@@ -1,0 +1,114 @@
+/*
+ * Feature highlight band (cmp-008): peach band, full-bleed banner image with
+ * a diagonal lower edge, eyebrow + heading, a grid of highlights, one CTA.
+ *
+ * Self-contained: it releases itself from the section's content width and
+ * paints its own band, so it needs no section style. The diagonal is cut out
+ * of the image, and the block's own background is what shows through it.
+ */
+
+.feature-highlight-band-container .feature-highlight-band-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.feature-highlight-band-container {
+  margin: 0;
+}
+
+.feature-highlight-band {
+  background-color: var(--brand-peach);
+  padding-bottom: 56px;
+}
+
+.feature-highlight-band .feature-highlight-band-media {
+  line-height: 0;
+}
+
+.feature-highlight-band .feature-highlight-band-media picture {
+  display: block;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - var(--band-angle)));
+}
+
+.feature-highlight-band .feature-highlight-band-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.feature-highlight-band .feature-highlight-band-body {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 32px 24px 0;
+  max-width: 1200px;
+}
+
+.feature-highlight-band .feature-highlight-band-intro {
+  margin: 0 0 32px;
+}
+
+.feature-highlight-band .feature-highlight-band-pretitle {
+  margin: 0 0 4px;
+  color: var(--dark-color);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.feature-highlight-band .feature-highlight-band-title {
+  margin: 0;
+  font-size: var(--heading-font-size-xl);
+  line-height: 1.2;
+}
+
+.feature-highlight-band .feature-highlight-band-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px 48px;
+  margin: 0;
+}
+
+.feature-highlight-band .feature-highlight-band-item-title {
+  margin: 0 0 8px;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.feature-highlight-band .feature-highlight-band-item p {
+  margin: 0;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.55;
+}
+
+/* footnote markers in the highlight copy */
+.feature-highlight-band .feature-highlight-band-item sup {
+  font-size: 0.6em;
+  line-height: 0;
+  vertical-align: super;
+}
+
+.feature-highlight-band .feature-highlight-band-cta {
+  margin-top: 36px;
+}
+
+.feature-highlight-band .feature-highlight-band-cta p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .feature-highlight-band {
+    padding-bottom: 72px;
+  }
+
+  .feature-highlight-band .feature-highlight-band-body {
+    padding: 40px 32px 0;
+  }
+
+  .feature-highlight-band .feature-highlight-band-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

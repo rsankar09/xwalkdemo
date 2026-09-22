@@ -1,0 +1,9 @@
+{
+  "name": "eds-import-scratch",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@adobe/aem-import-helper": "^1.6.0",
+    "linkedom": "^0.18.13"
+  }
+}

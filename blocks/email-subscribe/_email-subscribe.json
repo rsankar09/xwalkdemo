@@ -1,0 +1,68 @@
+{
+  "definitions": [
+    {
+      "title": "Email Subscribe",
+      "id": "email-subscribe",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Email Subscribe",
+              "model": "email-subscribe"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "email-subscribe",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "copy_eyebrow",
+          "label": "Eyebrow",
+          "value": "Subscribe"
+        },
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "copy_description",
+          "label": "Description"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "form_action",
+          "label": "Subscription endpoint",
+          "description": "URL the address is POSTed to. Leave empty and the form will validate but not submit."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "form_actionText",
+          "label": "Submit button label",
+          "value": "Subscribe"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "form_placeholder",
+          "label": "Input placeholder",
+          "value": "Email address"
+        },
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "consent",
+          "label": "Consent text",
+          "description": "Optional. When set, a required consent checkbox is shown with this label."
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

@@ -1,0 +1,560 @@
+[
+  {
+    "width": 375,
+    "captured": true,
+    "overflow": null,
+    "height": 13099,
+    "blocks": [
+      {
+        "name": "header",
+        "status": "loaded"
+      },
+      {
+        "name": "hero-billboard",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-list-card",
+        "status": "loaded"
+      },
+      {
+        "name": "announcement-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "product-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-link-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-highlight-band",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "cta-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "footer",
+        "status": "loaded"
+      },
+      {
+        "name": "email-subscribe",
+        "status": "loaded"
+      }
+    ],
+    "notLoaded": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "brokenImages": [],
+    "imagesNoAlt": 0,
+    "headings": [
+      "H1 With you for the moments ahead",
+      "H2 Your future—built with confidence",
+      "H3 Dedicated financial expertise",
+      "H3 Strategies built to evolve",
+      "H3 180+ years of trust",
+      "H2 New York Life announces record $2.78 billion divid",
+      "H2 Ready for all of life's milestones",
+      "H3 Protect your family's future",
+      "H3 Grow your savings & wealth",
+      "H3 Plan ahead for retirement",
+      "H3 Get financial or business guidance",
+      "H2 Resources to guide your next step",
+      "H3 Guide to life insurance policy types",
+      "H3 Build a budget that works for you",
+      "H3 Are annuities a safe option?",
+      "H3 Living expenses calculator",
+      "H3 Retirement savings calculator",
+      "H3 College savings calculator",
+      "H3 Long-term care calculator",
+      "H2 Stronger together since 1845",
+      "H4 Profits that work for you",
+      "H4 Impact by giving back",
+      "H4 Strength that endures",
+      "H4 Belonging for everyone",
+      "H2 Creating opportunities where we live & work",
+      "H3 Discover our work in action",
+      "H3 Explore grant opportunities",
+      "H3 Learn how we're teaming up for success",
+      "H3 Turn today's goals into tomorrow's possibilities"
+    ]
+  },
+  {
+    "width": 600,
+    "captured": false,
+    "overflow": null,
+    "height": 9367,
+    "blocks": [
+      {
+        "name": "header",
+        "status": "loaded"
+      },
+      {
+        "name": "hero-billboard",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-list-card",
+        "status": "loaded"
+      },
+      {
+        "name": "announcement-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "product-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-link-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-highlight-band",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "cta-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "footer",
+        "status": "loaded"
+      },
+      {
+        "name": "email-subscribe",
+        "status": "loaded"
+      }
+    ],
+    "notLoaded": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "brokenImages": [],
+    "imagesNoAlt": 0,
+    "headings": [
+      "H1 With you for the moments ahead",
+      "H2 Your future—built with confidence",
+      "H3 Dedicated financial expertise",
+      "H3 Strategies built to evolve",
+      "H3 180+ years of trust",
+      "H2 New York Life announces record $2.78 billion divid",
+      "H2 Ready for all of life's milestones",
+      "H3 Protect your family's future",
+      "H3 Grow your savings & wealth",
+      "H3 Plan ahead for retirement",
+      "H3 Get financial or business guidance",
+      "H2 Resources to guide your next step",
+      "H3 Guide to life insurance policy types",
+      "H3 Build a budget that works for you",
+      "H3 Are annuities a safe option?",
+      "H3 Living expenses calculator",
+      "H3 Retirement savings calculator",
+      "H3 College savings calculator",
+      "H3 Long-term care calculator",
+      "H2 Stronger together since 1845",
+      "H4 Profits that work for you",
+      "H4 Impact by giving back",
+      "H4 Strength that endures",
+      "H4 Belonging for everyone",
+      "H2 Creating opportunities where we live & work",
+      "H3 Discover our work in action",
+      "H3 Explore grant opportunities",
+      "H3 Learn how we're teaming up for success",
+      "H3 Turn today's goals into tomorrow's possibilities"
+    ]
+  },
+  {
+    "width": 768,
+    "captured": true,
+    "overflow": null,
+    "height": 8691,
+    "blocks": [
+      {
+        "name": "header",
+        "status": "loaded"
+      },
+      {
+        "name": "hero-billboard",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-list-card",
+        "status": "loaded"
+      },
+      {
+        "name": "announcement-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "product-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-link-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-highlight-band",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "cta-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "footer",
+        "status": "loaded"
+      },
+      {
+        "name": "email-subscribe",
+        "status": "loaded"
+      }
+    ],
+    "notLoaded": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "brokenImages": [],
+    "imagesNoAlt": 0,
+    "headings": [
+      "H1 With you for the moments ahead",
+      "H2 Your future—built with confidence",
+      "H3 Dedicated financial expertise",
+      "H3 Strategies built to evolve",
+      "H3 180+ years of trust",
+      "H2 New York Life announces record $2.78 billion divid",
+      "H2 Ready for all of life's milestones",
+      "H3 Protect your family's future",
+      "H3 Grow your savings & wealth",
+      "H3 Plan ahead for retirement",
+      "H3 Get financial or business guidance",
+      "H2 Resources to guide your next step",
+      "H3 Guide to life insurance policy types",
+      "H3 Build a budget that works for you",
+      "H3 Are annuities a safe option?",
+      "H3 Living expenses calculator",
+      "H3 Retirement savings calculator",
+      "H3 College savings calculator",
+      "H3 Long-term care calculator",
+      "H2 Stronger together since 1845",
+      "H4 Profits that work for you",
+      "H4 Impact by giving back",
+      "H4 Strength that endures",
+      "H4 Belonging for everyone",
+      "H2 Creating opportunities where we live & work",
+      "H3 Discover our work in action",
+      "H3 Explore grant opportunities",
+      "H3 Learn how we're teaming up for success",
+      "H3 Turn today's goals into tomorrow's possibilities"
+    ]
+  },
+  {
+    "width": 900,
+    "captured": false,
+    "overflow": null,
+    "height": 6112,
+    "blocks": [
+      {
+        "name": "header",
+        "status": "loaded"
+      },
+      {
+        "name": "hero-billboard",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-list-card",
+        "status": "loaded"
+      },
+      {
+        "name": "announcement-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "product-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-link-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-highlight-band",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "cta-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "footer",
+        "status": "loaded"
+      },
+      {
+        "name": "email-subscribe",
+        "status": "loaded"
+      }
+    ],
+    "notLoaded": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "brokenImages": [],
+    "imagesNoAlt": 0,
+    "headings": [
+      "H1 With you for the moments ahead",
+      "H2 Your future—built with confidence",
+      "H3 Dedicated financial expertise",
+      "H3 Strategies built to evolve",
+      "H3 180+ years of trust",
+      "H2 New York Life announces record $2.78 billion divid",
+      "H2 Ready for all of life's milestones",
+      "H3 Protect your family's future",
+      "H3 Grow your savings & wealth",
+      "H3 Plan ahead for retirement",
+      "H3 Get financial or business guidance",
+      "H2 Resources to guide your next step",
+      "H3 Guide to life insurance policy types",
+      "H3 Build a budget that works for you",
+      "H3 Are annuities a safe option?",
+      "H3 Living expenses calculator",
+      "H3 Retirement savings calculator",
+      "H3 College savings calculator",
+      "H3 Long-term care calculator",
+      "H2 Stronger together since 1845",
+      "H4 Profits that work for you",
+      "H4 Impact by giving back",
+      "H4 Strength that endures",
+      "H4 Belonging for everyone",
+      "H2 Creating opportunities where we live & work",
+      "H3 Discover our work in action",
+      "H3 Explore grant opportunities",
+      "H3 Learn how we're teaming up for success",
+      "H3 Turn today's goals into tomorrow's possibilities"
+    ]
+  },
+  {
+    "width": 1200,
+    "captured": false,
+    "overflow": null,
+    "height": 5831,
+    "blocks": [
+      {
+        "name": "header",
+        "status": "loaded"
+      },
+      {
+        "name": "hero-billboard",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-list-card",
+        "status": "loaded"
+      },
+      {
+        "name": "announcement-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "product-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-link-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-highlight-band",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "cta-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "footer",
+        "status": "loaded"
+      },
+      {
+        "name": "email-subscribe",
+        "status": "loaded"
+      }
+    ],
+    "notLoaded": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "brokenImages": [],
+    "imagesNoAlt": 0,
+    "headings": [
+      "H1 With you for the moments ahead",
+      "H2 Your future—built with confidence",
+      "H3 Dedicated financial expertise",
+      "H3 Strategies built to evolve",
+      "H3 180+ years of trust",
+      "H2 New York Life announces record $2.78 billion divid",
+      "H2 Ready for all of life's milestones",
+      "H3 Protect your family's future",
+      "H3 Grow your savings & wealth",
+      "H3 Plan ahead for retirement",
+      "H3 Get financial or business guidance",
+      "H2 Resources to guide your next step",
+      "H3 Guide to life insurance policy types",
+      "H3 Build a budget that works for you",
+      "H3 Are annuities a safe option?",
+      "H3 Living expenses calculator",
+      "H3 Retirement savings calculator",
+      "H3 College savings calculator",
+      "H3 Long-term care calculator",
+      "H2 Stronger together since 1845",
+      "H4 Profits that work for you",
+      "H4 Impact by giving back",
+      "H4 Strength that endures",
+      "H4 Belonging for everyone",
+      "H2 Creating opportunities where we live & work",
+      "H3 Discover our work in action",
+      "H3 Explore grant opportunities",
+      "H3 Learn how we're teaming up for success",
+      "H3 Turn today's goals into tomorrow's possibilities"
+    ]
+  },
+  {
+    "width": 1440,
+    "captured": true,
+    "overflow": null,
+    "height": 5877,
+    "blocks": [
+      {
+        "name": "header",
+        "status": "loaded"
+      },
+      {
+        "name": "hero-billboard",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-list-card",
+        "status": "loaded"
+      },
+      {
+        "name": "announcement-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "product-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "icon-link-card",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-highlight-band",
+        "status": "loaded"
+      },
+      {
+        "name": "feature-card",
+        "status": "loaded"
+      },
+      {
+        "name": "cta-banner",
+        "status": "loaded"
+      },
+      {
+        "name": "footer",
+        "status": "loaded"
+      },
+      {
+        "name": "email-subscribe",
+        "status": "loaded"
+      }
+    ],
+    "notLoaded": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "brokenImages": [],
+    "imagesNoAlt": 0,
+    "headings": [
+      "H1 With you for the moments ahead",
+      "H2 Your future—built with confidence",
+      "H3 Dedicated financial expertise",
+      "H3 Strategies built to evolve",
+      "H3 180+ years of trust",
+      "H2 New York Life announces record $2.78 billion divid",
+      "H2 Ready for all of life's milestones",
+      "H3 Protect your family's future",
+      "H3 Grow your savings & wealth",
+      "H3 Plan ahead for retirement",
+      "H3 Get financial or business guidance",
+      "H2 Resources to guide your next step",
+      "H3 Guide to life insurance policy types",
+      "H3 Build a budget that works for you",
+      "H3 Are annuities a safe option?",
+      "H3 Living expenses calculator",
+      "H3 Retirement savings calculator",
+      "H3 College savings calculator",
+      "H3 Long-term care calculator",
+      "H2 Stronger together since 1845",
+      "H4 Profits that work for you",
+      "H4 Impact by giving back",
+      "H4 Strength that endures",
+      "H4 Belonging for everyone",
+      "H2 Creating opportunities where we live & work",
+      "H3 Discover our work in action",
+      "H3 Explore grant opportunities",
+      "H3 Learn how we're teaming up for success",
+      "H3 Turn today's goals into tomorrow's possibilities"
+    ]
+  }
+]

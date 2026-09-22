@@ -15,7 +15,16 @@
       "hero",
       "cards",
       "columns",
-      "fragment"
+      "fragment",
+      "hero-billboard",
+      "feature-card",
+      "product-card",
+      "icon-list-card",
+      "icon-link-card",
+      "announcement-banner",
+      "feature-highlight-band",
+      "cta-banner",
+      "email-subscribe"
     ]
   },
   {
@@ -37,6 +46,30 @@
       "image",
       "button",
       "title"
+    ]
+  },
+  {
+    "id": "feature-card",
+    "components": [
+      "feature-card-item"
+    ]
+  },
+  {
+    "id": "icon-link-card",
+    "components": [
+      "icon-link-card-item"
+    ]
+  },
+  {
+    "id": "icon-list-card",
+    "components": [
+      "icon-list-card-item"
+    ]
+  },
+  {
+    "id": "product-card",
+    "components": [
+      "product-card-item"
     ]
   }
 ]

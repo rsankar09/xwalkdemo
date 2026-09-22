@@ -1,0 +1,100 @@
+/*
+ * Announcement banner (cmp-004): pale-blue full-width strip carrying an icon,
+ * a one-line headline and a trailing arrow link.
+ *
+ * Self-contained: it releases itself from the section's content width and
+ * paints its own band, so it needs no section style.
+ */
+
+.announcement-banner-container .announcement-banner-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.announcement-banner-container {
+  margin: 0;
+}
+
+.announcement-banner {
+  background-color: var(--brand-pale-blue);
+  padding: 20px 24px;
+}
+
+.announcement-banner .announcement-banner-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.announcement-banner .announcement-banner-inner > * {
+  margin: 0;
+}
+
+.announcement-banner .announcement-banner-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  line-height: 1;
+}
+
+.announcement-banner .announcement-banner-icon .icon,
+.announcement-banner .announcement-banner-icon img {
+  width: auto;
+  max-width: 40px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.announcement-banner .announcement-banner-copy {
+  font-size: var(--body-font-size-s);
+}
+
+.announcement-banner .announcement-banner-copy p {
+  margin: 0;
+}
+
+.announcement-banner .announcement-banner-title {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.announcement-banner .announcement-banner-action {
+  font-size: var(--body-font-size-s);
+}
+
+/*
+ * The brand blue only reaches 4.11:1 on this pale band, so the link uses the
+ * darker blue (6.67:1). Measured with axe-core, not eyeballed.
+ */
+.announcement-banner .announcement-banner-action a:any-link {
+  color: var(--brand-blue-hover);
+  font-weight: 700;
+}
+
+.announcement-banner .announcement-banner-action a::after {
+  content: "";
+  display: inline-block;
+  margin-left: 8px;
+  border: solid currentcolor;
+  border-width: 0 2px 2px 0;
+  padding: 3px;
+  vertical-align: middle;
+  transform: rotate(-45deg);
+}
+
+@media (width >= 900px) {
+  .announcement-banner {
+    padding: 20px 32px;
+  }
+
+  /* the link sits hard right on wide viewports */
+  .announcement-banner .announcement-banner-action {
+    margin-left: auto;
+  }
+}

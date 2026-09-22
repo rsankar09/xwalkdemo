@@ -132,12 +132,60 @@
         "component": "multiselect",
         "name": "style",
         "label": "Style",
+        "description": "Band treatments that sit behind a whole section. Blocks that carry their own band (Announcement Banner, Feature Highlight Band, Hero Billboard) need none of these.",
         "options": [
           {
             "name": "Highlight",
             "value": "highlight"
+          },
+          {
+            "name": "Navy band",
+            "value": "navy"
+          },
+          {
+            "name": "Green band",
+            "value": "green"
+          },
+          {
+            "name": "Angled edge",
+            "value": "angled"
+          },
+          {
+            "name": "Footnotes",
+            "value": "footnotes"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "announcement-banner",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "icon",
+        "label": "Icon",
+        "description": "Icon token such as :announcement:. Needs a matching /icons/<name>.svg."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Headline",
+        "description": "One line. The strip does not wrap gracefully beyond two."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "label": "Link text"
       }
     ]
   },
@@ -180,12 +228,289 @@
     ]
   },
   {
+    "id": "cta-banner",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Heading type",
+        "value": "h3",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Supporting line"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cta",
+        "label": "Button link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "Button text"
+      }
+    ]
+  },
+  {
+    "id": "email-subscribe",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_eyebrow",
+        "label": "Eyebrow",
+        "value": "Subscribe"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "form_action",
+        "label": "Subscription endpoint",
+        "description": "URL the address is POSTed to. Leave empty and the form will validate but not submit."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "form_actionText",
+        "label": "Submit button label",
+        "value": "Subscribe"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "form_placeholder",
+        "label": "Input placeholder",
+        "value": "Email address"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "consent",
+        "label": "Consent text",
+        "description": "Optional. When set, a required consent checkbox is shown with this label."
+      }
+    ]
+  },
+  {
+    "id": "feature-card",
+    "fields": []
+  },
+  {
+    "id": "feature-card-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Alt text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_pretitle",
+        "label": "Eyebrow",
+        "description": "Short kicker above the title, e.g. ARTICLE."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Title type",
+        "value": "h3",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          },
+          {
+            "name": "Heading 4",
+            "value": "h4"
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Link",
+        "description": "Makes the whole card clickable and adds the arrow."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "label": "Link text",
+        "description": "Screen-reader label for the card link. Defaults to the title."
+      }
+    ]
+  },
+  {
+    "id": "feature-highlight-band",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Banner image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Alt text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_pretitle",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Heading type",
+        "value": "h2",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "highlights",
+        "label": "Highlights",
+        "description": "Each heading starts a new highlight; the text under it is its body. Two highlights per row on desktop."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cta",
+        "label": "Button link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "Button text"
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
         "component": "aem-content",
         "name": "reference",
         "label": "Reference"
+      }
+    ]
+  },
+  {
+    "id": "hero-billboard",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Background image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Alt text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_pretitle",
+        "label": "Eyebrow",
+        "description": "Short kicker above the headline."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Headline"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cta",
+        "label": "Button link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "Button text"
       }
     ]
   },
@@ -212,6 +537,175 @@
         "value": "",
         "label": "Text",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "icon-link-card",
+    "fields": []
+  },
+  {
+    "id": "icon-link-card-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "icon",
+        "label": "Icon",
+        "description": "Icon token such as :house:. Needs a matching /icons/<name>.svg."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Title type",
+        "value": "h3",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          },
+          {
+            "name": "Heading 4",
+            "value": "h4"
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Link",
+        "description": "Makes the whole card clickable and adds the arrow."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "label": "Link text",
+        "description": "Screen-reader label for the card link. Defaults to the title."
+      }
+    ]
+  },
+  {
+    "id": "icon-list-card",
+    "fields": []
+  },
+  {
+    "id": "icon-list-card-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "icon",
+        "label": "Icon",
+        "description": "Icon token such as :people:. Needs a matching /icons/<name>.svg."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Title type",
+        "value": "h3",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          },
+          {
+            "name": "Heading 4",
+            "value": "h4"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "product-card",
+    "fields": []
+  },
+  {
+    "id": "product-card-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_pretitle",
+        "label": "Eyebrow",
+        "description": "Category above the title, e.g. INSURANCE."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Title type",
+        "value": "h3",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          },
+          {
+            "name": "Heading 4",
+            "value": "h4"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Link",
+        "description": "Makes the whole card clickable and adds the arrow."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "label": "Link text",
+        "description": "Screen-reader label for the card link. Defaults to the title."
       }
     ]
   }

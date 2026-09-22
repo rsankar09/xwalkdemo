@@ -1,0 +1,130 @@
+/*
+ * Email subscribe (cmp-011). Background and foreground are inherited from the
+ * parent band (the footer, or a navy section) rather than hardcoded, so the
+ * block works on both the dark footer and a light page section.
+ */
+
+.email-subscribe {
+  --email-subscribe-height: 48px;
+
+  max-width: 400px;
+  color: inherit;
+}
+
+.email-subscribe .email-subscribe-copy {
+  margin-bottom: 20px;
+}
+
+.email-subscribe .email-subscribe-eyebrow {
+  margin: 0 0 12px;
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.email-subscribe .email-subscribe-copy p {
+  margin: 0;
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+}
+
+.email-subscribe .email-subscribe-form {
+  margin: 0;
+}
+
+.email-subscribe .email-subscribe-field {
+  display: flex;
+  align-items: stretch;
+  background-color: var(--background-color);
+}
+
+/* visually hidden, still announced */
+.email-subscribe .email-subscribe-label {
+  position: absolute;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.email-subscribe .email-subscribe-field input {
+  flex: 1;
+  box-sizing: border-box;
+  border: 0;
+  background-color: transparent;
+  padding: 0 16px;
+  min-width: 0;
+  height: var(--email-subscribe-height);
+  color: var(--text-color);
+  font-size: var(--body-font-size-s);
+}
+
+.email-subscribe .email-subscribe-field input::placeholder {
+  color: var(--dark-color);
+  opacity: 1;
+}
+
+.email-subscribe .email-subscribe-submit {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background-color: var(--brand-blue);
+  width: var(--email-subscribe-height);
+  height: var(--email-subscribe-height);
+  color: var(--background-color);
+  cursor: pointer;
+}
+
+.email-subscribe .email-subscribe-submit:hover,
+.email-subscribe .email-subscribe-submit:focus-visible {
+  background-color: var(--brand-blue-hover);
+}
+
+.email-subscribe .email-subscribe-submit svg {
+  width: 22px;
+  height: 22px;
+}
+
+.email-subscribe .email-subscribe-consent {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.45;
+}
+
+.email-subscribe .email-subscribe-consent input {
+  flex-shrink: 0;
+  margin: 2px 0 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-blue);
+}
+
+.email-subscribe .email-subscribe-consent p {
+  margin: 0;
+}
+
+.email-subscribe .email-subscribe-status {
+  margin: 10px 0 0;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.4;
+}
+
+.email-subscribe .email-subscribe-status-error {
+  font-weight: 700;
+}
+
+.email-subscribe .email-subscribe-status:empty {
+  display: none;
+}
+
+.email-subscribe .email-subscribe-field input:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: -2px;
+}

@@ -1,0 +1,10 @@
+const {parseHTML}=require('linkedom');const path=require('path');
+const d=require(path.resolve(__dirname,'../capture/home/dom.json'));
+const {document}=parseHTML(d.html);
+const root=document.querySelector('.root.container.responsivegrid');
+let node=root; while(node&&node.children.length===1)node=node.children[0];
+let main=[...node.children][1]; while(main&&main.children.length===1)main=main.children[0];
+const secs=[...main.children];
+const si=+process.argv[2], ci=+process.argv[3];
+const c=secs[si].querySelectorAll('.cmp-card')[ci];
+console.log(c.innerHTML.replace(/\s*\n\s*/g,'\n').replace(/>\s+</g,'>\n<'));
