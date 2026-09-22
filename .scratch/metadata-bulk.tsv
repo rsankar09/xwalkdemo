@@ -1,0 +1,21 @@
+URL	Description	Image	og:type	Robots
+/**		/media/og-default-nyl.jpg	website	
+/articles/**		/media/og-default-articles.jpg	article	
+/newsroom/**		/media/og-default-newsroom.jpg	article	
+/foundation/**		/media/og-default-foundation.jpg	article	
+/products/**		/media/og-default-products.jpg		
+/group-benefit-solutions/**		/media/og-default-gbs.jpg		
+/groupmembership/**		/media/og-default-gbs.jpg		
+/guaranteed-products/**		/media/og-default-products.jpg		
+/communities/**		/media/og-default-communities.jpg		
+/careers/**		/media/og-default-careers.jpg		
+/about/**		/media/og-default-about.jpg		
+/resources/**		/media/og-default-resources.jpg		
+/my-account/**	Manage your New York Life policies, payments, and account settings online.	/media/og-default-about.jpg		
+/leads-recruiting/**	Explore a career as a New York Life financial professional and connect with a recruiter.	/media/og-default-careers.jpg		
+/drafts/**				noindex, nofollow
+/test-form-submission				noindex, nofollow
+/address2testrelease3/**				noindex, nofollow
+/houston-clinic/thank-you				noindex, nofollow
+/leads-recruiting/contact-a-recruiter2				noindex, nofollow
+/newsroom/love-takes-action-podcast-episode-three-transcript1				noindex, nofollow

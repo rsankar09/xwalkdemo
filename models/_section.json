@@ -29,10 +29,27 @@
           "component": "multiselect",
           "name": "style",
           "label": "Style",
+          "description": "Band treatments that sit behind a whole section. Blocks that carry their own band (Announcement Banner, Feature Highlight Band, Hero Billboard) need none of these.",
           "options": [
             {
               "name": "Highlight",
               "value": "highlight"
+            },
+            {
+              "name": "Navy band",
+              "value": "navy"
+            },
+            {
+              "name": "Green band",
+              "value": "green"
+            },
+            {
+              "name": "Angled edge",
+              "value": "angled"
+            },
+            {
+              "name": "Footnotes",
+              "value": "footnotes"
             }
           ]
         }
@@ -50,7 +67,16 @@
         "hero",
         "cards",
         "columns",
-        "fragment"
+        "fragment",
+        "hero-billboard",
+        "feature-card",
+        "product-card",
+        "icon-list-card",
+        "icon-link-card",
+        "announcement-banner",
+        "feature-highlight-band",
+        "cta-banner",
+        "email-subscribe"
       ]
     }
   ]

@@ -1,0 +1,108 @@
+{
+  "definitions": [
+    {
+      "title": "Product Cards",
+      "id": "product-card",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Product Cards",
+              "model": "product-card",
+              "filter": "product-card"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Product Card",
+      "id": "product-card-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Product Card",
+              "model": "product-card-item"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "product-card",
+      "fields": []
+    },
+    {
+      "id": "product-card-item",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "copy_pretitle",
+          "label": "Eyebrow",
+          "description": "Category above the title, e.g. INSURANCE."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "copy_title",
+          "label": "Title"
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "copy_titleType",
+          "label": "Title type",
+          "value": "h3",
+          "options": [
+            {
+              "name": "Heading 2",
+              "value": "h2"
+            },
+            {
+              "name": "Heading 3",
+              "value": "h3"
+            },
+            {
+              "name": "Heading 4",
+              "value": "h4"
+            }
+          ]
+        },
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "copy_description",
+          "label": "Description"
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "link",
+          "label": "Link",
+          "description": "Makes the whole card clickable and adds the arrow."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "linkText",
+          "label": "Link text",
+          "description": "Screen-reader label for the card link. Defaults to the title."
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "product-card",
+      "components": [
+        "product-card-item"
+      ]
+    }
+  ]
+}

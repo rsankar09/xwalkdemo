@@ -1,0 +1,66 @@
+/*
+ * Icon list card (cmp-003): icon, title, description. No border, no fill,
+ * no link. Three across at desktop.
+ */
+
+.icon-list-card > ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icon-list-card .icon-list-card-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.icon-list-card .icon-list-card-media {
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+/*
+ * Height-constrained with auto width: the source icons range from 38x48 to
+ * 49x44, so pinning both axes would letterbox most of them.
+ */
+.icon-list-card .icon-list-card-media .icon,
+.icon-list-card .icon-list-card-media img {
+  width: auto;
+  max-width: 56px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.icon-list-card .icon-list-card-body {
+  margin: 0;
+}
+
+.icon-list-card .icon-list-card-title {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.icon-list-card .icon-list-card-description {
+  margin: 10px 0 0;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.55;
+}
+
+@media (width >= 600px) {
+  .icon-list-card > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .icon-list-card > ul {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}

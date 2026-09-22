@@ -16,8 +16,22 @@
   --light-color: #f8f8f8;
   --dark-color: #505050;
   --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+
+  /* brand palette — sampled from capture/home/crops (see migration handoff) */
+  --brand-blue: #0468ff;
+  --brand-blue-hover: #0047cc;
+  --brand-navy: #000a62;
+  --brand-green: #016355;
+  --brand-peach: #ffe8cf;
+  --brand-pale-blue: #e5f1ff;
+  --brand-rule: #dbd8d4;
+
+  /* the brand blue is the single accent: links, buttons and card arrows */
+  --link-color: var(--brand-blue);
+  --link-hover-color: var(--brand-blue-hover);
+
+  /* band geometry — the diagonal edge shared by the bands and the outlined banner */
+  --band-angle: 56px;
 
   /* fonts */
   --body-font-family: roboto, roboto-fallback, sans-serif;
@@ -36,8 +50,13 @@
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
-  /* nav height */
-  --nav-height: 64px;
+  /*
+   * Nav height. Must match the real header bar, and must live here rather
+   * than in header.css: this file is render-blocking, header.css arrives with
+   * the lazily-loaded block. A stale value here shifts the whole page when
+   * the header lands. 65/119 are the measured source heights.
+   */
+  --nav-height: 65px;
 }
 
 /* fallback fonts */
@@ -55,6 +74,9 @@
 
 @media (width >= 900px) {
   :root {
+    /* nav height — the desktop bar adds the utility row */
+    --nav-height: 119px;
+
     /* body sizes */
     --body-font-size-m: 18px;
     --body-font-size-s: 16px;
@@ -170,6 +192,23 @@ p.button-wrapper {
   margin: 12px 0;
 }
 
+/*
+ * Two CTAs authored as consecutive paragraphs read as one pair. Measured on
+ * the Personalized Guidance band: stacked on mobile, side by side from tablet
+ * up. Scoped to default content — blocks lay their own CTAs out.
+ */
+@media (width >= 600px) {
+  main > .section .default-content-wrapper > p.button-wrapper:has(+ p.button-wrapper),
+  main > .section .default-content-wrapper > p.button-wrapper + p.button-wrapper {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  main > .section .default-content-wrapper > p.button-wrapper:has(+ p.button-wrapper) {
+    margin-right: 12px;
+  }
+}
+
 a.button:any-link,
 button.button {
   box-sizing: border-box;
@@ -197,10 +236,11 @@ button.button:disabled {
   pointer-events: none;
 }
 
+/* primary is the brand blue: every CTA in the source design is blue, not black */
 a.button.primary,
 button.button.primary {
-  border-color: var(--text-color);
-  background-color: var(--text-color);
+  border-color: var(--brand-blue);
+  background-color: var(--brand-blue);
   color: var(--background-color);
 }
 
@@ -208,9 +248,9 @@ a.button.primary:hover,
 a.button.primary:focus-visible,
 button.button.primary:hover,
 button.button.primary:focus-visible {
-  border-color: var(--dark-color);
-  background-color: var(--dark-color);
-  color: var(--light-color);
+  border-color: var(--brand-blue-hover);
+  background-color: var(--brand-blue-hover);
+  color: var(--background-color);
 }
 
 a.button.primary[aria-disabled="true"],
@@ -322,4 +362,100 @@ main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
   padding: 40px 0;
+}
+
+/* coloured full-bleed bands (xc-2: the band is a section treatment, not a block feature) */
+main > .section.navy,
+main > .section.green {
+  margin: 0;
+  padding: 56px 0;
+}
+
+main > .section.navy {
+  background-color: var(--brand-navy);
+  color: var(--background-color);
+}
+
+main > .section.green {
+  background-color: var(--brand-green);
+  color: var(--background-color);
+}
+
+/* headings inherit the band's foreground rather than the global text colour */
+main > .section.navy :is(h1, h2, h3, h4, h5, h6),
+main > .section.green :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
+/*
+ * Diagonal band edge. Applied with a colour band, e.g. `navy, angled`.
+ * Top edge falls left-to-right, bottom edge rises left-to-right, which is the
+ * shape measured on the navy band behind the product cards (cmp-005).
+ */
+main > .section.angled {
+  clip-path: polygon(
+    0 0,
+    100% var(--band-angle),
+    100% 100%,
+    0 calc(100% - var(--band-angle))
+  );
+  padding: calc(56px + var(--band-angle)) 0;
+}
+
+/*
+ * Disclosure / footnote block. The <sup> markers in body copy point at it, so
+ * it is always the closing section of a page that uses them. Small print,
+ * tight leading, and no eyebrow treatment — every paragraph here opens with a
+ * <sup>, not a kicker. Declared ahead of the eyebrow rules so the more
+ * specific selector does not descend below the less specific one.
+ */
+main > .section.footnotes .default-content-wrapper > p {
+  margin: 12px 0 0;
+  color: var(--dark-color);
+  font-size: var(--body-font-size-xs);
+  line-height: 1.5;
+}
+
+/*
+ * Eyebrow / kicker: a short paragraph that opens a block of default content
+ * and is immediately followed by a heading.
+ *
+ * Modelled as position rather than an authored class because default content
+ * carries no class field — see the migration handoff, "which model owns each
+ * property". The `+ h2` test is what keeps it off trailing paragraphs: an
+ * earlier version matched `p:first-child` in any wrapper and rendered the
+ * band's closing CTA button as a tiny uppercase kicker.
+ */
+main > .section .default-content-wrapper > p:first-child:has(+ h2) {
+  margin: 0 0 4px;
+  color: var(--dark-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* on a dark band the kicker keeps the band's own foreground */
+main > .section:is(.navy, .green) .default-content-wrapper > p:first-child:has(+ h2) {
+  color: inherit;
+}
+
+/* footnote markers in body copy */
+main > .section sup {
+  font-size: 0.6em;
+  line-height: 0;
+  vertical-align: super;
+}
+
+@media (width >= 900px) {
+  main > .section.navy,
+  main > .section.green {
+    padding: 72px 0;
+  }
+
+  main > .section.angled {
+    padding: calc(72px + var(--band-angle)) 0;
+  }
 }

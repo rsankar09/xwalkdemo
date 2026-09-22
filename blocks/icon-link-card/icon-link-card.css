@@ -1,0 +1,114 @@
+/*
+ * Icon link card (cmp-007): bordered white card, icon, title only, arrow.
+ * Four across at desktop.
+ */
+
+.icon-link-card > ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icon-link-card .icon-link-card-item {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  border: 1px solid var(--brand-rule);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.icon-link-card .icon-link-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.icon-link-card .icon-link-card-link::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+}
+
+.icon-link-card .icon-link-card-link-bare {
+  position: absolute;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.icon-link-card .icon-link-card-media {
+  padding: 24px 24px 0;
+  line-height: 1;
+}
+
+/*
+ * Height-constrained with auto width: the source icons range from 38x48 to
+ * 49x44, so pinning both axes would letterbox most of them.
+ */
+.icon-link-card .icon-link-card-media .icon,
+.icon-link-card .icon-link-card-media img {
+  width: auto;
+  max-width: 56px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.icon-link-card .icon-link-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  padding: 16px 24px 0;
+}
+
+.icon-link-card .icon-link-card-title {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.icon-link-card .icon-link-card-arrow {
+  display: block;
+  margin: 20px 24px 24px;
+  color: var(--brand-blue);
+  line-height: 0;
+}
+
+.icon-link-card .icon-link-card-arrow svg {
+  width: 26px;
+  height: 26px;
+}
+
+@media (width >= 600px) {
+  .icon-link-card > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .icon-link-card > ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* declared last: outranks the rules above */
+.icon-link-card .icon-link-card-item:hover .icon-link-card-title {
+  text-decoration: underline;
+}
+
+.icon-link-card .icon-link-card-item:hover .icon-link-card-arrow {
+  color: var(--brand-blue-hover);
+}
+
+.icon-link-card .icon-link-card-item:has(.icon-link-card-link:focus-visible) {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}

@@ -1,0 +1,128 @@
+/*
+ * Hero billboard (cmp-002).
+ *
+ * Below 900 the source stacks the image above the content card; from 900 up
+ * the image becomes a full-bleed backdrop and the card is offset over it with
+ * an angled top-right corner.
+ */
+
+/* release the block from the section's content width */
+.hero-billboard-container .hero-billboard-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-billboard {
+  position: relative;
+}
+
+.hero-billboard .hero-billboard-media {
+  line-height: 0;
+}
+
+.hero-billboard .hero-billboard-media picture {
+  display: block;
+}
+
+/*
+ * No aspect-ratio on purpose: the authored image keeps its intrinsic ratio
+ * and its width/height attributes reserve the box, so there is no CLS and no
+ * silent crop. The source's mobile asset is 327x184, but baking that in would
+ * crop every asset that is not.
+ */
+.hero-billboard .hero-billboard-media img {
+  width: 100%;
+  height: auto;
+}
+
+.hero-billboard .hero-billboard-content {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+  max-width: 1200px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.hero-billboard .hero-billboard-copy {
+  margin: 0;
+}
+
+.hero-billboard .hero-billboard-pretitle {
+  margin: 0 0 12px;
+  color: var(--dark-color);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.hero-billboard .hero-billboard-title {
+  margin: 0;
+  font-size: var(--heading-font-size-xl);
+  line-height: 1.15;
+}
+
+.hero-billboard .hero-billboard-description {
+  margin: 16px 0 0;
+  font-size: var(--body-font-size-s);
+  line-height: 1.55;
+}
+
+.hero-billboard .hero-billboard-cta {
+  margin-top: 28px;
+}
+
+.hero-billboard .hero-billboard-cta p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  /*
+   * padding-left aligns the card's left edge to the 1200px content column
+   * that every other band uses. Expressed as a percentage of this
+   * (full-bleed) block rather than in vw: vw includes the scrollbar, so a
+   * vw-based offset drifts a few px out of alignment with its neighbours.
+   */
+  .hero-billboard {
+    display: flex;
+    align-items: center;
+    padding-left: max(32px, calc((100% - 1200px) / 2 + 32px));
+    min-height: 680px;
+  }
+
+  .hero-billboard .hero-billboard-media {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+  }
+
+  .hero-billboard .hero-billboard-media picture,
+  .hero-billboard .hero-billboard-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-billboard .hero-billboard-content {
+    /* angled top-right corner, matching the diagonal used by the bands */
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--band-angle)) 0,
+      100% var(--band-angle),
+      100% 100%,
+      0 100%
+    );
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    padding: 48px calc(var(--band-angle) + 32px) 48px 48px;
+    width: 620px;
+    max-width: 100%;
+  }
+
+  .hero-billboard .hero-billboard-title {
+    font-size: var(--heading-font-size-xxl);
+  }
+}

@@ -1,0 +1,14 @@
+const {parseHTML}=require('linkedom');const path=require('path');
+const d=require(path.resolve(__dirname,'../capture/home/dom.json'));
+const {document}=parseHTML(d.html);
+const root=document.querySelector('.root.container.responsivegrid');
+let node=root; while(node&&node.children.length===1)node=node.children[0];
+let main=[...node.children][1]; while(main&&main.children.length===1)main=main.children[0];
+const secs=[...main.children];
+console.log('### Personalized Guidance text');
+const pg=[...secs[1].querySelectorAll('.cmp-text')].find(e=>/Personalized Guidance/.test(e.textContent));
+console.log(pg.innerHTML.replace(/>\s+</g,'>\n<').trim());
+console.log('\n### section1 buttons');
+[...secs[1].querySelectorAll('.cmp-button a')].forEach(a=>console.log(`  "${a.textContent.trim()}" -> ${a.getAttribute('href')}  parentClasses=${a.closest('.button').getAttribute('class').split(/\s+/).filter(c=>!/aem-Grid/.test(c)).join('.')}`));
+console.log('\n### footnotes (sec9)');
+console.log(secs[9].querySelector('.cmp-text').innerHTML.replace(/>\s+</g,'>\n<').trim());

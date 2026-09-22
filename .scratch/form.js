@@ -1,0 +1,15 @@
+const {parseHTML}=require('linkedom');const path=require('path');
+const d=require(path.resolve(__dirname,'../capture/home/dom.json'));
+const {document}=parseHTML(d.html);
+const es=document.querySelector('.cmp-email-subscribe');
+const f=es.querySelector('form');
+console.log('form action=',JSON.stringify(f.getAttribute('action')),'method=',JSON.stringify(f.getAttribute('method')));
+console.log('form attrs:',[...f.attributes].map(a=>a.name+'='+a.value).join(' | '));
+const inp=es.querySelector('.cmp-email-subscribe__button--input');
+console.log('input attrs:',[...inp.attributes].map(a=>a.name+'='+a.value).join(' | '));
+const btn=es.querySelector('button');
+console.log('button text=',JSON.stringify((btn.textContent||'').trim()),'aria-label=',JSON.stringify(btn.getAttribute('aria-label')));
+const cb=es.querySelector('.cmp-email-subscribe__checkbox-area');
+console.log('consent area HTML:', cb.innerHTML.replace(/\s+/g,' ').trim().slice(0,400));
+console.log('eyebrow=',JSON.stringify(es.querySelector('.cmp-email-subscribe__eyebrow').textContent.trim()));
+console.log('desc=',JSON.stringify(es.querySelector('.cmp-email-subscribe__description').innerHTML.replace(/\s+/g,' ').trim().slice(0,300)));
