@@ -375,9 +375,9 @@ function getBundledFooterFragment() {
 export default async function decorate(block) {
   const footerMeta = getMetadata('footer');
 
-  const footerPath = footerMeta
-    ? new URL(footerMeta, window.location).pathname
-    : '/footer';
+  // const footerPath = footerMeta
+  //   ? new URL(footerMeta, window.location).pathname
+  //   : '/footer';
 
   block.textContent = '';
 
@@ -386,12 +386,17 @@ export default async function decorate(block) {
    *
    * If it doesn't exist, fall back to the bundled HTML.
    */
-  let fragment = await loadFragment(footerPath);
+  // let fragment = await loadFragment(footerPath);
+  //
+  // if (!fragment) {
+  //   fragment = await loadBundledFragment(BUNDLED_FOOTER);
+  // }
+  let fragment = BUNDLED_FOOTER;
 
   if (!fragment) {
     fragment = await loadBundledFragment(BUNDLED_FOOTER);
   }
-
+  fragment = await loadBundledFragment(BUNDLED_FOOTER);
   /*
    * If the external bundled fragment also doesn't exist,
    * use the inline fallback.
