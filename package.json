@@ -28,6 +28,7 @@
   "homepage": "https://github.com/adobe/aem-boilerplate#readme",
   "devDependencies": {
     "@adobe/aem-import-helper": "^1.6.0",
+    "@adobe/helix-importer": "^3.4.147",
     "@babel/eslint-parser": "7.28.6",
     "eslint": "8.57.1",
     "eslint-config-airbnb-base": "15.0.0",

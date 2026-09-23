@@ -6,9 +6,19 @@
  * This harness runs it against the captured DOM in capture/<page>/dom.json
  * with jsdom and a faithful WebImporter stub, then asserts:
  *
- *   1. every emitted block table matches the row/cell contract derived
+ *   1. every block header resolves to a BLOCK component in
+ *      component-definition.json — not to a child-item component
+ *   2. every emitted block table matches the row/cell contract derived
  *      from that block's own model partial
- *   2. no source text, link or image was dropped
+ *   3. the markdown actually converts to JCR through the real
+ *      `@adobe/helix-importer` md2jcr pipeline, with every authored value
+ *      landing on the model field it belongs to
+ *   4. no source text, link or image was dropped
+ *
+ * Check 3 is the authoritative one. Checks 1 and 2 are cheap structural
+ * pre-flights that produce a precise message; md2jcr is what the import
+ * service actually runs, and it is the only thing that proves the cells
+ * map to the right properties.
  *
  * Usage: node tools/importer/qa.mjs [page ...]
  */
@@ -17,6 +27,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
+import { md2jcr } from '@adobe/helix-importer';
 import { readContracts } from './model-contract.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -57,6 +68,54 @@ global.WebImporter = WebImporter;
 const transformer = (await import('./import.js')).default;
 const contracts = readContracts(ROOT);
 
+/*
+ * The aggregated component JSONs, exactly as the import service reads them.
+ * Run `npm run build:json` after touching any `_<block>.json` — md2jcr
+ * derives the cell-to-property mapping from these, so a stale aggregate
+ * imports the old shape.
+ */
+const components = {
+  models: JSON.parse(readFileSync(join(ROOT, 'component-models.json'), 'utf-8')),
+  definition: JSON.parse(readFileSync(join(ROOT, 'component-definition.json'), 'utf-8')),
+  filters: JSON.parse(readFileSync(join(ROOT, 'component-filters.json'), 'utf-8')),
+};
+
+const ITEM_RESOURCE_TYPE = 'core/franklin/components/block/v1/block/item';
+
+/**
+ * Every component in the definition file, flattened out of its groups.
+ * @returns {object[]} The component definitions
+ */
+const allComponents = () => components.definition.groups.flatMap((g) => g.components || []);
+
+/**
+ * Resolves a block header the way md2jcr does — `getComponentByTitle`, a
+ * plain `find()` over every component's `title`.
+ *
+ * This is where the plural block titles bit: a header of `Icon List Card`
+ * matched the *item* component titled "Icon List Card" (the block was
+ * "Icon List Cards"), so md2jcr treated the container block as a simple
+ * one, fed the row's cells to the item model's first field group and threw
+ * "The content isn't mapping to the model correctly" on the second cell.
+ * @param {string} title The block header text
+ * @returns {string|null} A failure message, or null when the header is sound
+ */
+function checkBlockTitle(title) {
+  const hit = allComponents().find((c) => c.title === title);
+  if (!hit) {
+    return `block header "${title}" matches no component title in `
+      + 'component-definition.json — md2jcr will throw "The component '
+      + `'${title}' does not exist"`;
+  }
+  const resourceType = hit.plugins?.xwalk?.page?.resourceType;
+  if (resourceType === ITEM_RESOURCE_TYPE) {
+    return `block header "${title}" resolves to the CHILD ITEM component `
+      + `"${hit.id}", not a block. Give the block definition the title `
+      + `"${title}" and rename the item (e.g. "${title} Item").`;
+  }
+  return null;
+}
+
 /** @returns {string} normalized text */
 const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
 
@@ -72,7 +131,7 @@ const KNOWN_UNBUILT = new Set(['table']);
  * @param {string} page The capture directory name
  * @returns {object} The report for this page
  */
-function checkPage(page) {
+async function checkPage(page) {
   const domPath = join(ROOT, 'capture', page, 'dom.json');
   if (!existsSync(domPath)) return { page, skipped: 'no dom.json' };
   const { html } = JSON.parse(readFileSync(domPath, 'utf-8'));
@@ -149,6 +208,12 @@ function checkPage(page) {
         + 'resolve to a block folder (check singular/plural)');
       return;
     }
+
+    // md2jcr resolves the header by component TITLE, so a header that maps
+    // to a block folder can still resolve to the wrong component.
+    const titleFailure = checkBlockTitle(header);
+    if (titleFailure) failures.push(titleFailure);
+
     if (contract.kind === 'simple') {
       if (bodyRows.length !== contract.rows) {
         failures.push(`${name}: emitted ${bodyRows.length} rows, model has `
@@ -181,11 +246,44 @@ function checkPage(page) {
   const missingAlt = [...main.querySelectorAll('img')]
     .filter((i) => !i.getAttribute('alt')).length;
 
+  // grabbed before md2jcr runs the transform a second time and resets them
+  const warnings = transformer.getWarnings();
+
+  /*
+   * The authoritative check: run the same conversion the import service
+   * runs. md2jcr re-parses the source html and calls transformDOM itself,
+   * so it gets a clean document rather than the one mutated above.
+   *
+   * Everything before this point only counts rows and cells. This is what
+   * proves each cell lands on the property it is meant to.
+   */
+  const jcr = { ok: false };
+  try {
+    const res = await md2jcr(
+      `https://www.newyorklife.com/${page}`,
+      html,
+      transformer,
+      {
+        createDocumentFromString: (s) => new JSDOM(s, {
+          url: `https://www.newyorklife.com/${page}`,
+        }).window.document,
+      },
+      { components },
+    );
+    const xml = res.jcr?.toString?.() ?? res.jcr ?? '';
+    jcr.ok = true;
+    jcr.items = [...xml.matchAll(/ model="([a-z0-9-]+)"/g)].map((m) => m[1]);
+  } catch (e) {
+    jcr.error = e.message.split('\n').slice(0, 2).join(' — ');
+    failures.push(`md2jcr: ${jcr.error}`);
+  }
+
   return {
     page,
+    jcr,
     blocks,
     failures,
-    warnings: transformer.getWarnings(),
+    warnings,
     droppedImages,
     droppedHeadings,
     missingAlt,
@@ -200,9 +298,16 @@ function checkPage(page) {
 const args = process.argv.slice(2);
 const pages = args.length ? args : ['home'];
 
+// checked one page at a time: the transform keeps its warnings in module
+// state, so running pages concurrently would interleave them
+const results = await pages.reduce(async (acc, page) => {
+  const all = await acc;
+  all.push(await checkPage(page));
+  return all;
+}, Promise.resolve([]));
+
 let failed = 0;
-pages.forEach((page) => {
-  const r = checkPage(page);
+results.forEach((r) => {
   console.log(`\n${'='.repeat(64)}\n${r.page}`);
   if (r.skipped) { console.log(`  SKIPPED: ${r.skipped}`); return; }
   if (r.error) { console.log(`  ERROR: ${r.error}`); failed += 1; return; }
@@ -230,6 +335,9 @@ pages.forEach((page) => {
   }
   if (r.missingAlt) console.log(`  images missing alt: ${r.missingAlt}`);
   console.log(`  links: ${r.srcLinkCount} source -> ${r.outLinkCount} imported`);
+  console.log(`  md2jcr: ${r.jcr.ok
+    ? `OK, ${r.jcr.items.length} node(s) — ${[...new Set(r.jcr.items)].join(', ')}`
+    : 'FAILED'}`);
   if (r.failures.length) {
     failed += 1;
     console.log('  CONTRACT FAILURES:');
