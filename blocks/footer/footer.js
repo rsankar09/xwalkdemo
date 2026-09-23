@@ -391,12 +391,12 @@ export default async function decorate(block) {
   // if (!fragment) {
   //   fragment = await loadBundledFragment(BUNDLED_FOOTER);
   // }
-  let fragment = BUNDLED_FOOTER;
+  let fragment = BUNDLED_FOOTER_HTML;
 
-  if (!fragment) {
-    fragment = await loadBundledFragment(BUNDLED_FOOTER);
-  }
-  fragment = await loadBundledFragment(BUNDLED_FOOTER);
+  // if (!fragment) {
+  //   fragment = await loadBundledFragment(BUNDLED_FOOTER);
+  // }
+  // fragment = await loadBundledFragment(BUNDLED_FOOTER);
   /*
    * If the external bundled fragment also doesn't exist,
    * use the inline fallback.
