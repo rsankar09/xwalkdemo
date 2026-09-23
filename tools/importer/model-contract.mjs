@@ -10,12 +10,26 @@
  *    their base property when that base exists
  *  - simple block    -> one ROW per group, each of one cell
  *  - container block -> one row per item, one CELL per group of the item model
+ *  - `classes` / `classes_*` and `tab` fields are NOT groups: block options
+ *    ride in the parenthesised block header and UE tabs are layout only.
+ *    Mirrors FieldGroup._groupFields() in @adobe/helix-md2jcr.
  */
 
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const COMPANION_SUFFIXES = ['MimeType', 'Alt', 'Text', 'Type', 'Title'];
+
+/**
+ * True for the `classes` block-options field and its `classes_*` variants.
+ * These never occupy a row or a cell — md2jcr reads them from the
+ * parenthesised block header instead.
+ * @param {string} name The field name
+ * @returns {boolean} Whether the field is a block-options field
+ */
+function isClassesField(name) {
+  return name === 'classes' || name.startsWith('classes_');
+}
 
 /**
  * Resolves the group a field name belongs to.
@@ -37,9 +51,12 @@ function groupOf(name, all) {
  * @returns {string[]} Ordered group keys
  */
 export function groupsOf(model) {
-  const all = new Set((model.fields || []).map((f) => f.name));
+  const fields = (model.fields || [])
+    .filter((f) => f.component !== 'tab')
+    .filter((f) => !isClassesField(f.name));
+  const all = new Set(fields.map((f) => f.name));
   const groups = [];
-  (model.fields || []).forEach((f) => {
+  fields.forEach((f) => {
     const g = groupOf(f.name, all);
     if (!groups.includes(g)) groups.push(g);
   });

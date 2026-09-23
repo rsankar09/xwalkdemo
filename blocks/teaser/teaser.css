@@ -1,0 +1,187 @@
+/*
+ * Teaser (cmp-a09): tinted band, left-aligned copy, one quiet arrow link.
+ *
+ * The band paints itself inside the section's content column rather than
+ * escaping it. Full-bleed colour is a section treatment in this project
+ * (`main > .section.light|navy|green`, see the xc-2 note in styles.css), so a
+ * teaser that needs to run edge to edge is authored in a `light` section and
+ * left on its plain variant — the two tints are the same token either way.
+ *
+ * Variants (block options): text-left (default) | text-center, and tinted.
+ */
+
+.teaser .teaser-inner {
+  box-sizing: border-box;
+}
+
+.teaser .teaser-copy {
+  margin: 0;
+}
+
+/*
+ * The source headline is set light rather than the site's semibold default:
+ * a long sentence-case sentence at display size, not a section label.
+ */
+.teaser .teaser-title {
+  margin: 0;
+  max-width: 20em;
+  font-size: var(--heading-font-size-xl);
+  font-weight: 300;
+  line-height: 1.15;
+}
+
+.teaser .teaser-description {
+  margin: 20px 0 0;
+  max-width: 44em;
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+}
+
+.teaser .teaser-action {
+  margin-top: 28px;
+}
+
+.teaser .teaser-action p {
+  margin: 0;
+}
+
+/*
+ * Reads as text, not as a button: the arrow is the only affordance, and it
+ * inherits currentColor so the hover state moves both together.
+ */
+.teaser .teaser-link:any-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding-block: 2px;
+  color: var(--text-color);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+}
+
+.teaser .teaser-link:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+.teaser .teaser-link:focus-visible {
+  outline: 2px solid var(--link-hover-color);
+  outline-offset: 3px;
+}
+
+.teaser .teaser-arrow {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.teaser .teaser-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* variant: tinted band — the padding is part of the band, not of the block */
+.teaser.tinted {
+  padding: 40px 24px 56px;
+  background-color: var(--light-color);
+}
+
+/*
+ * variant: dark band. The source's second band treatment, and the more
+ * common of the two. Everything inside inherits currentColor, so the arrow
+ * and the link hover invert with the copy rather than needing their own
+ * overrides.
+ */
+.teaser.dark {
+  padding: 40px 24px 56px;
+  background-color: var(--brand-navy);
+  color: var(--background-color);
+}
+
+.teaser.dark .teaser-link:any-link {
+  color: inherit;
+}
+
+.teaser.dark .teaser-link:hover,
+.teaser.dark .teaser-link:focus-visible {
+  color: inherit;
+}
+
+.teaser.dark .teaser-link:focus-visible {
+  outline-color: currentcolor;
+}
+
+/*
+ * variant: image bands. Mobile always stacks image above copy regardless of
+ * side — `image-right` is a desktop-only concern, and reversing the order on
+ * a narrow screen would put the copy above an image it refers to.
+ */
+.teaser-media {
+  margin: 0 0 24px;
+}
+
+.teaser-media picture,
+.teaser-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.teaser.image-left,
+.teaser.image-right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* variant: alignment. text-left is the default and is spelled out so an
+   author who sets it explicitly gets the same result as one who leaves it. */
+.teaser.text-left .teaser-inner {
+  text-align: left;
+}
+
+.teaser.text-center .teaser-inner {
+  text-align: center;
+}
+
+.teaser.text-center .teaser-title,
+.teaser.text-center .teaser-description {
+  margin-inline: auto;
+}
+
+@media (width >= 900px) {
+  .teaser .teaser-description {
+    margin-top: 24px;
+  }
+
+  .teaser .teaser-action {
+    margin-top: 40px;
+  }
+
+  .teaser.tinted,
+  .teaser.dark {
+    padding: 72px 48px 96px;
+  }
+
+  /* desktop: image and copy share the row, copy vertically centred */
+  .teaser.image-left,
+  .teaser.image-right {
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .teaser.image-right {
+    flex-direction: row-reverse;
+  }
+
+  .teaser.image-left > *,
+  .teaser.image-right > * {
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  .teaser.image-left .teaser-media,
+  .teaser.image-right .teaser-media {
+    margin: 0;
+  }
+}

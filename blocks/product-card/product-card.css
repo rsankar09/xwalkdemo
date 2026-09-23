@@ -75,10 +75,22 @@
   line-height: 1.55;
 }
 
+/*
+ * Description links sit above the stretched-link overlay. They inherit the
+ * band's white, so colour cannot distinguish them from the copy around them —
+ * underline at rest. WCAG 1.4.1.
+ */
 .product-card .product-card-description a {
   position: relative;
   z-index: 2;
   color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.product-card .product-card-description a:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
 }
 
 .product-card .product-card-arrow {
@@ -114,7 +126,13 @@
   text-decoration: underline;
 }
 
+/*
+ * White ring plus a dark halo: nothing ties this block to a dark band, so a
+ * bare white outline would vanish at 1:1 if the card were placed on a default
+ * white section.
+ */
 .product-card .product-card-item:has(.product-card-link:focus-visible) {
-  outline: 2px solid var(--background-color);
-  outline-offset: 2px;
+  outline: 3px solid var(--background-color);
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px var(--text-color);
 }

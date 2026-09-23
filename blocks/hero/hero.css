@@ -7,6 +7,21 @@
   position: relative;
   padding: 40px 24px;
   min-height: 300px;
+  isolation: isolate;
+}
+
+/*
+ * Scrim. The h1 is white over an author-supplied photo, so without this the
+ * contrast ratio depends entirely on which image gets uploaded. 80% black
+ * holds white text above 4.5:1 even over a pure-white photo; the text-shadow
+ * on the heading covers the bright-detail case.
+ */
+.hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(to right, rgb(0 0 0 / 80%), rgb(0 0 0 / 55%));
 }
 
 .hero h1 {
@@ -14,6 +29,7 @@
   margin-left: auto;
   margin-right: auto;
   color: var(--background-color);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 90%);
 }
 
 .hero picture {

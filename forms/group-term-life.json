@@ -1,0 +1,217 @@
+{
+  "id": "group-term-life",
+  "name": "group-term-life-lead",
+  "title": "Group Term Life — request information",
+  "action": "",
+  "method": "POST",
+  "encoding": "json",
+  "submitLabel": "Submit",
+  "requiredNote": "*Required",
+  "requiredIndicator": "*",
+  "errorSummaryTitle": "Please correct the following before continuing.",
+  "submittingMessage": "Submitting…",
+  "successMessage": "Thank you. A representative will be in touch.",
+  "errorMessage": "We could not submit your request. Please try again.",
+  "unconfiguredMessage": "This form is not connected to a destination yet.",
+  "fields": [
+    {
+      "type": "text",
+      "name": "firstName",
+      "label": "First Name",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "given-name",
+      "maxLength": 40,
+      "messages": {
+        "valueMissing": "Enter your first name."
+      }
+    },
+    {
+      "type": "text",
+      "name": "lastName",
+      "label": "Last Name",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "family-name",
+      "maxLength": 40,
+      "messages": {
+        "valueMissing": "Enter your last name."
+      }
+    },
+    {
+      "type": "email",
+      "name": "email",
+      "label": "Email",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "email",
+      "maxLength": 80,
+      "messages": {
+        "valueMissing": "Enter your email address.",
+        "typeMismatch": "Enter an email address in the format name@example.com."
+      }
+    },
+    {
+      "type": "tel",
+      "name": "phone",
+      "label": "Phone Number",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "tel-national",
+      "placeholder": "###-###-####",
+      "pattern": "[0-9]{3}-[0-9]{3}-[0-9]{4}",
+      "inputMode": "tel",
+      "maxLength": 12,
+      "help": "Format: 555-555-5555",
+      "messages": {
+        "valueMissing": "Enter your phone number.",
+        "patternMismatch": "Enter a phone number as 555-555-5555."
+      }
+    },
+    {
+      "type": "text",
+      "name": "address",
+      "label": "Address",
+      "required": true,
+      "width": "half",
+      "autocomplete": "address-line1",
+      "maxLength": 80,
+      "messages": {
+        "valueMissing": "Enter your street address."
+      }
+    },
+    {
+      "type": "text",
+      "name": "address2",
+      "label": "Apt, bldg, etc.",
+      "width": "half",
+      "autocomplete": "address-line2",
+      "maxLength": 40
+    },
+    {
+      "type": "text",
+      "name": "city",
+      "label": "City",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "address-level2",
+      "maxLength": 40,
+      "messages": {
+        "valueMissing": "Enter your city."
+      }
+    },
+    {
+      "type": "select",
+      "name": "state",
+      "label": "State",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "address-level1",
+      "placeholder": "Select",
+      "messages": {
+        "valueMissing": "Select your state."
+      },
+      "options": [
+        { "label": "Alabama", "value": "AL" },
+        { "label": "Alaska", "value": "AK" },
+        { "label": "Arizona", "value": "AZ" },
+        { "label": "Arkansas", "value": "AR" },
+        { "label": "California", "value": "CA" },
+        { "label": "Colorado", "value": "CO" },
+        { "label": "Connecticut", "value": "CT" },
+        { "label": "Delaware", "value": "DE" },
+        { "label": "District of Columbia", "value": "DC" },
+        { "label": "Florida", "value": "FL" },
+        { "label": "Georgia", "value": "GA" },
+        { "label": "Hawaii", "value": "HI" },
+        { "label": "Idaho", "value": "ID" },
+        { "label": "Illinois", "value": "IL" },
+        { "label": "Indiana", "value": "IN" },
+        { "label": "Iowa", "value": "IA" },
+        { "label": "Kansas", "value": "KS" },
+        { "label": "Kentucky", "value": "KY" },
+        { "label": "Louisiana", "value": "LA" },
+        { "label": "Maine", "value": "ME" },
+        { "label": "Maryland", "value": "MD" },
+        { "label": "Massachusetts", "value": "MA" },
+        { "label": "Michigan", "value": "MI" },
+        { "label": "Minnesota", "value": "MN" },
+        { "label": "Mississippi", "value": "MS" },
+        { "label": "Missouri", "value": "MO" },
+        { "label": "Montana", "value": "MT" },
+        { "label": "Nebraska", "value": "NE" },
+        { "label": "Nevada", "value": "NV" },
+        { "label": "New Hampshire", "value": "NH" },
+        { "label": "New Jersey", "value": "NJ" },
+        { "label": "New Mexico", "value": "NM" },
+        { "label": "New York", "value": "NY" },
+        { "label": "North Carolina", "value": "NC" },
+        { "label": "North Dakota", "value": "ND" },
+        { "label": "Ohio", "value": "OH" },
+        { "label": "Oklahoma", "value": "OK" },
+        { "label": "Oregon", "value": "OR" },
+        { "label": "Pennsylvania", "value": "PA" },
+        { "label": "Rhode Island", "value": "RI" },
+        { "label": "South Carolina", "value": "SC" },
+        { "label": "South Dakota", "value": "SD" },
+        { "label": "Tennessee", "value": "TN" },
+        { "label": "Texas", "value": "TX" },
+        { "label": "Utah", "value": "UT" },
+        { "label": "Vermont", "value": "VT" },
+        { "label": "Virginia", "value": "VA" },
+        { "label": "Washington", "value": "WA" },
+        { "label": "West Virginia", "value": "WV" },
+        { "label": "Wisconsin", "value": "WI" },
+        { "label": "Wyoming", "value": "WY" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "zip",
+      "label": "Zip Code",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "postal-code",
+      "placeholder": "#####",
+      "pattern": "[0-9]{5}",
+      "inputMode": "numeric",
+      "maxLength": 5,
+      "messages": {
+        "valueMissing": "Enter your ZIP code.",
+        "patternMismatch": "Enter a 5-digit ZIP code."
+      }
+    },
+    {
+      "type": "text",
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "required": true,
+      "width": "quarter",
+      "autocomplete": "bday",
+      "placeholder": "MM/DD/YYYY",
+      "pattern": "(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(19|20)[0-9]{2}",
+      "inputMode": "numeric",
+      "maxLength": 10,
+      "help": "Use MM/DD/YYYY.",
+      "messages": {
+        "valueMissing": "Enter your date of birth.",
+        "patternMismatch": "Enter your date of birth as MM/DD/YYYY."
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "emailOptIn",
+      "label": "Join our email list to stay in the know about the best ways to prepare for your future.",
+      "width": "full"
+    },
+    {
+      "type": "hidden",
+      "name": "leadSource",
+      "value": "group-term-life"
+    },
+    {
+      "type": "submit",
+      "label": "Submit"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "definitions": [
+    {
+      "title": "Form",
+      "id": "form",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Form",
+              "model": "form"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "form",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "copy_title",
+          "label": "Heading"
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "copy_titleType",
+          "label": "Heading type",
+          "value": "h3",
+          "options": [
+            {
+              "name": "Heading 2",
+              "value": "h2"
+            },
+            {
+              "name": "Heading 3",
+              "value": "h3"
+            }
+          ]
+        },
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "copy_description",
+          "label": "Intro copy"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "definition",
+          "label": "Form definition",
+          "value": "/forms/group-term-life.json",
+          "description": "Path to the form definition JSON, e.g. /forms/group-term-life.json. Same-origin paths starting with / only. The fields, validation messages and submit endpoint all come from that file — see /forms/README.md."
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

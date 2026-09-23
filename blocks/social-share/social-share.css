@@ -1,0 +1,116 @@
+/*
+ * Social share (cmp-a03): page furniture, not authored content.
+ *
+ * Mobile first, this is a plain horizontal row under the headline. Only from
+ * 900px, where there is room beside the article column, does it become the
+ * vertical sticky rail from the source design. The `inline` variant opts out
+ * of that and stays a row at every width.
+ */
+
+.social-share {
+  --social-share-chip: 40px;
+}
+
+.social-share .social-share-rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.social-share .social-share-label {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.social-share .social-share-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social-share .social-share-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--brand-blue);
+  cursor: pointer;
+  padding: 0;
+  width: var(--social-share-chip);
+  height: var(--social-share-chip);
+  color: var(--background-color);
+}
+
+.social-share .social-share-link:hover {
+  background-color: var(--brand-blue-hover);
+}
+
+.social-share .social-share-link:focus-visible {
+  outline: 2px solid var(--brand-navy);
+  outline-offset: 2px;
+}
+
+/* the /icons/*.svg set is authored white, so it needs the filled chip behind */
+.social-share .social-share-link .icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.social-share .social-share-link .icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Hidden with opacity, never display/visibility: those two would drop the
+ * live region out of the accessibility tree and the confirmation would be
+ * silent.
+ */
+.social-share .social-share-status {
+  transition: opacity 0.2s ease;
+  opacity: 0;
+  margin: 0;
+  min-height: 1.4em;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.4;
+}
+
+.social-share .social-share-status-shown {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-share .social-share-link,
+  .social-share .social-share-status {
+    transition: none;
+  }
+}
+
+@media (width >= 900px) {
+  .social-share:not(.inline) .social-share-rail {
+    position: sticky;
+    top: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .social-share:not(.inline) .social-share-list {
+    flex-direction: column;
+  }
+
+  .social-share:not(.inline) .social-share-status {
+    max-width: 8em;
+  }
+}

@@ -106,6 +106,37 @@ body.appear {
   display: block;
 }
 
+/*
+ * Skip link. Injected by scripts.js during eager load so it is the first
+ * focusable node on the page, ahead of the lazily-loaded header. Offscreen
+ * until focused rather than display:none, which would remove it from the
+ * tab order entirely.
+ */
+a.skip-to-main:any-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border: 2px solid var(--text-color);
+  border-radius: 4px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 16px));
+}
+
+a.skip-to-main:any-link:focus {
+  transform: translateY(0);
+}
+
+main:focus {
+  outline: none;
+}
+
 header {
   height: var(--nav-height);
 }
@@ -182,7 +213,13 @@ a:any-link {
   overflow-wrap: break-word;
 }
 
-a:hover {
+/*
+ * Focus gets the same non-colour cue as hover. Technique G183 only allows a
+ * colour-only link at rest if the cue appears on both hover AND focus —
+ * underlining hover alone leaves keyboard users without it.
+ */
+a:hover,
+a:focus-visible {
   color: var(--link-hover-color);
   text-decoration: underline;
 }
@@ -388,6 +425,53 @@ main > .section.green :is(h1, h2, h3, h4, h5, h6) {
 }
 
 /*
+ * Links on a coloured band. The accent blue is unreadable here — #0468ff is
+ * 3.63:1 on navy and 1.52:1 on green, both under the 4.5:1 floor. Take the
+ * band's own foreground and carry an underline, since colour can no longer
+ * be what separates a link from the text around it.
+ */
+main > .section:is(.navy, .green) a:any-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+main > .section:is(.navy, .green) a:hover,
+main > .section:is(.navy, .green) a:focus-visible {
+  color: inherit;
+  text-decoration-thickness: 2px;
+}
+
+main > .section:is(.navy, .green) a:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
+}
+
+/*
+ * Secondary buttons hardcode --text-color on transparent, which lands at
+ * 1.96:1 on navy. decorateButtons() turns any <em><a> into one of these, so
+ * an author writing an italic link in a band would otherwise get it.
+ */
+main > .section:is(.navy, .green) :is(a, button).button.secondary {
+  border-color: currentcolor;
+  background-color: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+
+main > .section:is(.navy, .green) :is(a, button).button.secondary:hover,
+main > .section:is(.navy, .green) :is(a, button).button.secondary:focus-visible {
+  border-color: currentcolor;
+  background-color: rgb(255 255 255 / 15%);
+  color: inherit;
+}
+
+/* the blue fill is 1.52:1 on green — outline it so the control edge reads */
+main > .section.green :is(a, button).button.primary {
+  border-color: var(--background-color);
+}
+
+/*
  * Diagonal band edge. Applied with a colour band, e.g. `navy, angled`.
  * Top edge falls left-to-right, bottom edge rises left-to-right, which is the
  * shape measured on the navy band behind the product cards (cmp-005).
@@ -414,6 +498,16 @@ main > .section.footnotes .default-content-wrapper > p {
   color: var(--dark-color);
   font-size: var(--body-font-size-xs);
   line-height: 1.5;
+}
+
+/*
+ * Small print sits at --dark-color, so the accent blue is only 1.70:1 against
+ * the text around it — under the 3:1 that G183 needs for a colour-only link.
+ * Underline at rest instead.
+ */
+main > .section.footnotes a:any-link {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 /*
@@ -444,7 +538,7 @@ main > .section:is(.navy, .green) .default-content-wrapper > p:first-child:has(+
 
 /* footnote markers in body copy */
 main > .section sup {
-  font-size: 0.6em;
+  font-size: max(0.7em, 11px);
   line-height: 0;
   vertical-align: super;
 }

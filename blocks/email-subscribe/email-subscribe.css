@@ -101,8 +101,8 @@
 .email-subscribe .email-subscribe-consent input {
   flex-shrink: 0;
   margin: 2px 0 0;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   accent-color: var(--brand-blue);
 }
 
@@ -120,8 +120,12 @@
   font-weight: 700;
 }
 
+/*
+ * Kept in the accessibility tree while empty — see .form-status and
+ * .social-share-status. display:none here would silence every announcement.
+ */
 .email-subscribe .email-subscribe-status:empty {
-  display: none;
+  min-height: 1.4em;
 }
 
 .email-subscribe .email-subscribe-field input:focus-visible {

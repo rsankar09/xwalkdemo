@@ -86,7 +86,7 @@
 
 /* footnote markers in the highlight copy */
 .feature-highlight-band .feature-highlight-band-item sup {
-  font-size: 0.6em;
+  font-size: max(0.7em, 11px);
   line-height: 0;
   vertical-align: super;
 }

@@ -1,0 +1,118 @@
+/*
+ * Pull quote (cmp-pull-quote): a quoted sentence lifted out of body copy.
+ *
+ * Sits inside the text column rather than running full bleed — it is an
+ * interruption in the reading flow, not a section band. Full-width colour is
+ * a section treatment in this project (see the xc-2 note in styles.css), so
+ * a quote that needs to span the page is authored in a coloured section and
+ * left on its `plain` variant.
+ *
+ * Variants (block options): highlighted (default) | dark | tinted | plain.
+ */
+
+.pull-quote .pull-quote-figure {
+  margin: 0;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+/*
+ * The opening glyph is decorative, so it is drawn rather than authored and
+ * hidden from assistive tech — a screen reader announcing a quotation mark
+ * before the sentence adds nothing to the <blockquote> semantics.
+ */
+.pull-quote .pull-quote-quote::before {
+  /* the `/ ""` alt-text syntax is what actually keeps it out of the
+     accessibility tree; content alone is announced as a stray quote mark */
+  content: "\201C" / "";
+  display: block;
+  margin-bottom: 8px;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 0.7;
+  color: currentcolor;
+  opacity: 0.45;
+}
+
+.pull-quote .pull-quote-quote {
+  margin: 0;
+  font-size: var(--heading-font-size-s);
+  font-weight: 300;
+  line-height: 1.35;
+}
+
+.pull-quote .pull-quote-credit p {
+  margin: 0;
+}
+
+.pull-quote .pull-quote-quote p {
+  margin: 0 0 12px;
+}
+
+.pull-quote .pull-quote-quote p:last-child {
+  margin-bottom: 0;
+}
+
+/* footnote markers inside a quote must not disturb its line spacing */
+.pull-quote .pull-quote-quote sup {
+  font-size: max(0.7em, 11px);
+  line-height: 0;
+  vertical-align: super;
+}
+
+.pull-quote .pull-quote-credit {
+  margin-top: 24px;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.4;
+}
+
+.pull-quote .pull-quote-name {
+  font-weight: 700;
+}
+
+/* the role line is secondary to the name, so it steps back rather than
+   competing with it */
+.pull-quote .pull-quote-role {
+  opacity: 0.8;
+}
+
+/* variant: highlighted — the source default, a left rule in brand navy */
+.pull-quote.highlighted .pull-quote-figure {
+  border-left: 4px solid var(--brand-navy);
+  padding-left: 28px;
+}
+
+/* variant: tinted */
+.pull-quote.tinted .pull-quote-figure {
+  background-color: var(--light-color);
+}
+
+/* variant: dark band — everything inside inherits currentColor, so the
+   glyph and the credit invert with the quote */
+.pull-quote.dark .pull-quote-figure {
+  background-color: var(--brand-navy);
+  color: var(--background-color);
+}
+
+/* variant: plain — no rule, no fill; the type does the work */
+.pull-quote.plain .pull-quote-figure {
+  padding-inline: 0;
+}
+
+@media (width >= 900px) {
+  .pull-quote .pull-quote-figure {
+    padding: 40px;
+  }
+
+  .pull-quote .pull-quote-quote {
+    font-size: var(--heading-font-size-m);
+  }
+
+  .pull-quote.highlighted .pull-quote-figure {
+    padding-left: 40px;
+  }
+
+  .pull-quote.plain .pull-quote-figure {
+    padding-inline: 0;
+  }
+}

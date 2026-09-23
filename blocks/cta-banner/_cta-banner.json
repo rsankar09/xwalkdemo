@@ -31,7 +31,7 @@
           "valueType": "string",
           "name": "copy_titleType",
           "label": "Heading type",
-          "value": "h3",
+          "value": "h2",
           "options": [
             {
               "name": "Heading 2",

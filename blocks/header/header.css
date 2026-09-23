@@ -211,8 +211,24 @@ header:has(> .header) {
 
 .header .nav-hamburger button {
   display: block;
+  position: relative;
   width: 24px;
   height: 22px;
+}
+
+/*
+ * The bars are 24x22, below the 24x24 minimum target. Grow the hit area with
+ * an overlay rather than the box itself: the button sits in the nav grid and
+ * resizing it would move the brand mark. WCAG 2.5.8.
+ */
+.header .nav-hamburger button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .header .nav-hamburger-icon,
@@ -799,7 +815,10 @@ header:has(> .header) {
   box-sizing: border-box;
   width: 100%;
   margin: 0;
-  border: 1px solid var(--brand-rule);
+
+  /* #6f6f6f, not --brand-rule: the border is the input's only boundary and
+     must clear 3:1 against white for WCAG 1.4.11 */
+  border: 1px solid #6f6f6f;
   border-radius: 4px;
   padding: 12px;
   font-family: inherit;

@@ -1,0 +1,286 @@
+/*
+ * Form (cmp-p10). A 12-column grid the definition assigns widths into:
+ * full / half / third / quarter. Everything is full width on mobile, collapses
+ * to halves on tablet, and only honours the requested width from 900px — a
+ * quarter-width field is 60px wide on a phone, which is not a field.
+ *
+ * Surface colours come from the parent band (the source sits on the
+ * ultralight-gray band), so nothing here hardcodes a page background.
+ */
+
+.form {
+  --form-gap: 20px;
+  --form-control-height: 44px;
+
+  /* 4.86:1 on white, 4.6:1 on --light-color: the border is the only boundary
+     the input has, so it must clear 3:1 for WCAG 1.4.11 non-text contrast */
+  --form-border: #6f6f6f;
+  --form-error: #b3261e;
+
+  color: inherit;
+}
+
+.form .form-form {
+  margin: 0;
+}
+
+.form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--form-gap) 16px;
+}
+
+.form .form-field {
+  display: flex;
+  flex-direction: column;
+  grid-column: span 12;
+  min-width: 0;
+}
+
+.form .form-label {
+  margin-bottom: 8px;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.3;
+}
+
+.form .form-required {
+  margin-left: 2px;
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.form .form-field input,
+.form .form-field select,
+.form .form-field textarea {
+  box-sizing: border-box;
+  border: 1px solid var(--form-border);
+  border-radius: 2px;
+  background-color: var(--background-color);
+  padding: 0 12px;
+  width: 100%;
+  height: var(--form-control-height);
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-xs);
+}
+
+.form .form-field textarea {
+  padding: 10px 12px;
+  height: auto;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.form .form-field select {
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="%23131313" stroke-width="2"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 18px 18px;
+  padding-right: 34px;
+}
+
+.form .form-field input::placeholder,
+.form .form-field textarea::placeholder {
+  color: var(--dark-color);
+  opacity: 1;
+}
+
+.form .form-help {
+  margin: 6px 0 0;
+  color: var(--dark-color);
+  font-size: var(--body-font-size-xs);
+  line-height: 1.4;
+}
+
+.form .form-error {
+  margin: 6px 0 0;
+  color: var(--form-error);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.form .form-field-invalid input,
+.form .form-field-invalid select,
+.form .form-field-invalid textarea {
+  border-color: var(--form-error);
+  border-width: 2px;
+}
+
+/* checkbox rows are a horizontal pair, not a stacked label/control */
+.form .form-field-checkbox {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  column-gap: 10px;
+}
+
+.form .form-field-checkbox input {
+  flex-shrink: 0;
+  margin: 2px 0 0;
+  border: 0;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  accent-color: var(--brand-blue);
+}
+
+.form .form-field-checkbox .form-label {
+  margin-bottom: 0;
+  line-height: 1.45;
+}
+
+.form .form-field-checkbox .form-help,
+.form .form-field-checkbox .form-error {
+  grid-column: 2;
+}
+
+.form .form-fieldset {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.form .form-legend {
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* focus rings live after the state rules above so specificity only ascends */
+.form .form-field input:focus-visible,
+.form .form-field select:focus-visible,
+.form .form-field textarea:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 1px;
+}
+
+.form .form-errors {
+  margin-bottom: 24px;
+  border-left: 4px solid var(--form-error);
+  padding: 12px 16px;
+}
+
+.form .form-errors:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}
+
+.form .form-errors-title {
+  margin: 0 0 8px;
+  color: var(--form-error);
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.form .form-errors-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.5;
+}
+
+.form .form-errors-list a {
+  color: var(--form-error);
+}
+
+.form .form-actions {
+  margin-top: 28px;
+}
+
+/* square-ish corners, matching the fields rather than the site's pill CTAs */
+.form .form-submit {
+  margin: 0;
+  border-radius: 2px;
+  min-width: 140px;
+  padding: 0.7em 1.6em;
+  font-weight: 700;
+}
+
+.form .form-submit[disabled],
+.form .form-submit[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form .form-status {
+  margin: 12px 0 0;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.4;
+}
+
+/*
+ * The status region must stay rendered while empty: display:none would drop
+ * it out of the accessibility tree, and a live region that is inserted and
+ * populated in the same tick is not announced. Reserve its line box instead.
+ * Same reasoning as .social-share-status.
+ */
+.form .form-status:empty {
+  min-height: 1.4em;
+}
+
+.form .form-status-error {
+  color: var(--form-error);
+  font-weight: 700;
+}
+
+.form .form-note {
+  margin: 16px 0 0;
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.form .form-notice {
+  margin: 0;
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+}
+
+/* visually hidden, still announced */
+.form .form-visually-hidden {
+  position: absolute;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (width >= 600px) {
+  .form .form-field-half,
+  .form .form-field-third,
+  .form .form-field-quarter {
+    grid-column: span 6;
+  }
+}
+
+@media (width >= 900px) {
+  .form {
+    --form-gap: 24px;
+  }
+
+  .form .form-field-half {
+    grid-column: span 6;
+  }
+
+  .form .form-field-third {
+    grid-column: span 4;
+  }
+
+  .form .form-field-quarter {
+    grid-column: span 3;
+  }
+}
+
+@media (width >= 1200px) {
+  .form .form-errors,
+  .form .form-grid {
+    max-width: 1100px;
+  }
+}

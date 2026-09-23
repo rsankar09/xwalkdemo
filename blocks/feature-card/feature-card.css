@@ -14,13 +14,23 @@
   list-style: none;
 }
 
+/*
+ * Radius and border are per-band, not per-block: the source authors the light
+ * band's cards at 18px with a 2px rule, and the green band's at 4px with no
+ * border. Defaults are the light treatment; the green override is below.
+ *
+ * `overflow: hidden` is what rounds the photo's top corners — the source puts
+ * no radius on the image itself, it clips it against the card.
+ */
 .feature-card .feature-card-item {
   display: flex;
   position: relative;
   flex-direction: column;
-  border: 1px solid var(--brand-rule);
+  border: 2px solid var(--brand-rule);
+  border-radius: 18px;
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow: hidden;
 }
 
 /* stretched link: anchor wraps the title, overlay covers the card */
@@ -51,11 +61,14 @@
 
 /*
  * A fixed ratio is the design here, not a stand-in for intrinsic dimensions:
- * a card grid wants one uniform strip. Measured 7:4 off the source crop.
+ * a card grid wants one uniform strip. 575/323 is the rendition the source CDN
+ * actually serves for every card in this grid (the `-w575-h323` suffix), which
+ * supersedes the 7:4 previously eyeballed off the crop. Note the asset
+ * filenames claim `3x2`/`4_3` — the delivered bytes are neither.
  */
 .feature-card .feature-card-media img {
   width: 100%;
-  aspect-ratio: 7 / 4;
+  aspect-ratio: 575 / 323;
   object-fit: cover;
 }
 
@@ -137,7 +150,23 @@
   color: var(--brand-blue-hover);
 }
 
+/*
+ * Two-colour focus ring. The offset gap shows whatever band the card sits on,
+ * and the brand blue is only 1.52:1 against the green one. A dark ring with a
+ * white halo clears 3:1 on white and on green alike.
+ */
 .feature-card .feature-card-item:has(.feature-card-link:focus-visible) {
-  outline: 2px solid var(--brand-blue);
-  outline-offset: 2px;
+  outline: 3px solid var(--text-color);
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px var(--background-color);
+}
+
+/*
+ * Green-band treatment (cmp-009). The source scopes radius and border per
+ * band, not per card type: 18px + a 2px rule on the light band, 4px and no
+ * border on the green one. Declared last so it outranks the base card rule.
+ */
+main > .section.green .feature-card .feature-card-item {
+  border: 0;
+  border-radius: 4px;
 }

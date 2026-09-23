@@ -15,6 +15,8 @@
  * if present, is the consent label.
  */
 
+import { moveInstrumentation } from '../../scripts/scripts.js';
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 let instanceCount = 0;
@@ -67,6 +69,7 @@ export default function decorate(block) {
   let buttonLabel = 'Subscribe';
   let placeholder = 'Email address';
   const contentCells = [];
+  let formCell = null;
 
   cells.forEach((cell) => {
     const anchor = cell.querySelector('a[href]');
@@ -74,6 +77,7 @@ export default function decorate(block) {
     if (anchor) {
       // the form cell: the link carries the endpoint and the button label,
       // any remaining text in the cell is the input placeholder
+      formCell = cell;
       endpoint = anchor.getAttribute('href');
       if (anchor.textContent.trim()) buttonLabel = anchor.textContent.trim();
       const rest = text.replace(anchor.textContent, '').trim();
@@ -99,6 +103,10 @@ export default function decorate(block) {
   }
 
   const { field, input } = createField(placeholder, buttonLabel, id);
+  // the form cell is consumed into the generated field (its link supplied the
+  // endpoint and button label) and never re-appended, so carry its
+  // instrumentation across or the endpoint field stops being editable
+  if (formCell) moveInstrumentation(formCell, field);
 
   let consentInput = null;
   if (consentCell) {
@@ -108,9 +116,22 @@ export default function decorate(block) {
     consentInput.type = 'checkbox';
     consentInput.id = `${id}-consent`;
     consentInput.required = true;
+    consentInput.setAttribute('aria-describedby', `${id}-status`);
     const consentLabel = document.createElement('label');
     consentLabel.setAttribute('for', `${id}-consent`);
-    consentLabel.append(...consentCell.childNodes);
+    moveInstrumentation(consentCell, consentLabel);
+    /*
+     * The authored cell wraps its text in a <p>. <label> takes phrasing
+     * content only, so unwrap it — flow content here makes both the clickable
+     * region and the accessible-name computation UA-dependent.
+     */
+    [...consentCell.childNodes].forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'P') {
+        consentLabel.append(...node.childNodes);
+      } else {
+        consentLabel.append(node);
+      }
+    });
     consent.append(consentInput, consentLabel);
     form.append(consent);
     consentCell.remove();
@@ -130,10 +151,16 @@ export default function decorate(block) {
    * @param {string} message Text to announce
    * @param {boolean} invalid Whether this represents an error
    */
-  const setStatus = (message, invalid) => {
+  const setStatus = (message, invalid, control = input) => {
     status.textContent = message;
     status.classList.toggle('email-subscribe-status-error', invalid);
-    input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+    /*
+     * Mark only the control that actually failed. Flagging the email field on
+     * a consent error tells the user the wrong input is broken.
+     */
+    [input, consentInput].forEach((el) => {
+      if (el) el.setAttribute('aria-invalid', invalid && el === control ? 'true' : 'false');
+    });
   };
 
   form.addEventListener('submit', async (event) => {
@@ -146,7 +173,7 @@ export default function decorate(block) {
       return;
     }
     if (consentInput && !consentInput.checked) {
-      setStatus('Please accept the terms to continue.', true);
+      setStatus('Please accept the terms to continue.', true, consentInput);
       consentInput.focus();
       return;
     }

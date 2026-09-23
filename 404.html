@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta
@@ -24,7 +24,6 @@
           backBtn.classList.add('button', 'error-button-back');
           backBtn.href = pathname;
           backBtn.textContent = 'Go back';
-          backBtn.title = 'Go back';
           const btnContainer = document.querySelector('.button-container');
           btnContainer.append(backBtn);
         }
@@ -50,6 +49,12 @@
     main.error .error-number text {
       font-family: monospace;
     }
+
+    /* the error heading is an h1 for document structure; keep the smaller
+       display size the design calls for rather than the global h1 scale */
+    main.error .error-message {
+      font-size: var(--heading-font-size-xl);
+    }
   </style>
   <link rel="stylesheet" href="/styles/lazy-styles.css">
 </head>
@@ -58,10 +63,11 @@
   <header></header>
   <main class="error">
     <div class="section">
-      <svg viewBox="1 0 38 18" class="error-number">
-        <text x="0" y="17">404</text>
+      <svg viewBox="1 0 38 18" class="error-number" role="img" aria-labelledby="error-number-title">
+        <title id="error-number-title">Error 404</title>
+        <text x="0" y="17" aria-hidden="true">404</text>
       </svg>
-      <h2 class="error-message">Page Not Found</h2>
+      <h1 class="error-message">Page Not Found</h1>
       <p class="button-container">
         <a href="/" class="button secondary error-button-home">Go home</a>
       </p>

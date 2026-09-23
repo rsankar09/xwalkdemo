@@ -17,6 +17,8 @@
  * never depends on how many rows arrived.
  */
 
+import { moveInstrumentation } from '../../scripts/scripts.js';
+
 const HEADINGS = 'h1, h2, h3, h4, h5, h6';
 
 /**
@@ -53,6 +55,10 @@ export default function decorate(block) {
   cells.forEach((cell) => {
     const kind = classifyCell(cell);
     if (kind === 'media') {
+      // the cell carries the image field's data-aue-* instrumentation; it is
+      // dropped here in favour of the media pane, so carry it across or the
+      // image stops being editable in Universal Editor
+      moveInstrumentation(cell, media);
       media.append(...cell.childNodes);
     } else if (kind === 'cta') {
       cell.classList.add('hero-billboard-cta');

@@ -1,23 +1,22 @@
 /*
- * Announcement banner (cmp-004): pale-blue full-width strip carrying an icon,
- * a one-line headline and a trailing arrow link.
+ * Announcement banner (cmp-004): pale-blue strip carrying an icon, a one-line
+ * headline and a trailing arrow link.
  *
- * Self-contained: it releases itself from the section's content width and
- * paints its own band, so it needs no section style.
+ * NOT full-bleed. The source strip is inset, but not by any fixed amount: it
+ * simply declines the negative-margin breakout that the site's other tinted
+ * bands use, so it lands at whatever the content container's gutter happens to
+ * be (68px at 1440, 12px at 768, 16px at 375). The EDS equivalent is to add no
+ * release rule at all and let the section wrapper size it — that way the inset
+ * tracks this project's container instead of hard-coding the source's.
  */
 
-.announcement-banner-container .announcement-banner-wrapper {
-  max-width: unset;
-  padding: 0;
-}
-
-.announcement-banner-container {
-  margin: 0;
-}
-
 .announcement-banner {
+  border-radius: 4px;
   background-color: var(--brand-pale-blue);
-  padding: 20px 24px;
+
+  /* asymmetric by design: the source insets content 24px from the left and
+     40px from the right, so the arrow link clears the rounded corner */
+  padding: 20px 40px 20px 24px;
 }
 
 .announcement-banner .announcement-banner-inner {
@@ -25,8 +24,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
-  margin: 0 auto;
-  max-width: 1200px;
 }
 
 .announcement-banner .announcement-banner-inner > * {
@@ -73,6 +70,10 @@
  * darker blue (6.67:1). Measured with axe-core, not eyeballed.
  */
 .announcement-banner .announcement-banner-action a:any-link {
+  /* standalone CTA, so it needs the 24px minimum target */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   color: var(--brand-blue-hover);
   font-weight: 700;
 }
@@ -89,8 +90,9 @@
 }
 
 @media (width >= 900px) {
+  /* the 24/40 asymmetry is held here too — only the vertical rhythm opens up */
   .announcement-banner {
-    padding: 20px 32px;
+    padding: 24px 40px 24px 24px;
   }
 
   /* the link sits hard right on wide viewports */
