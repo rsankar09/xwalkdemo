@@ -21,7 +21,7 @@ import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment, loadBundledFragment } from '../fragment/fragment.js';
 
 
-const  BUNDLED_NAV = `<div>
+const  fragment = `<div>
   <p><a href="/"><picture><img src="/blocks/header/nyl-logo.svg" alt="New York Life Insurance Company" width="48" height="48"></picture></a></p>
 </div>
 <div>
@@ -818,7 +818,7 @@ export default async function decorate(block) {
   // const fragment = await loadFragment(navPath)
   //   || await loadBundledFragment(BUNDLED_NAV);
 
-  const fragment = BUNDLED_NAV;
+  // const fragment = BUNDLED_NAV;
    
   block.textContent = '';
   if (!fragment) return;
