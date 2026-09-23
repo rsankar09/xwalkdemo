@@ -120,6 +120,23 @@
 }
 
 /*
+ * Forced colours rewrites background-color, which would erase a masked shape,
+ * so fall back to a border-drawn chevron that the UA will recolour.
+ */
+@media (forced-colors: active) {
+  .announcement-banner .announcement-banner-action a::after {
+    width: auto;
+    height: auto;
+    border: solid currentcolor;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    background: none;
+    mask: none;
+    transform: rotate(-45deg);
+  }
+}
+
+/*
  * From tablet up the source adds its inner gutters back: the icon sits 36px
  * in (24px band padding + a 12px column gutter), the label column starts 44px
  * after the icon ink, and the arrow ends ~50px short of the right edge.

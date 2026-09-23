@@ -91,9 +91,9 @@
  * weight, is what gives the row its texture.
  *
  * The colour is its own value (#474952). The source uses three distinct greys
- * for eyebrows — #2e3038 for the section kicker, #474952 on a card, --text-color
- * on the peach band — and --dark-color (#505050) is none of them. See the
- * handoff note at the bottom of this file.
+ * for eyebrows — #2e3038 for the section kicker, #474952 on a card,
+ * --text-color on the peach band — and --dark-color (#505050) is none of
+ * them, so there is no token to reach for yet.
  */
 .feature-card .feature-card-pretitle {
   order: -1;

@@ -144,7 +144,7 @@
     align-items: center;
     min-height: 602px;
     padding: 72px 0 96px;
-    padding-left: max(32px, calc((100% - 1344px) / 2 + 32px));
+    padding-left: max(32px, calc((100% - 1352px) / 2 + 32px));
   }
 
   .hero-billboard .hero-billboard-media {

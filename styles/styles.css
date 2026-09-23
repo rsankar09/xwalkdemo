@@ -66,8 +66,8 @@
   --heading-font-size-s: 18px;
   --heading-font-size-xs: 16px;
 
-  /* heading line height — 38/30 mobile, 48/42 desktop, both ≈1.15 */
-  --heading-line-height: 1.15;
+  /* heading line height — 38/30 here, 48/42 from 900px up */
+  --heading-line-height: 1.267;
 
   /* buttons — label is 16px/24px w600 on a 6px radius at every breakpoint */
   --button-font-size: 16px;
@@ -76,6 +76,21 @@
 
   /* cards carry an 18px radius in the source */
   --card-radius: 18px;
+
+  /*
+   * Card titles are 20px/24px w500 at every breakpoint, so they cannot come
+   * off the heading ramp — `--heading-font-size-m` is only 20px below 900.
+   */
+  --card-title-size: 20px;
+  --card-title-line-height: 24px;
+  --card-title-weight: 500;
+
+  /*
+   * Eyebrow / kicker greys. The source uses three, by context: on a plain
+   * section, on a card, and on the peach band (full strength).
+   */
+  --eyebrow-color: #2e3038;
+  --eyebrow-color-on-card: #474952;
 
   /*
    * Nav height. Must match the real header bar, and must live here rather
@@ -108,6 +123,9 @@
      * Body copy does not scale between breakpoints in the source — only the
      * headings do, so only the heading ramp is redeclared here.
      */
+
+    /* 48/42 — the ramp tightens as the headings get bigger */
+    --heading-line-height: 1.143;
 
     /* heading sizes — h2 is measured at 42px/48px */
     --heading-font-size-xxl: 54px;
@@ -409,16 +427,30 @@ main img {
   width: 100%;
 }
 
-/* sections */
+/*
+ * sections
+ *
+ * The source runs a much looser vertical rhythm than the boilerplate's 40px:
+ * measured gaps between bands are 85–102px at 1440. At 40px the page came out
+ * 615px shorter than the original over its full length.
+ */
 main > .section {
-  margin: 40px 0;
+  margin: 72px 0;
+}
+
+@media (width >= 900px) {
+  main > .section {
+    margin: 96px 0;
+  }
 }
 
 /*
- * Content column. Measured on the source at 1440: text runs x=80 → x=1360,
- * i.e. 1280px wide (the 1304px-wide aem-Grid at x=68 sits outside it and adds
- * 12px gutters). 1344 + the 32px gutters below reproduces that exactly;
- * below ~1344 the gutters take over and the column just narrows.
+ * Content column. Measured off the source's product tiles at 1440, which are
+ * the load-bearing grid: four 292px tiles with 40px gutters running
+ * x=76 → x=1363, i.e. a 1288px column. (Running *text* sits 4px further in at
+ * x=80; that inset belongs to the text, not the column.) 1352 + the 32px
+ * gutters below reproduces the grid exactly; below ~1352 the gutters take over
+ * and the column just narrows.
  */
 main > .section > div {
   /*
@@ -427,7 +459,7 @@ main > .section > div {
    * to 1352 and pulled it out to x=44.
    */
   box-sizing: border-box;
-  max-width: 1344px;
+  max-width: 1352px;
   margin: auto;
   padding: 0 24px;
 }
@@ -555,6 +587,12 @@ main > .section.angled {
  */
 main > .section.footnotes .default-content-wrapper > p {
   margin: 12px 0 0;
+
+  /*
+   * Small print runs the full column in the source — it opts out of the
+   * ~880px prose measure that running body copy uses.
+   */
+  max-width: none;
   color: var(--dark-color);
   font-size: var(--body-font-size-xs);
   line-height: 1.5;
@@ -582,11 +620,11 @@ main > .section.footnotes a:any-link {
  */
 main > .section .default-content-wrapper > p:first-child:has(+ h2) {
   margin: 0 0 4px;
-  color: var(--dark-color);
+  color: var(--eyebrow-color);
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   line-height: 1.4;
   text-transform: uppercase;
 }

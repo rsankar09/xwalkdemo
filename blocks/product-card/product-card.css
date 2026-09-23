@@ -127,21 +127,45 @@
 /*
  * The arrow is bottom-anchored (the body takes the slack via flex: 1) so that
  * every tile in a row lines its arrow up, which is what the source does with
- * its equal-height card row. The source arrow is 26px of ink starting flush
- * with the 30px text inset; our glyph is drawn inside a 24-unit viewBox with
- * ~3 units of slack on the left, so the box is oversized to 34px and pulled
- * back 4px to put the ink where the source puts it.
+ * its equal-height card row.
+ *
+ * The source glyph is 26 x 17 of ink sitting flush with the 30px text inset.
+ * The shared card util draws its arrow inside a square 24-unit viewBox, which
+ * cannot be stretched to that ratio from CSS (preserveAspectRatio is an
+ * attribute), so the glyph is re-cut here as a mask on the span and the inline
+ * SVG is hidden. currentcolor keeps it on the tile's own foreground.
  */
 .product-card .product-card-arrow {
   display: block;
-  margin: 24px 30px 28px 26px;
+  margin: 30px 30px 28px;
+  width: 26px;
+  height: 17px;
+  background-color: currentcolor;
   color: var(--background-color);
-  line-height: 0;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 17"><path d="M1 8.5h23M16.5 2l6.5 6.5-6.5 6.5" fill="none" stroke="black" stroke-width="2"/></svg>') no-repeat center / contain;
 }
 
 .product-card .product-card-arrow svg {
-  width: 34px;
-  height: 34px;
+  display: none;
+}
+
+/*
+ * Forced colours rewrites background-color, which would erase a masked shape.
+ * Hand the inline SVG back: its stroke is currentColor, which is honoured.
+ */
+@media (forced-colors: active) {
+  .product-card .product-card-arrow {
+    width: auto;
+    height: auto;
+    background: none;
+    mask: none;
+  }
+
+  .product-card .product-card-arrow svg {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
 }
 
 .product-card .product-card-linked .product-card-body {

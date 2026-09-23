@@ -182,9 +182,13 @@
 
 /* legal row */
 
-/* longhands only: `.footer > div` owns the horizontal centring and padding */
+/*
+ * Longhands only: `.footer > div` owns the horizontal centring and padding.
+ * Measured from the bottom of the last link's line box to the hairline: 40px
+ * while the columns are stacked, 80px once they sit side by side.
+ */
 .footer .footer-legal {
-  margin-top: 32px;
+  margin-top: 40px;
 }
 
 .footer .footer-legal-inner {
@@ -216,7 +220,7 @@
 .footer .footer-legal-links {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -238,8 +242,12 @@
  * OneTrust privacy-choices hook. The CMP is loaded from scripts/delayed.js
  * and binds itself to .ot-sdk-show-settings; the CPRA badge is the authored
  * :privacy-options: icon so the row renders correctly before the CMP lands.
+ *
+ * The selector is specific enough to beat the inline-block on
+ * .footer-legal-links a — as an inline-block the badge wraps onto its own
+ * line under the label.
  */
-.footer .footer-privacy-choices {
+.footer .footer-legal-links a.footer-privacy-choices {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -299,6 +307,10 @@
     grid-column: auto;
   }
 
+  .footer .footer-legal {
+    margin-top: 80px;
+  }
+
   .footer .footer-legal-meta {
     flex-direction: row;
   }
@@ -312,8 +324,7 @@
   }
 
   .footer .footer-legal-links {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     gap: 8px 40px;
   }
 }

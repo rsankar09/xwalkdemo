@@ -61,12 +61,13 @@
 }
 
 /*
- * Mirrors `main > .section > div` (max-width 1352 + 24/32px gutters, content
- * box) so the band's copy sits on the same column as every other block on the
- * page. Keep the two in sync — see the handoff note at the foot of this file.
+ * The block is full-bleed, so it has to re-establish the content column
+ * itself. These declarations mirror `main > .section > div` exactly
+ * (border-box, max-width 1352 + 24/32px gutters) so the copy lands on the
+ * same column as every other block on the page — keep the two in sync.
  */
 .feature-highlight-band .feature-highlight-band-body {
-  box-sizing: content-box;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 24px 24px 0;
   max-width: 1352px;
