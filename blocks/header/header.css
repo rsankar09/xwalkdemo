@@ -31,7 +31,9 @@ header:has(> .header) {
     --nav-gutter: 40px;
     --nav-bar-height: 79px;
     --nav-header-height: 79px;
-    --nav-link-size: 18px;
+
+    /* measured on the source: top-level nav labels are 16px, not 18px */
+    --nav-link-size: 16px;
     --nav-util-size: 14px;
     --nav-desc-size: 15px;
   }
@@ -293,8 +295,9 @@ header:has(> .header) {
 }
 
 @media (width >= 900px) {
+  /* the source logo is a 48px square at x=40 — measured, was 56px here */
   .header .nav-brand img {
-    height: 56px;
+    height: 48px;
   }
 }
 

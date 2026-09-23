@@ -1,14 +1,34 @@
 /*
  * Icon list card (cmp-003): icon, title, description. No border, no fill,
  * no link. Three across at desktop.
+ *
+ * Every number here is measured off capture/index/screenshots/{375,768,1440}.png
+ * rather than inherited from the boilerplate:
+ *
+ *   icon box   48px tall at >=900, 40px below, icon centred in it
+ *   gap        24px at >=900, 10px below
+ *   title      20px / 24px, weight 500, --text-color
+ *   gap        16px
+ *   body copy  20px / 30px, weight 400, #474952
+ *
+ * The block previously used --body-font-size-s/-xs (16/14px) for the title and
+ * description, which is roughly two steps small everywhere.
  */
 
 .icon-list-card > ul {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px 24px;
+
+  /* rows are 24px apart in the source at every breakpoint, same as the columns */
+  gap: 24px;
   margin: 0;
-  padding: 0;
+
+  /*
+   * The source card carries `margin: 24px 12px 0`, so the first row sits 24px
+   * below whatever precedes it exactly as the second row sits 24px below the
+   * first. The gap above covers the later rows; this covers the first.
+   */
+  padding: 24px 0 0;
   list-style: none;
 }
 
@@ -17,21 +37,38 @@
   flex-direction: column;
 }
 
+/*
+ * Fixed-height box with the icon centred in it. The source icons range from
+ * 38x48 to 49x44, so a box that tracked the icon would leave the three titles
+ * on different baselines; the source centres them in a box the height of the
+ * tallest icon and so do we.
+ */
 .icon-list-card .icon-list-card-media {
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  margin-bottom: 10px;
   line-height: 1;
 }
 
-/*
- * Height-constrained with auto width: the source icons range from 38x48 to
- * 49x44, so pinning both axes would letterbox most of them.
- */
-.icon-list-card .icon-list-card-media .icon,
-.icon-list-card .icon-list-card-media img {
+/* the icon arrives wrapped in a default-content paragraph — its margins are not ours */
+.icon-list-card .icon-list-card-media p {
+  margin: 0;
+}
+
+/* undo the global 24x24 .icon box: these render at their intrinsic size */
+.icon-list-card .icon-list-card-media .icon {
+  display: block;
   width: auto;
-  max-width: 56px;
-  height: 44px;
-  object-fit: contain;
+  height: auto;
+}
+
+.icon-list-card .icon-list-card-media img {
+  display: block;
+  width: auto;
+  max-width: 40px;
+  height: auto;
+  max-height: 40px;
 }
 
 .icon-list-card .icon-list-card-body {
@@ -41,15 +78,20 @@
 .icon-list-card .icon-list-card-title {
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: var(--body-font-size-s);
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
 }
 
+/*
+ * 20px/30px, and a grey rather than the page text colour: sampled #474952 off
+ * the source crop, the same ink the icons are drawn in.
+ */
 .icon-list-card .icon-list-card-description {
-  margin: 10px 0 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.55;
+  margin: 16px 0 0;
+  color: #474952;
+  font-size: 20px;
+  line-height: 30px;
 }
 
 @media (width >= 600px) {
@@ -61,6 +103,16 @@
 @media (width >= 900px) {
   .icon-list-card > ul {
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+  }
+
+  /* the icon box and the air under it both grow at desktop */
+  .icon-list-card .icon-list-card-media {
+    min-height: 48px;
+    margin-bottom: 24px;
+  }
+
+  .icon-list-card .icon-list-card-media img {
+    max-width: 56px;
+    max-height: 48px;
   }
 }

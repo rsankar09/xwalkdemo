@@ -50,7 +50,8 @@ function createField(placeholder, buttonLabel, id) {
   button.type = 'submit';
   button.className = 'email-subscribe-submit';
   button.setAttribute('aria-label', buttonLabel);
-  button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M12 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  // the source marks the submit affordance with a bare chevron, not an arrow
+  button.innerHTML = '<svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M6.5 3 13 9l-6.5 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
 
   field.append(label, input, button);
   return { field, input };

@@ -3,6 +3,11 @@
  * and an arrow. Three across at desktop. Used on white and on the green band
  * (cmp-009) — the band is a section style, so nothing here sets a background
  * other than the card's own.
+ *
+ * Every number below is measured off capture/index/screenshots/1440.png and
+ * cross-checked at 768/375, not eyeballed. Reference frame, 1440:
+ * card 411x402 at x=80, 2px rule, image 407x228, then 28 / 18 / 20 / 24 /
+ * 24 / 32 / 24 down to the inner bottom edge.
  */
 
 .feature-card > ul {
@@ -16,8 +21,8 @@
 
 /*
  * Radius and border are per-band, not per-block: the source authors the light
- * band's cards at 18px with a 2px rule, and the green band's at 4px with no
- * border. Defaults are the light treatment; the green override is below.
+ * band's cards at 18px with a 2px rule, and the green band's at 4px with a
+ * 1px one. Defaults are the light treatment; the green override is below.
  *
  * `overflow: hidden` is what rounds the photo's top corners — the source puts
  * no radius on the image itself, it clips it against the card.
@@ -27,7 +32,7 @@
   position: relative;
   flex-direction: column;
   border: 2px solid var(--brand-rule);
-  border-radius: 18px;
+  border-radius: var(--card-radius);
   background-color: var(--background-color);
   color: var(--text-color);
   overflow: hidden;
@@ -62,9 +67,8 @@
 /*
  * A fixed ratio is the design here, not a stand-in for intrinsic dimensions:
  * a card grid wants one uniform strip. 575/323 is the rendition the source CDN
- * actually serves for every card in this grid (the `-w575-h323` suffix), which
- * supersedes the 7:4 previously eyeballed off the crop. Note the asset
- * filenames claim `3x2`/`4_3` — the delivered bytes are neither.
+ * actually serves for every card in this grid (the `-w575-h323` suffix), and
+ * the delivered pixels agree — 407x228 at 1440, 344x193 at 768, 323x181 at 375.
  */
 .feature-card .feature-card-media img {
   width: 100%;
@@ -72,37 +76,53 @@
   object-fit: cover;
 }
 
+/* 28px, not 24 — measured from the image edge and from the card's inner edge */
 .feature-card .feature-card-body {
   display: flex;
   flex: 1;
   flex-direction: column;
   margin: 0;
-  padding: 24px;
+  padding: 28px;
 }
 
+/*
+ * Eyebrow: 14/18 at weight 500 with ~1.4px of tracking, which is 0.1em at this
+ * size. Not 700 — the source runs medium here and the extra tracking, not the
+ * weight, is what gives the row its texture.
+ *
+ * The colour is its own value (#474952). The source uses three distinct greys
+ * for eyebrows — #2e3038 for the section kicker, #474952 on a card, --text-color
+ * on the peach band — and --dark-color (#505050) is none of them. See the
+ * handoff note at the bottom of this file.
+ */
 .feature-card .feature-card-pretitle {
   order: -1;
-  margin: 0 0 12px;
-  color: var(--dark-color);
+  margin: 0 0 20px;
+  color: #474952;
   font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 18px;
   text-transform: uppercase;
 }
 
+/*
+ * 20/24 weight 500 at every breakpoint, so it cannot come off the heading
+ * ramp (--heading-font-size-m is 20px only below 900px).
+ */
 .feature-card .feature-card-title {
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: var(--body-font-size-s);
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
 }
 
+/* running copy is 18/26 in the source, the same as body text everywhere else */
 .feature-card .feature-card-description {
-  margin: 12px 0 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.55;
+  margin: 16px 0 0;
+  font-size: var(--body-font-size-m);
+  line-height: 26px;
 }
 
 /* description links sit above the stretched-link overlay */
@@ -111,16 +131,30 @@
   z-index: 2;
 }
 
+/*
+ * The arrow is a deeper blue than the accent (#04c against the buttons'
+ * #0468ff) — sampled off the flat interior of the glyph, not an edge pixel.
+ *
+ * Left margin is 23px rather than the body's 28px on purpose: the shared icon
+ * draws its path inset 4/24 of the viewBox, so 23 + that bearing lands the
+ * visible stroke on the same 28px text edge as the eyebrow and title.
+ */
 .feature-card .feature-card-arrow {
   display: block;
-  margin: 20px 24px 24px;
-  color: var(--brand-blue);
+  margin: 24px 28px 24px 23px;
+  color: #04c;
   line-height: 0;
 }
 
+/*
+ * 32px, not 26: the source's glyph measures 26x15 of ink. The shared icon only
+ * fills 15/24 of its box horizontally and 12/24 vertically, so a 26px box draws
+ * a 16x13 arrow — visibly undersized. 32px gives 20x16 ink and a ~2.7px stroke,
+ * matching the source's height and weight; only the tail stays a little short.
+ */
 .feature-card .feature-card-arrow svg {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
 }
 
 /* the arrow sits below the body, so the body must not also pad the bottom */
@@ -147,7 +181,7 @@
 }
 
 .feature-card .feature-card-item:hover .feature-card-arrow {
-  color: var(--brand-blue-hover);
+  color: var(--brand-navy);
 }
 
 /*
@@ -163,10 +197,27 @@
 
 /*
  * Green-band treatment (cmp-009). The source scopes radius and border per
- * band, not per card type: 18px + a 2px rule on the light band, 4px and no
- * border on the green one. Declared last so it outranks the base card rule.
+ * band, not per card type: 18px + a 2px rule on the light band, 4px and a 1px
+ * rule on the green one. Declared last so it outranks the base card rule.
  */
 main > .section.green .feature-card .feature-card-item {
-  border: 0;
+  border-width: 1px;
   border-radius: 4px;
+}
+
+/*
+ * The band's global link treatment — inherit the band's foreground and carry
+ * an underline — exists so links read against navy or green. These cards are
+ * white surfaces sitting *on* the band, so it must not reach inside them: the
+ * source draws the title as plain dark text and the source's own screenshot
+ * shows no underline at rest. Specificity has to clear the band rule, hence
+ * the full path.
+ */
+main > .section:is(.navy, .green) .feature-card .feature-card-link:any-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+main > .section:is(.navy, .green) .feature-card .feature-card-description a:any-link {
+  color: var(--link-color);
 }

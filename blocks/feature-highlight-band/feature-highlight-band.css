@@ -1,10 +1,13 @@
 /*
  * Feature highlight band (cmp-008): peach band, full-bleed banner image with
- * a diagonal lower edge, eyebrow + heading, a grid of highlights, one CTA.
+ * two diagonal cuts, eyebrow + heading, a grid of highlights, one CTA.
  *
  * Self-contained: it releases itself from the section's content width and
- * paints its own band, so it needs no section style. The diagonal is cut out
- * of the image, and the block's own background is what shows through it.
+ * paints its own band, so it needs no section style.
+ *
+ * Measured off capture/index/screenshots/1440.png. Reference frame, 1440:
+ * image 1440x391, then 24 to the eyebrow, 18 to the h2, 64 to the highlight
+ * grid, 42/24 between highlights, 64 to the CTA, 120 to the foot of the band.
  */
 
 .feature-highlight-band-container .feature-highlight-band-wrapper {
@@ -18,16 +21,37 @@
 
 .feature-highlight-band {
   background-color: var(--brand-peach);
-  padding-bottom: 56px;
+  padding-bottom: 80px;
 }
 
+/*
+ * The two cuts are taken out of the image, and what shows through them is
+ * *not* the same colour: the source pulls the image up out of the band with a
+ * negative margin, so the top-right wedge sits over the white page above and
+ * the bottom-left one over the peach. Painting that split on the media itself
+ * reproduces it without any negative margins — the cuts never reach the
+ * middle of the image (they stop at 31% and 72%), so the 50% seam is always
+ * hidden behind the picture.
+ */
 .feature-highlight-band .feature-highlight-band-media {
+  background-image: linear-gradient(
+    var(--background-color) 0 50%,
+    var(--brand-peach) 50% 100%
+  );
   line-height: 0;
 }
 
+/*
+ * Both cuts hold their proportions across breakpoints, which is how they were
+ * derived: the top-right wedge is 11.3% of the width by 31% of the image
+ * height at 1440, 768 and 375 alike, and the bottom-left one runs from 72% of
+ * the height on the left edge to 49% of the width along the bottom. That is a
+ * ~9deg cut at the bottom and a ~37deg one at the top right — deliberately
+ * different angles, and the bottom edge falls to the *right*, not the left.
+ */
 .feature-highlight-band .feature-highlight-band-media picture {
   display: block;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - var(--band-angle)));
+  clip-path: polygon(0 0, 88.7% 0, 100% 31%, 100% 100%, 49% 100%, 0 72%);
 }
 
 .feature-highlight-band .feature-highlight-band-media img {
@@ -36,52 +60,66 @@
   height: auto;
 }
 
+/*
+ * Mirrors `main > .section > div` (max-width 1352 + 24/32px gutters, content
+ * box) so the band's copy sits on the same column as every other block on the
+ * page. Keep the two in sync — see the handoff note at the foot of this file.
+ */
 .feature-highlight-band .feature-highlight-band-body {
-  box-sizing: border-box;
+  box-sizing: content-box;
   margin: 0 auto;
-  padding: 32px 24px 0;
-  max-width: 1200px;
+  padding: 24px 24px 0;
+  max-width: 1352px;
 }
 
+/* h2 box bottom to the first highlight measures 64px in the source */
 .feature-highlight-band .feature-highlight-band-intro {
-  margin: 0 0 32px;
+  margin: 0 0 64px;
 }
 
+/*
+ * The source sets this eyebrow in --text-color, not the softer grey the cards
+ * use: 14px type on peach needs the extra contrast. The 26px leading is the
+ * paragraph line box it is inlined into in the source, and it is what puts
+ * the heading 68px below the image rather than 60.
+ */
 .feature-highlight-band .feature-highlight-band-pretitle {
-  margin: 0 0 4px;
-  color: var(--dark-color);
+  margin: 0 0 18px;
+  color: var(--text-color);
   font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 26px;
   text-transform: uppercase;
 }
 
 .feature-highlight-band .feature-highlight-band-title {
   margin: 0;
   font-size: var(--heading-font-size-xl);
-  line-height: 1.2;
+  line-height: var(--heading-line-height);
 }
 
 .feature-highlight-band .feature-highlight-band-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px 48px;
+  gap: 42px 24px;
   margin: 0;
 }
 
+/* 20/24 weight 500 at every breakpoint — the same face as a card title */
 .feature-highlight-band .feature-highlight-band-item-title {
-  margin: 0 0 8px;
+  margin: 0 0 24px;
   font-family: var(--body-font-family);
-  font-size: var(--body-font-size-s);
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
 }
 
+/* running copy: 18/26, the source's body size, not the eyebrow size */
 .feature-highlight-band .feature-highlight-band-item p {
   margin: 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.55;
+  font-size: var(--body-font-size-m);
+  line-height: 26px;
 }
 
 /* footnote markers in the highlight copy */
@@ -92,23 +130,35 @@
 }
 
 .feature-highlight-band .feature-highlight-band-cta {
-  margin-top: 36px;
+  margin-top: 64px;
 }
 
 .feature-highlight-band .feature-highlight-band-cta p {
   margin: 0;
 }
 
+/*
+ * The intro sits in half the column from tablet up — six of the source's
+ * twelve grid columns — which is what keeps the heading off the highlights'
+ * right-hand column.
+ */
+@media (width >= 600px) {
+  .feature-highlight-band .feature-highlight-band-intro {
+    max-width: 50%;
+  }
+
+  /* two up from tablet, the same breakpoint the card grids pair off at */
+  .feature-highlight-band .feature-highlight-band-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (width >= 900px) {
   .feature-highlight-band {
-    padding-bottom: 72px;
+    padding-bottom: 120px;
   }
 
   .feature-highlight-band .feature-highlight-band-body {
-    padding: 40px 32px 0;
-  }
-
-  .feature-highlight-band .feature-highlight-band-grid {
-    grid-template-columns: repeat(2, 1fr);
+    padding: 24px 32px 0;
   }
 }

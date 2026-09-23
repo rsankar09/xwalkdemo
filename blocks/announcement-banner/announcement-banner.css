@@ -14,19 +14,29 @@
   border-radius: 4px;
   background-color: var(--brand-pale-blue);
 
-  /* asymmetric by design: the source insets content 24px from the left and
-     40px from the right, so the arrow link clears the rounded corner */
-  padding: 20px 40px 20px 24px;
+  /* at 375 the source drops its inner gutters and insets content a flat 24px */
+  padding: 24px;
 }
 
+/*
+ * The source strip is 96px tall at 1440: a 48px content row inside 24px of
+ * padding, with the icon setting the row height. min-height keeps that
+ * rhythm even when the icon is missing or the copy is a single short line.
+ */
 .announcement-banner .announcement-banner-inner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
+  min-height: 48px;
+  gap: 12px 24px;
 }
 
-.announcement-banner .announcement-banner-inner > * {
+/*
+ * Both authoring surfaces wrap each cell's content in a <p>, and those
+ * margins were padding the flex line out past the source's 48px content row.
+ */
+.announcement-banner .announcement-banner-inner > *,
+.announcement-banner .announcement-banner-inner p {
   margin: 0;
 }
 
@@ -37,32 +47,45 @@
   line-height: 1;
 }
 
+/*
+ * The megaphone glyph fills its 48-unit viewBox horizontally and 33 of it
+ * vertically, which is exactly the ink the source shows (48 x 33).
+ */
 .announcement-banner .announcement-banner-icon .icon,
 .announcement-banner .announcement-banner-icon img {
-  width: auto;
-  max-width: 40px;
-  height: 28px;
+  width: 48px;
+  max-width: 100%;
+  height: 48px;
   object-fit: contain;
 }
 
+/*
+ * flex-basis: 100% below tablet reproduces the source's stacked mobile strip.
+ * Without an explicit basis the copy's max-content width decides where the
+ * line breaks, which pushed the icon onto a row of its own at 768.
+ */
 .announcement-banner .announcement-banner-copy {
-  font-size: var(--body-font-size-s);
+  flex: 1 1 100%;
+  min-width: 0;
+  font-size: var(--body-font-size-m);
 }
 
 .announcement-banner .announcement-banner-copy p {
   margin: 0;
 }
 
+/* measured: the source h4 is 20px / 24px at 500 on every breakpoint */
 .announcement-banner .announcement-banner-title {
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: var(--body-font-size-s);
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
 }
 
 .announcement-banner .announcement-banner-action {
-  font-size: var(--body-font-size-s);
+  font-size: var(--button-font-size);
+  line-height: 24px;
 }
 
 /*
@@ -75,28 +98,61 @@
   align-items: center;
   min-height: 24px;
   color: var(--brand-blue-hover);
-  font-weight: 700;
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  line-height: 24px;
 }
 
+/*
+ * The source trails a long arrow, not a chevron: 26 x 17 of ink, 12px after
+ * the label. Drawn as a mask so it takes the link's own colour on hover and
+ * in forced-colours mode.
+ */
 .announcement-banner .announcement-banner-action a::after {
   content: "";
   display: inline-block;
-  margin-left: 8px;
-  border: solid currentcolor;
-  border-width: 0 2px 2px 0;
-  padding: 3px;
-  vertical-align: middle;
-  transform: rotate(-45deg);
+  flex: none;
+  margin-left: 12px;
+  width: 26px;
+  height: 17px;
+  background-color: currentcolor;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 17"><path d="M1 8.5h23M16.5 2l6.5 6.5-6.5 6.5" fill="none" stroke="black" stroke-width="2"/></svg>') no-repeat center / contain;
+}
+
+/*
+ * From tablet up the source adds its inner gutters back: the icon sits 36px
+ * in (24px band padding + a 12px column gutter), the label column starts 44px
+ * after the icon ink, and the arrow ends ~50px short of the right edge.
+ */
+@media (width >= 600px) {
+  .announcement-banner {
+    padding: 24px 48px 24px 36px;
+  }
+
+  .announcement-banner .announcement-banner-inner {
+    gap: 12px 44px;
+  }
+
+  /* the copy shares the line with the icon and takes whatever is left */
+  .announcement-banner .announcement-banner-copy {
+    flex: 1 1 0;
+  }
+
+  /*
+   * At tablet the source drops the link onto its own line but keeps it
+   * aligned with the copy rather than the icon — 48px of icon plus the 44px
+   * column gap.
+   */
+  .announcement-banner .announcement-banner-action {
+    flex: 0 0 100%;
+    margin-left: 92px;
+  }
 }
 
 @media (width >= 900px) {
-  /* the 24/40 asymmetry is held here too — only the vertical rhythm opens up */
-  .announcement-banner {
-    padding: 24px 40px 24px 24px;
-  }
-
-  /* the link sits hard right on wide viewports */
+  /* everything fits on one line again and the link sits hard right */
   .announcement-banner .announcement-banner-action {
+    flex: 0 0 auto;
     margin-left: auto;
   }
 }

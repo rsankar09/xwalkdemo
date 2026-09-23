@@ -1,4 +1,4 @@
-import { getMetadata } from '../../scripts/aem.js';
+// import { getMetadata } from '../../scripts/aem.js';
 
 /*
  * Header block.
@@ -606,7 +606,6 @@ const fragment = parser.parseFromString(
   'text/html',
 ).body.firstElementChild;
 
-
 /*
  * The nav collapses to a hamburger below the 900px breakpoint.
  */
@@ -621,7 +620,6 @@ const FOCUSABLE = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
-
 /* The header block element, assigned once by decorate(). */
 let header;
 
@@ -631,12 +629,10 @@ let current = null;
 /* Monotonic source of unique ids. */
 let ids = 0;
 
-
 function nextId(prefix) {
   ids += 1;
   return `${prefix}-${ids}`;
 }
-
 
 /**
  * Returns the authored content wrapper.
@@ -646,7 +642,6 @@ function contentOf(section) {
 
   return section.querySelector(':scope > .default-content-wrapper') || section;
 }
-
 
 /**
  * Returns the fragment identifier of a link.
@@ -661,7 +656,6 @@ function hashOf(link) {
   return index < 0 ? '' : href.slice(index + 1);
 }
 
-
 /**
  * Returns visible focusable elements.
  */
@@ -670,11 +664,9 @@ function focusablesIn(root) {
     .filter((el) => el.getClientRects().length);
 }
 
-
 function isMenuOpen() {
   return header.classList.contains('nav-open');
 }
-
 
 /**
  * Locks page scrolling while a drawer/menu is open.
@@ -685,13 +677,11 @@ function syncScrollLock() {
   document.body.style.overflowY = locked ? 'hidden' : '';
 }
 
-
 function setOverlay(visible) {
   const overlay = header.querySelector('.nav-overlay');
 
   if (overlay) overlay.hidden = !visible;
 }
-
 
 /**
  * Closes the currently open drawer.
@@ -711,7 +701,6 @@ function closeDrawer(returnFocus = false) {
 
   if (returnFocus) toggle.focus();
 }
-
 
 /**
  * Opens a drawer.
@@ -744,7 +733,6 @@ function openDrawer(toggle, panel, modal = false) {
     if (first) first.focus();
   }
 }
-
 
 /**
  * Opens a mega-menu category.
@@ -788,7 +776,6 @@ function openCategory(button, force = false) {
   }
 }
 
-
 /**
  * Keyboard handling.
  */
@@ -802,6 +789,7 @@ function onKeydown(e) {
         '.nav-hamburger button',
       );
 
+      // eslint-disable-next-line no-use-before-define
       toggleMenu(false);
 
       if (hamburger) hamburger.focus();
@@ -843,7 +831,6 @@ function onKeydown(e) {
   }
 }
 
-
 /**
  * Opens/closes the mobile navigation.
  */
@@ -875,11 +862,9 @@ function toggleMenu(expanded) {
   syncScrollLock();
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Build */
 /* ------------------------------------------------------------------ */
-
 
 /**
  * Splits an LI into:
@@ -912,7 +897,6 @@ function splitItem(li) {
   };
 }
 
-
 function labelOf(nodes) {
   return nodes
     .map((node) => node.textContent)
@@ -921,15 +905,12 @@ function labelOf(nodes) {
     .trim();
 }
 
-
 function hasContent(nodes) {
   return nodes.some(
-    (node) =>
-      node.nodeType === Node.ELEMENT_NODE ||
-      node.textContent.trim(),
+    (node) => node.nodeType === Node.ELEMENT_NODE
+      || node.textContent.trim(),
   );
 }
-
 
 function buildToggle(label, panelId, className) {
   const button = document.createElement('button');
@@ -942,7 +923,6 @@ function buildToggle(label, panelId, className) {
 
   return button;
 }
-
 
 /**
  * Normalizes one navigation link.
@@ -1006,7 +986,6 @@ function decorateNavLink(li) {
   return emphasised;
 }
 
-
 /**
  * Builds the footer/promo area of a navigation drawer.
  */
@@ -1036,7 +1015,6 @@ function buildFootnote(nodes) {
 
   return footnote;
 }
-
 
 /**
  * Builds a navigation link panel.
@@ -1095,7 +1073,6 @@ function buildPanel(list, extra, id) {
   return panel;
 }
 
-
 /**
  * Builds one top-level mega-menu drawer.
  */
@@ -1126,8 +1103,7 @@ function buildDrawer(li) {
     const columns = [...list.children];
 
     const nested = columns.some(
-      (item) =>
-        item.querySelector(':scope > ul'),
+      (item) => item.querySelector(':scope > ul'),
     );
 
     if (nested) {
@@ -1202,22 +1178,20 @@ function buildDrawer(li) {
   );
 
   toggle.addEventListener('click', () => {
-    const opening =
-      !current ||
-      current.toggle !== toggle;
+    const opening = !current
+      || current.toggle !== toggle;
 
     openDrawer(
       toggle,
       drawer,
     );
 
-    const firstCategory =
-      drawer.querySelector('.nav-category');
+    const firstCategory = drawer.querySelector('.nav-category');
 
     if (
-      opening &&
-      firstCategory &&
-      isDesktop.matches
+      opening
+      && firstCategory
+      && isDesktop.matches
     ) {
       openCategory(
         firstCategory,
@@ -1235,7 +1209,6 @@ function buildDrawer(li) {
     drawer,
   );
 }
-
 
 /**
  * Builds the search drawer.
@@ -1255,8 +1228,7 @@ function buildSearchDrawer(section) {
     ? heading.textContent.trim()
     : 'Search';
 
-  const placeholder =
-    link.textContent.trim();
+  const placeholder = link.textContent.trim();
 
   const href = link.getAttribute('href');
 
@@ -1265,26 +1237,20 @@ function buildSearchDrawer(section) {
     query,
   ] = href.split('?');
 
-  const param =
-    (query && query.split('=')[0]) ||
-    'q';
+  const param = (query && query.split('=')[0])
+    || 'q';
 
-  const drawer =
-    document.createElement('div');
+  const drawer = document.createElement('div');
 
-  drawer.className =
-    'nav-drawer nav-search-drawer';
+  drawer.className = 'nav-drawer nav-search-drawer';
 
-  drawer.id =
-    nextId('nav-search');
+  drawer.id = nextId('nav-search');
 
   drawer.hidden = true;
 
-  const form =
-    document.createElement('form');
+  const form = document.createElement('form');
 
-  form.className =
-    'nav-search-form';
+  form.className = 'nav-search-form';
 
   form.action = action;
   form.method = 'get';
@@ -1293,20 +1259,16 @@ function buildSearchDrawer(section) {
     'search',
   );
 
-  const inputId =
-    nextId('nav-search-input');
+  const inputId = nextId('nav-search-input');
 
-  const label =
-    document.createElement('label');
+  const label = document.createElement('label');
 
-  label.className =
-    'nav-search-label';
+  label.className = 'nav-search-label';
 
   label.htmlFor = inputId;
   label.textContent = title;
 
-  const input =
-    document.createElement('input');
+  const input = document.createElement('input');
 
   input.id = inputId;
   input.type = 'search';
@@ -1314,12 +1276,10 @@ function buildSearchDrawer(section) {
   input.placeholder = placeholder;
   input.autocomplete = 'off';
 
-  const clear =
-    document.createElement('button');
+  const clear = document.createElement('button');
 
   clear.type = 'reset';
-  clear.className =
-    'nav-search-clear';
+  clear.className = 'nav-search-clear';
 
   clear.textContent = 'Clear';
 
@@ -1332,15 +1292,12 @@ function buildSearchDrawer(section) {
     },
   );
 
-  const submit =
-    document.createElement('button');
+  const submit = document.createElement('button');
 
   submit.type = 'submit';
-  submit.className =
-    'nav-search-submit';
+  submit.className = 'nav-search-submit';
 
-  submit.innerHTML =
-    '<span class="nav-sr-only">Submit search</span>';
+  submit.innerHTML = '<span class="nav-sr-only">Submit search</span>';
 
   form.append(
     label,
@@ -1357,7 +1314,6 @@ function buildSearchDrawer(section) {
   };
 }
 
-
 /**
  * Builds a login field from:
  *
@@ -1373,17 +1329,13 @@ function buildField(spec) {
     .split('|')
     .map((s) => s.trim());
 
-  const id =
-    nextId('nav-login-field');
+  const id = nextId('nav-login-field');
 
-  const wrapper =
-    document.createElement('div');
+  const wrapper = document.createElement('div');
 
-  wrapper.className =
-    `nav-login-field nav-login-field-${type}`;
+  wrapper.className = `nav-login-field nav-login-field-${type}`;
 
-  const input =
-    document.createElement('input');
+  const input = document.createElement('input');
 
   input.type = type;
   input.id = id;
@@ -1396,16 +1348,13 @@ function buildField(spec) {
     input.required = true;
   }
 
-  const fallback =
-    type === 'password'
-      ? 'current-password'
-      : 'username';
+  const fallback = type === 'password'
+    ? 'current-password'
+    : 'username';
 
-  input.autocomplete =
-    complete || fallback;
+  input.autocomplete = complete || fallback;
 
-  const labelEl =
-    document.createElement('label');
+  const labelEl = document.createElement('label');
 
   labelEl.htmlFor = id;
   labelEl.textContent = label;
@@ -1425,23 +1374,20 @@ function buildField(spec) {
   return wrapper;
 }
 
-
 /**
  * Builds the additional login content.
  */
 function buildLoginExtras(nodes) {
-  const extras =
-    document.createElement('div');
+  const extras = document.createElement('div');
 
-  extras.className =
-    'nav-login-extras';
+  extras.className = 'nav-login-extras';
 
   let column = null;
 
   nodes.forEach((node) => {
     if (
-      node.nodeType !==
-      Node.ELEMENT_NODE
+      node.nodeType
+      !== Node.ELEMENT_NODE
     ) {
       return;
     }
@@ -1453,11 +1399,9 @@ function buildLoginExtras(nodes) {
     ) {
       column = null;
 
-      const promo =
-        document.createElement('div');
+      const promo = document.createElement('div');
 
-      promo.className =
-        'nav-login-promo';
+      promo.className = 'nav-login-promo';
 
       promo.append(node);
 
@@ -1471,11 +1415,9 @@ function buildLoginExtras(nodes) {
         'h1, h2, h3, h4, h5, h6',
       )
     ) {
-      column =
-        document.createElement('div');
+      column = document.createElement('div');
 
-      column.className =
-        'nav-login-column';
+      column.className = 'nav-login-column';
 
       extras.append(column);
     }
@@ -1486,32 +1428,25 @@ function buildLoginExtras(nodes) {
   return extras;
 }
 
-
 /**
  * Builds the login drawer.
  */
 function buildLoginDrawer(section) {
-  const content =
-    contentOf(section);
+  const content = contentOf(section);
 
   if (!content) return null;
 
-  const drawer =
-    document.createElement('div');
+  const drawer = document.createElement('div');
 
-  drawer.className =
-    'nav-drawer nav-login-drawer';
+  drawer.className = 'nav-drawer nav-login-drawer';
 
-  drawer.id =
-    nextId('nav-login');
+  drawer.id = nextId('nav-login');
 
   drawer.hidden = true;
 
-  const panel =
-    document.createElement('div');
+  const panel = document.createElement('div');
 
-  panel.className =
-    'nav-login-panel';
+  panel.className = 'nav-login-panel';
 
   panel.setAttribute(
     'role',
@@ -1525,47 +1460,37 @@ function buildLoginDrawer(section) {
 
   drawer.append(panel);
 
-  const children =
-    [...content.children];
+  const children = [...content.children];
 
-  const heading =
-    children.find(
-      (el) =>
-        el.matches(
-          'h1, h2, h3, h4, h5, h6',
-        ),
-    );
+  const heading = children.find(
+    (el) => el.matches(
+      'h1, h2, h3, h4, h5, h6',
+    ),
+  );
 
-  const fieldList =
-    children.find(
-      (el) =>
-        el.matches('ul') &&
-        el.textContent.includes('|'),
-    );
+  const fieldList = children.find(
+    (el) => el.matches('ul')
+        && el.textContent.includes('|'),
+  );
 
-  const submitLink =
-    content.querySelector(
-      'a.button',
-    ) ||
-    content.querySelector(
+  const submitLink = content.querySelector(
+    'a.button',
+  )
+    || content.querySelector(
       'strong a[href]',
     );
 
-  const submitWrapper =
-    submitLink
-      ? submitLink.closest('p')
-      : null;
+  const submitWrapper = submitLink
+    ? submitLink.closest('p')
+    : null;
 
-  const close =
-    document.createElement('button');
+  const close = document.createElement('button');
 
   close.type = 'button';
 
-  close.className =
-    'nav-login-close';
+  close.className = 'nav-login-close';
 
-  close.innerHTML =
-    '<span class="nav-sr-only">Close</span>';
+  close.innerHTML = '<span class="nav-sr-only">Close</span>';
 
   close.addEventListener(
     'click',
@@ -1577,14 +1502,11 @@ function buildLoginDrawer(section) {
   let title = 'Log In';
 
   if (heading) {
-    title =
-      heading.textContent.trim();
+    title = heading.textContent.trim();
 
-    heading.id =
-      nextId('nav-login-title');
+    heading.id = nextId('nav-login-title');
 
-    heading.className =
-      'nav-login-title';
+    heading.className = 'nav-login-title';
 
     panel.setAttribute(
       'aria-labelledby',
@@ -1609,21 +1531,17 @@ function buildLoginDrawer(section) {
       : -1,
   );
 
-  const intro =
-    children.filter(
-      (el, i) =>
-        el !== heading &&
-        el !== fieldList &&
-        el !== submitWrapper &&
-        (stop < 0 || i < stop),
-    );
+  const intro = children.filter(
+    (el, i) => el !== heading
+        && el !== fieldList
+        && el !== submitWrapper
+        && (stop < 0 || i < stop),
+  );
 
   if (intro.length) {
-    const wrapper =
-      document.createElement('div');
+    const wrapper = document.createElement('div');
 
-    wrapper.className =
-      'nav-login-intro';
+    wrapper.className = 'nav-login-intro';
 
     wrapper.append(...intro);
 
@@ -1633,52 +1551,45 @@ function buildLoginDrawer(section) {
   let help = null;
 
   if (submitWrapper) {
-    const next =
-      children[
-        children.indexOf(
-          submitWrapper,
-        ) + 1
-      ];
+    const next = children[
+      children.indexOf(
+        submitWrapper,
+      ) + 1
+    ];
 
-    const only =
-      next &&
-      next.matches('p') &&
-      next.querySelector('a[href]');
+    const only = next
+      && next.matches('p')
+      && next.querySelector('a[href]');
 
     if (
-      only &&
-      next.textContent.trim() ===
-        only.textContent.trim()
+      only
+      && next.textContent.trim()
+        === only.textContent.trim()
     ) {
       help = only;
     }
   }
 
-  const used =
-    new Set([
-      heading,
-      ...intro,
-    ]);
+  const used = new Set([
+    heading,
+    ...intro,
+  ]);
 
   if (submitLink && fieldList) {
-    const form =
-      document.createElement('form');
+    const form = document.createElement('form');
 
-    form.className =
-      'nav-login-form';
+    form.className = 'nav-login-form';
 
-    form.action =
-      submitLink.getAttribute(
-        'href',
-      );
+    form.action = submitLink.getAttribute(
+      'href',
+    );
 
     form.method = 'post';
     form.name = 'login';
 
     [...fieldList.children]
       .forEach((li) => {
-        const spec =
-          li.textContent.trim();
+        const spec = li.textContent.trim();
 
         if (spec) {
           form.append(
@@ -1687,22 +1598,17 @@ function buildLoginDrawer(section) {
         }
       });
 
-    const actions =
-      document.createElement('div');
+    const actions = document.createElement('div');
 
-    actions.className =
-      'nav-login-actions';
+    actions.className = 'nav-login-actions';
 
-    const submit =
-      document.createElement('button');
+    const submit = document.createElement('button');
 
     submit.type = 'submit';
 
-    submit.className =
-      'nav-login-submit';
+    submit.className = 'nav-login-submit';
 
-    submit.textContent =
-      submitLink.textContent.trim();
+    submit.textContent = submitLink.textContent.trim();
 
     actions.append(submit);
 
@@ -1711,8 +1617,7 @@ function buildLoginDrawer(section) {
         help.closest('p'),
       );
 
-      help.className =
-        'nav-login-help';
+      help.className = 'nav-login-help';
 
       actions.append(help);
     }
@@ -1725,10 +1630,9 @@ function buildLoginDrawer(section) {
     used.add(submitWrapper);
   }
 
-  const rest =
-    children.filter(
-      (el) => !used.has(el),
-    );
+  const rest = children.filter(
+    (el) => !used.has(el),
+  );
 
   if (rest.length) {
     panel.append(
@@ -1742,7 +1646,6 @@ function buildLoginDrawer(section) {
   };
 }
 
-
 /**
  * Converts a #search or #login link into a drawer toggle.
  */
@@ -1751,34 +1654,29 @@ function wireDrawerLink(
   built,
   className,
 ) {
-  const label =
-    link.textContent.trim() ||
-    built.title;
+  const label = link.textContent.trim()
+    || built.title;
 
-  const toggle =
-    buildToggle(
-      label,
-      built.drawer.id,
-      className,
-    );
+  const toggle = buildToggle(
+    label,
+    built.drawer.id,
+    className,
+  );
 
   toggle.addEventListener(
     'click',
-    () =>
-      openDrawer(
-        toggle,
-        built.drawer,
-        true,
-      ),
+    () => openDrawer(
+      toggle,
+      built.drawer,
+      true,
+    ),
   );
 
-  const parent =
-    link.parentElement;
+  const parent = link.parentElement;
 
-  const alone =
-    parent.matches('p') &&
-    parent.textContent.trim() ===
-      link.textContent.trim();
+  const alone = parent.matches('p')
+    && parent.textContent.trim()
+      === link.textContent.trim();
 
   (alone ? parent : link)
     .replaceWith(toggle);
@@ -1786,11 +1684,9 @@ function wireDrawerLink(
   return toggle;
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Decorate */
 /* ------------------------------------------------------------------ */
-
 
 /**
  * Loads and decorates the header.
@@ -1798,16 +1694,10 @@ function wireDrawerLink(
 export default async function decorate(block) {
   header = block;
 
-  const navMeta =
-    getMetadata('nav');
-
-  const navPath =
-    navMeta
-      ? new URL(
-        navMeta,
-        window.location,
-      ).pathname
-      : '/nav';
+  // const navMeta = getMetadata('nav');
+  // const navPath = navMeta
+  //   ? new URL(navMeta, window.location).pathname
+  //   : '/nav';
 
   /*
    * For AEM Edge Delivery Services,
@@ -1836,11 +1726,9 @@ export default async function decorate(block) {
   ];
 
   /* Overlay */
-  const overlay =
-    document.createElement('div');
+  const overlay = document.createElement('div');
 
-  overlay.className =
-    'nav-overlay';
+  overlay.className = 'nav-overlay';
 
   overlay.hidden = true;
 
@@ -1850,15 +1738,12 @@ export default async function decorate(block) {
   );
 
   /* Wrapper */
-  const wrapper =
-    document.createElement('div');
+  const wrapper = document.createElement('div');
 
-  wrapper.className =
-    'nav-wrapper';
+  wrapper.className = 'nav-wrapper';
 
   /* Navigation */
-  const nav =
-    document.createElement('nav');
+  const nav = document.createElement('nav');
 
   nav.id = 'nav';
 
@@ -1867,13 +1752,10 @@ export default async function decorate(block) {
     'Main',
   );
 
-
   /* Hamburger */
-  const hamburger =
-    document.createElement('div');
+  const hamburger = document.createElement('div');
 
-  hamburger.className =
-    'nav-hamburger';
+  hamburger.className = 'nav-hamburger';
 
   hamburger.innerHTML = `
     <button
@@ -1889,28 +1771,23 @@ export default async function decorate(block) {
     .querySelector('button')
     .addEventListener(
       'click',
-      () =>
-        toggleMenu(
-          !isMenuOpen(),
-        ),
+      () => toggleMenu(
+        !isMenuOpen(),
+      ),
     );
 
   nav.append(hamburger);
-
 
   /* -------------------------------------------------------------- */
   /* 1. Brand */
   /* -------------------------------------------------------------- */
 
-  const brandContent =
-    contentOf(brandSection);
+  const brandContent = contentOf(brandSection);
 
   if (brandContent) {
-    const brand =
-      document.createElement('div');
+    const brand = document.createElement('div');
 
-    brand.className =
-      'nav-brand';
+    brand.className = 'nav-brand';
 
     brand.append(
       ...[...brandContent.childNodes],
@@ -1921,8 +1798,7 @@ export default async function decorate(block) {
       .forEach((a) => {
         a.className = '';
 
-        const p =
-          a.closest('p');
+        const p = a.closest('p');
 
         if (p) {
           p.className = '';
@@ -1932,54 +1808,43 @@ export default async function decorate(block) {
     nav.append(brand);
   }
 
-
   /* -------------------------------------------------------------- */
   /* 4. Search */
   /* -------------------------------------------------------------- */
 
-  const search =
-    searchSection
-      ? buildSearchDrawer(
-        searchSection,
-      )
-      : null;
-
+  const search = searchSection
+    ? buildSearchDrawer(
+      searchSection,
+    )
+    : null;
 
   /* -------------------------------------------------------------- */
   /* 2. Navigation */
   /* -------------------------------------------------------------- */
 
-  const navContent =
-    contentOf(navSection);
+  const navContent = contentOf(navSection);
 
-  const navList =
-    navContent &&
-    navContent.querySelector(
+  const navList = navContent
+    && navContent.querySelector(
       ':scope > ul',
     );
 
   if (navList) {
-    const sections =
-      document.createElement('div');
+    const sections = document.createElement('div');
 
-    sections.className =
-      'nav-sections';
+    sections.className = 'nav-sections';
 
-    sections.id =
-      'nav-sections';
+    sections.id = 'nav-sections';
 
-    navList.className =
-      'nav-list';
+    navList.className = 'nav-list';
 
     [...navList.children]
       .forEach((li) => {
-        const link =
-          li.querySelector(
-            ':scope > a[href], :scope > p > a[href]',
-          );
+        const link = li.querySelector(
+          ':scope > a[href], :scope > p > a[href]',
+        );
 
-        const hash =
-          hashOf(link);
+        const hash = hashOf(link);
 
         if (hash === 'search') {
           if (!search) {
@@ -1987,15 +1852,13 @@ export default async function decorate(block) {
             return;
           }
 
-          li.className =
-            'nav-search';
+          li.className = 'nav-search';
 
-          const toggle =
-            wireDrawerLink(
-              link,
-              search,
-              'nav-search-toggle',
-            );
+          const toggle = wireDrawerLink(
+            link,
+            search,
+            'nav-search-toggle',
+          );
 
           toggle.after(
             search.drawer,
@@ -2011,8 +1874,7 @@ export default async function decorate(block) {
         ) {
           buildDrawer(li);
         } else {
-          li.className =
-            'nav-item';
+          li.className = 'nav-item';
         }
       });
 
@@ -2021,23 +1883,19 @@ export default async function decorate(block) {
     nav.append(sections);
   }
 
-
   /* -------------------------------------------------------------- */
   /* 3. Tools */
   /* -------------------------------------------------------------- */
 
-  const toolsContent =
-    contentOf(toolsSection);
+  const toolsContent = contentOf(toolsSection);
 
   if (
-    toolsContent &&
-    toolsContent.childElementCount
+    toolsContent
+    && toolsContent.childElementCount
   ) {
-    const tools =
-      document.createElement('div');
+    const tools = document.createElement('div');
 
-    tools.className =
-      'nav-tools';
+    tools.className = 'nav-tools';
 
     tools.append(
       ...[...toolsContent.childNodes],
@@ -2046,46 +1904,37 @@ export default async function decorate(block) {
     nav.append(tools);
   }
 
-
   /* -------------------------------------------------------------- */
   /* 6. Login */
   /* -------------------------------------------------------------- */
 
-  const login =
-    loginSection
-      ? buildLoginDrawer(
-        loginSection,
-      )
-      : null;
-
+  const login = loginSection
+    ? buildLoginDrawer(
+      loginSection,
+    )
+    : null;
 
   /* -------------------------------------------------------------- */
   /* 5. Utility */
   /* -------------------------------------------------------------- */
 
-  const utilityContent =
-    contentOf(utilitySection);
+  const utilityContent = contentOf(utilitySection);
 
-  const utilityList =
-    utilityContent &&
-    utilityContent.querySelector(
+  const utilityList = utilityContent
+    && utilityContent.querySelector(
       ':scope > ul',
     );
 
   if (utilityList) {
-    const utility =
-      document.createElement('div');
+    const utility = document.createElement('div');
 
-    utility.className =
-      'nav-utility';
+    utility.className = 'nav-utility';
 
-    utilityList.className =
-      'nav-utility-list';
+    utilityList.className = 'nav-utility-list';
 
     [...utilityList.children]
       .forEach((li) => {
-        const link =
-          li.querySelector('a[href]');
+        const link = li.querySelector('a[href]');
 
         if (
           hashOf(link) !== 'login'
@@ -2098,8 +1947,7 @@ export default async function decorate(block) {
           return;
         }
 
-        li.className =
-          'nav-login';
+        li.className = 'nav-login';
 
         wireDrawerLink(
           link,
@@ -2108,11 +1956,9 @@ export default async function decorate(block) {
         );
       });
 
-    const inner =
-      document.createElement('div');
+    const inner = document.createElement('div');
 
-    inner.className =
-      'nav-utility-inner';
+    inner.className = 'nav-utility-inner';
 
     inner.append(utilityList);
 
@@ -2120,7 +1966,6 @@ export default async function decorate(block) {
 
     wrapper.append(utility);
   }
-
 
   /* -------------------------------------------------------------- */
   /* Final DOM */
@@ -2136,7 +1981,6 @@ export default async function decorate(block) {
     overlay,
     wrapper,
   );
-
 
   /* -------------------------------------------------------------- */
   /* Sticky behavior */
@@ -2157,7 +2001,6 @@ export default async function decorate(block) {
     { passive: true },
   );
 
-
   /* -------------------------------------------------------------- */
   /* Keyboard */
   /* -------------------------------------------------------------- */
@@ -2167,7 +2010,6 @@ export default async function decorate(block) {
     onKeydown,
   );
 
-
   /* -------------------------------------------------------------- */
   /* Outside click */
   /* -------------------------------------------------------------- */
@@ -2176,8 +2018,8 @@ export default async function decorate(block) {
     'click',
     (e) => {
       if (
-        !current ||
-        header.contains(e.target)
+        !current
+        || header.contains(e.target)
       ) {
         return;
       }
@@ -2189,7 +2031,6 @@ export default async function decorate(block) {
       );
     },
   );
-
 
   /* -------------------------------------------------------------- */
   /* Breakpoint */
@@ -2218,12 +2059,11 @@ export default async function decorate(block) {
             'false',
           );
 
-          const panel =
-            document.getElementById(
-              button.getAttribute(
-                'aria-controls',
-              ),
-            );
+          const panel = document.getElementById(
+            button.getAttribute(
+              'aria-controls',
+            ),
+          );
 
           if (panel) {
             panel.hidden = true;

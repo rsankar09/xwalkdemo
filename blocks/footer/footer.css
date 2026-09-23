@@ -2,31 +2,56 @@
  * Footer — navy band carrying the link columns, an aside column (nested
  * email-subscribe block + social row) and the legal row.
  *
- * Geometry is derived from capture/home/crops/cmp-012.png (1440 capture,
- * crop scaled 0.625). Source responsive behaviour is 1 column on mobile,
- * 3 link columns with a full-width subscribe row on tablet, 4 columns on
- * desktop; that is mapped onto this project's 600/900/1200 breakpoints.
+ * Every value below is measured off the source rather than eyeballed:
+ * capture/index/screenshots/{375,768,1440}.png for geometry and
+ * capture/index/styles-{375,768,1440}.json for type. On a 1440 viewport the
+ * source band runs 0–1440 in navy with 72px/40px vertical padding, and the
+ * content sits in a 1280px column from x=80 to x=1360 split into four equal
+ * 302px columns with 24px gutters.
+ *
+ * Responsive behaviour follows the source: one stacked column on mobile, the
+ * subscribe/social aside first; three link columns from the source's tablet
+ * grid (768) with the aside still full width on top; the 4-up row at desktop.
  *
  * The aside column hosts blocks/email-subscribe as a child. Nothing here
  * reaches inside it — only the column that contains it is laid out.
  */
 
 .footer {
-  /* rule + hairline colours, both are the navy band tinted with white */
-  --footer-rule-color: rgb(255 255 255 / 30%);
-  --footer-fine-size: 13px;
-  --footer-title-size: 13px;
+  /*
+   * The warm grey the source uses for every de-emphasised string in the band:
+   * the column eyebrows, the phone number, the copyright and the hairline
+   * above the legal row. Links stay pure white.
+   */
+  --footer-muted: rgb(220 217 213);
 
   background-color: var(--brand-navy);
   color: var(--background-color);
-  font-size: var(--body-font-size-s);
-  line-height: 1.5;
+  font-family: var(--body-font-family);
+
+  /* the source sets footer body copy at the same 18px/26px as the page */
+  font-size: var(--body-font-size-m);
+  line-height: 26px;
+  padding: 56px 0;
 }
 
+/*
+ * Horizontal geometry only — the band's vertical padding lives on .footer so
+ * that .footer-legal can carry its hairline on the inner wrapper and have it
+ * stop at the content edge rather than run through the gutters.
+ */
 .footer > div {
+  box-sizing: border-box;
   margin: 0 auto;
-  max-width: 1200px;
-  padding: 0 24px;
+
+  /*
+   * 1344 + 2x32 gutter reproduces the source's 1280px footer column starting
+   * at x=80 on a 1440 viewport. The page's own column is 1288 at x=76; the
+   * source footer is inset those 4px too, and matching it is what makes the
+   * copyright wrap onto two lines the way the original does.
+   */
+  max-width: 1344px;
+  padding: 0 20px;
 }
 
 .footer p {
@@ -45,8 +70,10 @@
 
 .footer a:focus-visible {
   outline: 2px solid var(--background-color);
-  outline-offset: 3px;
-  border-radius: 2px;
+  outline-offset: 2px;
+
+  /* the source rounds the focus ring on footer links at 4px */
+  border-radius: 4px;
 }
 
 .footer .footer-visually-hidden {
@@ -66,39 +93,47 @@
 .footer .footer-columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 48px 40px;
-  padding-top: 48px;
+  gap: 48px 24px;
 }
 
 .footer .footer-column {
   margin: 0;
 }
 
-/* gap between the subscribe block wrapper and the social row */
-.footer .footer-column > div + div {
-  margin-top: 40px;
+/*
+ * Until the 4-up desktop grid the source floats the subscribe/social aside
+ * above the link columns rather than leaving it in source order at the end.
+ */
+.footer .footer-column-aside {
+  order: -1;
 }
 
-/* gap between two link groups stacked in the same column */
-.footer .footer-column > div > * + * {
-  margin-top: 48px;
+/* two link groups stacked in the same column */
+.footer .footer-linklist + .footer-linklist {
+  margin-top: 50px;
+}
+
+/* the subscribe block and the social row it sits above */
+.footer .footer-column-text + .footer-social {
+  margin-top: 40px;
 }
 
 .footer .footer-linklist-title,
 .footer .footer-social-title {
-  margin: 0 0 20px;
+  margin: 0 0 14px;
+  color: var(--footer-muted);
   font-family: var(--body-font-family);
-  font-size: var(--footer-title-size);
-  font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: 0.06em;
+  font-size: var(--body-font-size-xs);
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .footer .footer-linklist-items {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -109,9 +144,7 @@
 .footer .footer-social-list {
   display: flex;
   flex-wrap: wrap;
-
-  /* 5 x 42px + 4 x 10px = 250px, the narrowest column this grid produces */
-  gap: 10px;
+  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -135,56 +168,69 @@
 }
 
 .footer .footer-social-link .icon {
+  display: flex;
   width: 16px;
   height: 16px;
 }
 
-.footer .footer-social-link .icon img {
+.footer .footer-social-link .icon img,
+.footer .footer-social-link .icon svg {
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* legal row */
 
 /* longhands only: `.footer > div` owns the horizontal centring and padding */
 .footer .footer-legal {
-  margin-top: 72px;
-  padding-bottom: 48px;
+  margin-top: 32px;
 }
 
 .footer .footer-legal-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-top: 32px;
-  border-top: 1px solid var(--footer-rule-color);
-  font-size: var(--footer-fine-size);
+  padding-top: 24px;
+  border-top: 1px solid var(--footer-muted);
+  font-size: var(--body-font-size-xs);
+  line-height: 20px;
 }
 
 .footer .footer-legal-meta {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  color: var(--footer-muted);
 }
 
 .footer .footer-contact {
   flex: 0 0 auto;
+  margin-right: 40px;
+}
+
+.footer .footer-copyright {
+  margin-top: 8px;
+}
+
+.footer .footer-legal-nav {
+  margin-top: 16px;
 }
 
 .footer .footer-legal-links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px 40px;
+  flex-direction: column;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.footer .footer-legal-links li {
-  display: flex;
-  align-items: center;
-}
-
 .footer .footer-legal-links a {
+  display: inline-block;
+  box-sizing: border-box;
+
+  /* transparent ring so the 4px focus outline does not shift the row */
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding-top: 2px;
+  font-weight: 600;
   text-decoration: underline;
 }
 
@@ -200,56 +246,74 @@
 }
 
 .footer .footer-privacy-choices .icon {
-  width: 29px;
-  height: 14px;
+  display: flex;
+  width: 48px;
+  height: 24px;
   flex: 0 0 auto;
 }
 
-.footer .footer-privacy-choices .icon img {
+.footer .footer-privacy-choices .icon img,
+.footer .footer-privacy-choices .icon svg {
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
 @media (width >= 600px) {
-  .footer .footer-columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .footer > div {
+    padding: 0 24px;
   }
 }
 
-@media (width >= 900px) {
+/*
+ * 768 rather than 900: this is the source's own tablet grid stop, and it is
+ * where the three link columns appear. Holding it back to 900 leaves a 768
+ * viewport two columns short of the original.
+ */
+@media (width >= 768px) {
+  .footer .footer-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .footer .footer-column-aside {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (width >= 1200px) {
+  .footer {
+    padding: 72px 0 40px;
+  }
+
   .footer > div {
     padding: 0 32px;
   }
 
   .footer .footer-columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    padding-top: 64px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  /* matches the source tablet layout: subscribe drops below the link columns */
+  /* the aside returns to source order as the fourth column */
   .footer .footer-column-aside {
-    grid-column: 1 / -1;
-    max-width: 360px;
+    order: 0;
+    grid-column: auto;
   }
 
   .footer .footer-legal-meta {
     flex-direction: row;
-    gap: 40px;
-  }
-}
-
-@media (width >= 1200px) {
-  .footer .footer-columns {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 40px;
-    padding-top: 80px;
   }
 
-  .footer .footer-column-aside {
-    grid-column: auto;
-    max-width: none;
+  .footer .footer-copyright {
+    margin-top: 0;
   }
 
-  .footer .footer-legal {
-    margin-top: 88px;
+  .footer .footer-legal-nav {
+    margin-top: 24px;
+  }
+
+  .footer .footer-legal-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 40px;
   }
 }

@@ -13,15 +13,29 @@
   list-style: none;
 }
 
+/*
+ * Measured on the source at 1440: tiles are 292px on a 1288px column with a
+ * 40px column gutter (4 x 292 + 3 x 40 = 1288). Rows stay at 24px, and at 768
+ * the two-up grid drops back to 24px in both axes.
+ */
 .product-card .product-card-item {
   display: flex;
   position: relative;
   flex-direction: column;
+
+  /* measured: the tile corner is ~4px, not the 18px used by the image cards */
+  border-radius: 4px;
   background-color: var(--brand-blue);
   color: var(--background-color);
 }
 
-.product-card .product-card-link {
+/*
+ * The navy band rule (`main > .section:is(.navy, .green) a:any-link`) underlines
+ * every link inside the band at (0,4,1). A bare `.product-card .product-card-link`
+ * is (0,2,0) and loses, which is why the tile headings were rendering underlined.
+ * Qualifying with the `li` and `:any-link` takes this to (0,4,2).
+ */
+.product-card li.product-card-item a.product-card-link:any-link {
   color: inherit;
   text-decoration: none;
 }
@@ -42,37 +56,54 @@
   white-space: nowrap;
 }
 
+/*
+ * Tile padding measured off the source: text ink starts 31px from the tile
+ * edge and the arrow (whose box is its ink) starts at 30px, so the inline
+ * padding is 30px. Vertically the eyebrow cap lands at 33px, i.e. a 28px
+ * top padding on a 20px eyebrow line box.
+ */
 .product-card .product-card-body {
   display: flex;
   flex: 1;
   flex-direction: column;
   margin: 0;
-  padding: 24px;
+  padding: 28px 30px;
 }
 
 .product-card .product-card-pretitle {
   order: -1;
-  margin: 0 0 12px;
+  margin: 0 0 16px;
   color: inherit;
   font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.4;
+  font-weight: 500;
+
+  /* measured: "INSURANCE" sets 92px of ink at 14px, which needs ~0.14em */
+  letter-spacing: 0.14em;
+  line-height: 20px;
   text-transform: uppercase;
 }
 
+/*
+ * The tile heading is the source's `text__medium` step — 20px/26px at 500,
+ * not the 16px/700 this block used to carry.
+ */
 .product-card .product-card-title {
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: var(--body-font-size-s);
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 26px;
 }
 
+/*
+ * Tile body copy is the source's `body-small` step: 16px on the same 26px
+ * rhythm as the heading. (Running text elsewhere on the site is 18px/26px —
+ * this is the denser in-card variant, measured, not the global body size.)
+ */
 .product-card .product-card-description {
   margin: 12px 0 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.55;
+  font-size: var(--body-font-size-s);
+  line-height: 26px;
 }
 
 /*
@@ -93,16 +124,24 @@
   outline-offset: 2px;
 }
 
+/*
+ * The arrow is bottom-anchored (the body takes the slack via flex: 1) so that
+ * every tile in a row lines its arrow up, which is what the source does with
+ * its equal-height card row. The source arrow is 26px of ink starting flush
+ * with the 30px text inset; our glyph is drawn inside a 24-unit viewBox with
+ * ~3 units of slack on the left, so the box is oversized to 34px and pulled
+ * back 4px to put the ink where the source puts it.
+ */
 .product-card .product-card-arrow {
   display: block;
-  margin: 20px 24px 24px;
+  margin: 24px 30px 28px 26px;
   color: var(--background-color);
   line-height: 0;
 }
 
 .product-card .product-card-arrow svg {
-  width: 26px;
-  height: 26px;
+  width: 34px;
+  height: 34px;
 }
 
 .product-card .product-card-linked .product-card-body {
@@ -118,11 +157,14 @@
 @media (width >= 900px) {
   .product-card > ul {
     grid-template-columns: repeat(4, 1fr);
+
+    /* measured: 40px between columns at 1440, rows stay on 24px */
+    column-gap: 40px;
   }
 }
 
-/* declared last: outranks the rules above */
-.product-card .product-card-item:hover .product-card-title {
+/* declared last, and specific enough to outrank the :any-link reset above */
+.product-card li.product-card-item:hover a.product-card-link:any-link {
   text-decoration: underline;
 }
 

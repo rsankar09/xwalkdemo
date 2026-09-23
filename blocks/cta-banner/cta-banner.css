@@ -4,23 +4,37 @@
  * A clip-path cuts the border off, so the outline is drawn as two stacked
  * clipped layers: the element paints the stroke colour, and a ::before inset
  * by the stroke width paints the page colour back over the middle.
+ *
+ * The source draws the outline with a stretched SVG, so the two cut corners
+ * scale with the box rather than holding a fixed 45°. Measured off
+ * capture/index/screenshots: at 1440 the box is 1274x209 with a 139x56
+ * top-left cut and a 370x53 bottom-right tail; at 768 it is 716x276 with a
+ * 145x44 cut and a 396x43 tail. Expressed as percentages of the box those
+ * are two distinct shapes, so desktop gets its own set.
  */
 
 .cta-banner {
-  --cta-banner-angle: 40px;
   --cta-banner-stroke: 1px;
+
+  /* top-left cut, as a share of the box */
+  --cta-banner-cut-x: 20%;
+  --cta-banner-cut-y: 16%;
+
+  /* bottom-right tail, which is always the longer of the two */
+  --cta-banner-tail-x: 55%;
+  --cta-banner-tail-y: 16%;
 }
 
 .cta-banner .cta-banner-inner {
   position: relative;
   box-sizing: border-box;
   clip-path: polygon(
-    var(--cta-banner-angle) 0,
+    var(--cta-banner-cut-x) 0,
     100% 0,
-    100% calc(100% - var(--cta-banner-angle)),
-    calc(100% - var(--cta-banner-angle)) 100%,
+    100% calc(100% - var(--cta-banner-tail-y)),
+    calc(100% - var(--cta-banner-tail-x)) 100%,
     0 100%,
-    0 var(--cta-banner-angle)
+    0 var(--cta-banner-cut-y)
   );
   background-color: var(--brand-blue);
   padding: var(--cta-banner-stroke);
@@ -31,12 +45,12 @@
   position: absolute;
   z-index: 0;
   clip-path: polygon(
-    var(--cta-banner-angle) 0,
+    var(--cta-banner-cut-x) 0,
     100% 0,
-    100% calc(100% - var(--cta-banner-angle)),
-    calc(100% - var(--cta-banner-angle)) 100%,
+    100% calc(100% - var(--cta-banner-tail-y)),
+    calc(100% - var(--cta-banner-tail-x)) 100%,
     0 100%,
-    0 var(--cta-banner-angle)
+    0 var(--cta-banner-cut-y)
   );
   inset: var(--cta-banner-stroke);
   background-color: var(--background-color);
@@ -49,49 +63,69 @@
 }
 
 .cta-banner .cta-banner-copy {
-  padding: 32px calc(var(--cta-banner-angle) + 8px);
+  padding: 64px 24px 0;
 }
 
 .cta-banner .cta-banner-title {
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: var(--heading-font-size-s);
-  font-weight: 700;
-  line-height: 1.3;
+
+  /* measured: 26px/32px at every breakpoint, regular weight */
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 32px;
 }
 
 .cta-banner .cta-banner-copy p {
-  margin: 12px 0 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.55;
+  margin: 24px 0 0;
+  font-size: var(--body-font-size-m);
+  line-height: 26px;
 }
 
 .cta-banner .cta-banner-action {
-  padding: 0 calc(var(--cta-banner-angle) + 8px) 32px;
+  padding: 24px 24px 64px;
 }
 
 .cta-banner .cta-banner-action p {
   margin: 0;
 }
 
+/* the source runs the button full width while the box is single-column */
 .cta-banner .cta-banner-action a.button {
+  display: block;
   white-space: normal;
+  text-align: center;
 }
 
-@media (width >= 900px) {
+@media (width >= 600px) {
+  .cta-banner .cta-banner-action a.button {
+    display: inline-block;
+  }
+}
+
+@media (width >= 1200px) {
+  .cta-banner {
+    --cta-banner-cut-x: 11%;
+    --cta-banner-cut-y: 27%;
+    --cta-banner-tail-x: 29%;
+    --cta-banner-tail-y: 25%;
+  }
+
   .cta-banner .cta-banner-inner {
     display: flex;
-    align-items: center;
+
+    /* the source tops the button out with the heading, it is not centred */
+    align-items: flex-start;
     justify-content: space-between;
     gap: 32px;
   }
 
   .cta-banner .cta-banner-copy {
-    padding: 40px 0 40px calc(var(--cta-banner-angle) + 8px);
+    padding: 64px 0 64px 60px;
   }
 
   .cta-banner .cta-banner-action {
     flex-shrink: 0;
-    padding: 40px calc(var(--cta-banner-angle) + 8px) 40px 0;
+    padding: 64px 60px 64px 0;
   }
 }

@@ -1,9 +1,17 @@
 /*
  * Hero billboard (cmp-002).
  *
- * Below 900 the source stacks the image above the content card; from 900 up
- * the image becomes a full-bleed backdrop and the card is offset over it with
- * an angled top-right corner.
+ * Three layouts, transcribed from the source (measured in
+ * capture/index/screenshots/{375,768,1440}.png):
+ *
+ *   < 600   image on top at a 16:9 crop, copy stacked underneath, CTA full width
+ *   600-899 image and copy side by side, image right, 500px tall band
+ *   >= 900  image becomes a full-bleed backdrop and a 640x434 white card with
+ *           two bevelled corners is laid over it, 72px down from the top
+ *
+ * Type is measured, not inherited from the global ramp: the hero is the one
+ * display-sized heading on the site (40/46 small, 56/63 large) and its lead
+ * paragraph is 20/30, a step above the 18/26 body default.
  */
 
 /* release the block from the section's content width */
@@ -25,21 +33,22 @@
 }
 
 /*
- * No aspect-ratio on purpose: the authored image keeps its intrinsic ratio
- * and its width/height attributes reserve the box, so there is no CLS and no
- * silent crop. The source's mobile asset is 327x184, but baking that in would
- * crop every asset that is not.
+ * The source art-directs three crops of the same photo; we only ever get the
+ * one authored asset, so the ratio is pinned per breakpoint instead. 16:9 is
+ * the source's own mobile crop (327x184), which is what makes the stacked
+ * hero come out at the measured 589px on a 375 viewport.
  */
 .hero-billboard .hero-billboard-media img {
+  display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .hero-billboard .hero-billboard-content {
   box-sizing: border-box;
-  margin: 0 auto;
-  padding: 32px 24px 40px;
-  max-width: 1200px;
+  padding: 32px 24px;
   background-color: var(--background-color);
   color: var(--text-color);
 }
@@ -48,60 +57,101 @@
   margin: 0;
 }
 
+/*
+ * Uppercase and letter-spaced, as in the source. The phrase is long, so it is
+ * given its own line-height (16px, 18px from 900 up) and wraps to two lines
+ * below the desktop card width — exactly as the source does.
+ */
 .hero-billboard .hero-billboard-pretitle {
   margin: 0 0 12px;
-  color: var(--dark-color);
-  font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.4;
 
-  /*
-   * No text-transform here. This eyebrow carries a full phrase ("Life
-   * insurance • Investments • Retirement • Advisory"), not the 1-2 word
-   * kicker the other uppercase rules target; 50 characters of all-caps
-   * measurably slows reading.
-   */
+  /* the source eyebrow is rgb(46 48 56), a touch lighter than body text */
+  color: #2e3038;
+  font-size: var(--body-font-size-xs);
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 16px;
+  text-transform: uppercase;
 }
 
 .hero-billboard .hero-billboard-title {
   margin: 0;
-  font-size: var(--heading-font-size-xl);
-  line-height: 1.15;
+  font-size: 40px;
+  line-height: 46px;
 }
 
 .hero-billboard .hero-billboard-description {
-  margin: 16px 0 0;
-  font-size: var(--body-font-size-s);
-  line-height: 1.55;
+  margin: 14px 0 0;
+  font-size: 20px;
+  line-height: 30px;
 }
 
 .hero-billboard .hero-billboard-cta {
-  margin-top: 28px;
+  margin-top: 22px;
 }
 
 .hero-billboard .hero-billboard-cta p {
   margin: 0;
 }
 
-@media (width >= 900px) {
-  /*
-   * padding-left aligns the card's left edge to the 1200px content column
-   * that every other band uses. Expressed as a percentage of this
-   * (full-bleed) block rather than in vw: vw includes the scrollbar, so a
-   * vw-based offset drifts a few px out of alignment with its neighbours.
-   */
+/* stacked and split layouts both run the CTA full width of the copy column */
+.hero-billboard .hero-billboard-cta .button {
+  display: flex;
+  width: 100%;
+}
+
+@media (width >= 600px) {
   .hero-billboard {
     display: flex;
+    flex-direction: row-reverse;
+    min-height: 500px;
+  }
+
+  .hero-billboard .hero-billboard-media {
+    width: 50%;
+  }
+
+  .hero-billboard .hero-billboard-media picture {
+    height: 100%;
+  }
+
+  .hero-billboard .hero-billboard-media img {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+
+  .hero-billboard .hero-billboard-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px;
+    width: 50%;
+  }
+}
+
+@media (width >= 900px) {
+  /*
+   * 72px above the card and 96px below it is the source's own
+   * `margin: 72px auto 6pc`, which is what sets the 602px band height. The
+   * padding-left uses the same expression as the global content column so the
+   * card's left edge lines up with every other band on the page. Expressed as
+   * a percentage of this (full-bleed) block rather than in vw: vw includes the
+   * scrollbar, so a vw-based offset drifts a few px out of alignment.
+   */
+  .hero-billboard {
+    box-sizing: border-box;
+    flex-direction: row;
     align-items: center;
-    padding-left: max(32px, calc((100% - 1200px) / 2 + 32px));
-    min-height: 680px;
+    min-height: 602px;
+    padding: 72px 0 96px;
+    padding-left: max(32px, calc((100% - 1344px) / 2 + 32px));
   }
 
   .hero-billboard .hero-billboard-media {
     position: absolute;
     z-index: 0;
     inset: 0;
+    width: auto;
   }
 
   .hero-billboard .hero-billboard-media picture,
@@ -124,7 +174,6 @@
    * corners — the clip overrides it elsewhere, exactly as it does in source.
    */
   .hero-billboard .hero-billboard-content {
-    display: flex;
     clip-path: polygon(
       0.62% 0,
       85.68% 0,
@@ -137,12 +186,25 @@
     );
     position: relative;
     z-index: 1;
-    flex-direction: column;
+    justify-content: flex-start;
     margin: 0;
     border-radius: 5px;
     padding: 40px 43px 40px 38px;
     width: 640px;
     max-width: 100%;
+  }
+
+  .hero-billboard .hero-billboard-pretitle {
+    line-height: 18px;
+  }
+
+  .hero-billboard .hero-billboard-title {
+    font-size: 56px;
+    line-height: 63px;
+  }
+
+  .hero-billboard .hero-billboard-description {
+    margin-top: 22px;
   }
 
   /*
@@ -163,9 +225,11 @@
    */
   .hero-billboard .hero-billboard-cta {
     align-self: flex-end;
+    margin-top: 64px;
   }
 
-  .hero-billboard .hero-billboard-title {
-    font-size: var(--heading-font-size-xxl);
+  .hero-billboard .hero-billboard-cta .button {
+    display: inline-flex;
+    width: auto;
   }
 }

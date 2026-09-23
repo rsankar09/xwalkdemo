@@ -2,32 +2,50 @@
  * Email subscribe (cmp-011). Background and foreground are inherited from the
  * parent band (the footer, or a navy section) rather than hardcoded, so the
  * block works on both the dark footer and a light page section.
+ *
+ * Measured off capture/index/screenshots/1440.png at x=1058..1360: a 14px
+ * letter-spaced eyebrow, 18px/26px copy, then a 48px-tall white field with a
+ * 48px square blue submit button butted against its right edge. The field
+ * takes the full width of whatever column it lands in — 302px in the desktop
+ * footer, the full content width at tablet and mobile.
  */
 
 .email-subscribe {
   --email-subscribe-height: 48px;
+  --email-subscribe-border: rgb(182 178 175);
+  --email-subscribe-placeholder: rgb(117 117 117);
 
-  max-width: 400px;
+  /*
+   * The de-emphasised warm grey the eyebrow uses. The footer band publishes
+   * it; anywhere else the eyebrow simply matches the surrounding text.
+   */
+  --email-subscribe-muted: var(--footer-muted, currentcolor);
+
   color: inherit;
 }
 
 .email-subscribe .email-subscribe-copy {
-  margin-bottom: 20px;
-}
-
-.email-subscribe .email-subscribe-eyebrow {
-  margin: 0 0 12px;
-  font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1.4;
-  text-transform: uppercase;
+  margin-bottom: 40px;
 }
 
 .email-subscribe .email-subscribe-copy p {
   margin: 0;
-  font-size: var(--body-font-size-s);
-  line-height: 1.5;
+  font-size: var(--body-font-size-m);
+  line-height: 26px;
+}
+
+/*
+ * Matches .email-subscribe-copy p on specificity, so it has to be at least as
+ * specific or the eyebrow inherits the 18px body size.
+ */
+.email-subscribe .email-subscribe-copy p.email-subscribe-eyebrow {
+  margin: 0 0 8px;
+  color: var(--email-subscribe-muted);
+  font-size: var(--body-font-size-xs);
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 20px;
+  text-transform: uppercase;
 }
 
 .email-subscribe .email-subscribe-form {
@@ -37,7 +55,16 @@
 .email-subscribe .email-subscribe-field {
   display: flex;
   align-items: stretch;
+  box-sizing: border-box;
+
+  /* 48px is the outside height in the source, hairline included */
+  height: var(--email-subscribe-height);
+  border: 1px solid var(--email-subscribe-border);
+  border-radius: 4px;
   background-color: var(--background-color);
+
+  /* clips the square submit button back to the field's rounded corners */
+  overflow: hidden;
 }
 
 /* visually hidden, still announced */
@@ -55,15 +82,16 @@
   box-sizing: border-box;
   border: 0;
   background-color: transparent;
-  padding: 0 16px;
+  padding: 0 12px;
   min-width: 0;
-  height: var(--email-subscribe-height);
+  height: 100%;
   color: var(--text-color);
-  font-size: var(--body-font-size-s);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
 }
 
 .email-subscribe .email-subscribe-field input::placeholder {
-  color: var(--dark-color);
+  color: var(--email-subscribe-placeholder);
   opacity: 1;
 }
 
@@ -75,7 +103,7 @@
   border: 0;
   background-color: var(--brand-blue);
   width: var(--email-subscribe-height);
-  height: var(--email-subscribe-height);
+  height: 100%;
   color: var(--background-color);
   cursor: pointer;
 }
@@ -86,8 +114,8 @@
 }
 
 .email-subscribe .email-subscribe-submit svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 }
 
 .email-subscribe .email-subscribe-consent {
@@ -95,7 +123,7 @@
   gap: 10px;
   margin-bottom: 14px;
   font-size: var(--body-font-size-xs);
-  line-height: 1.45;
+  line-height: 20px;
 }
 
 .email-subscribe .email-subscribe-consent input {
@@ -113,7 +141,7 @@
 .email-subscribe .email-subscribe-status {
   margin: 10px 0 0;
   font-size: var(--body-font-size-xs);
-  line-height: 1.4;
+  line-height: 20px;
 }
 
 .email-subscribe .email-subscribe-status-error {
@@ -123,12 +151,14 @@
 /*
  * Kept in the accessibility tree while empty — see .form-status and
  * .social-share-status. display:none here would silence every announcement.
+ * It collapses instead of reserving a line: in the footer the source butts
+ * the social row 40px under the field, and a reserved line pushes it off.
  */
 .email-subscribe .email-subscribe-status:empty {
-  min-height: 1.4em;
+  margin: 0;
 }
 
-.email-subscribe .email-subscribe-field input:focus-visible {
+.email-subscribe .email-subscribe-field:focus-within {
   outline: 2px solid var(--brand-blue);
-  outline-offset: -2px;
+  outline-offset: 1px;
 }
