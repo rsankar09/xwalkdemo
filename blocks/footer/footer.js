@@ -1,10 +1,10 @@
 import { getMetadata } from '../../scripts/aem.js';
-import { loadFragment, loadBundledFragment } from '../fragment/fragment.js';
+// import { loadFragment, loadBundledFragment } from '../fragment/fragment.js';
 
 /*
  * Bundled footer used when no /footer document exists.
  */
-const BUNDLED_FOOTER = '/blocks/footer/footer.html';
+// const BUNDLED_FOOTER = '/blocks/footer/footer.html';
 
 /*
  * Fallback footer content.
