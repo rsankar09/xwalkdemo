@@ -168,7 +168,7 @@ line, and `href="#ot-sdk-show-settings"` wires the OneTrust hook.
 |---|---|---|
 | card media / eyebrow / title / description / link | the card block's **item** model | Per-card content. Each card type's model differs — `icon-list-card` has no link field, `icon-link-card` no description. |
 | card column count, border, fill | **CSS, not authored** | Each card type has one fixed presentation, so there is nothing to pick. This is the main gain from splitting: no variant checkboxes. |
-| band colour (navy / green) | **section** `style` | xc-2: the band spans the whole section, not just the block. An author opening the Product Cards dialog will not find it — it is on the section. |
+| band colour (navy / green) | **section** `style` | xc-2: the band spans the whole section, not just the block. An author opening the Product Card dialog will not find it — it is on the section. |
 | diagonal band edge (`angled`) | **section** `style` | Same. Used with `navy` behind the product cards. |
 | the announcement band and the peach highlight band | **the block itself** | Those two blocks release themselves from the content width and paint their own band, so they need no section style. |
 | eyebrow in default content | **position** — first paragraph immediately followed by an `h2` | Default content carries no class field. Documented because it is invisible otherwise. |

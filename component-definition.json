@@ -173,14 +173,14 @@
           }
         },
         {
-          "title": "Feature Cards",
+          "title": "Feature Card",
           "id": "feature-card",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Feature Cards",
+                  "name": "Feature Card",
                   "model": "feature-card",
                   "filter": "feature-card"
                 }
@@ -189,14 +189,14 @@
           }
         },
         {
-          "title": "Feature Card",
+          "title": "Feature Card Item",
           "id": "feature-card-item",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Feature Card",
+                  "name": "Feature Card Item",
                   "model": "feature-card-item"
                 }
               }
@@ -264,14 +264,14 @@
           }
         },
         {
-          "title": "Icon Link Cards",
+          "title": "Icon Link Card",
           "id": "icon-link-card",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Icon Link Cards",
+                  "name": "Icon Link Card",
                   "model": "icon-link-card",
                   "filter": "icon-link-card"
                 }
@@ -280,14 +280,14 @@
           }
         },
         {
-          "title": "Icon Link Card",
+          "title": "Icon Link Card Item",
           "id": "icon-link-card-item",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Icon Link Card",
+                  "name": "Icon Link Card Item",
                   "model": "icon-link-card-item"
                 }
               }
@@ -295,14 +295,14 @@
           }
         },
         {
-          "title": "Icon List Cards",
+          "title": "Icon List Card",
           "id": "icon-list-card",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Icon List Cards",
+                  "name": "Icon List Card",
                   "model": "icon-list-card",
                   "filter": "icon-list-card"
                 }
@@ -311,14 +311,14 @@
           }
         },
         {
-          "title": "Icon List Card",
+          "title": "Icon List Card Item",
           "id": "icon-list-card-item",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Icon List Card",
+                  "name": "Icon List Card Item",
                   "model": "icon-list-card-item"
                 }
               }
@@ -326,14 +326,14 @@
           }
         },
         {
-          "title": "Product Cards",
+          "title": "Product Card",
           "id": "product-card",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Product Cards",
+                  "name": "Product Card",
                   "model": "product-card",
                   "filter": "product-card"
                 }
@@ -342,14 +342,14 @@
           }
         },
         {
-          "title": "Product Card",
+          "title": "Product Card Item",
           "id": "product-card-item",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Product Card",
+                  "name": "Product Card Item",
                   "model": "product-card-item"
                 }
               }

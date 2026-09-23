@@ -22,10 +22,22 @@
  *   icon-list-card          N rows x 2  [icon]  | [copy]
  *   icon-link-card          N rows x 3  [icon]  | [copy]        | [link]
  *
- * Block-name headers are SINGULAR. toClassName() in scripts/aem.js turns the
- * header text into the block class, so "Feature Cards" would resolve to
- * .feature-cards and load nothing. The definition titles in the model
- * partials are plural for the authoring UI only — do not copy them here.
+ * Block-name headers are SINGULAR, and must match the BLOCK definition's
+ * `title` in component-definition.json exactly. Two separate things depend
+ * on it:
+ *
+ *   - toClassName() in scripts/aem.js turns the header into the block
+ *     class, so "Feature Cards" would resolve to .feature-cards and load
+ *     nothing;
+ *   - md2jcr resolves the header to a component by an exact title match
+ *     (Definitions.getComponentByTitle), so if a CHILD ITEM shares the
+ *     title, the container block is converted against the item model and
+ *     the import fails with "The content isn't mapping to the model
+ *     correctly" — a message about markdown columns for what is really a
+ *     naming collision. See IMPORT-QA-REPORT.md §2.0.
+ *
+ * Hence: block title == block folder in title case; item title == that
+ * plus " Item".
  */
 
 const HEADINGS = 'h1, h2, h3, h4, h5, h6';
