@@ -16,7 +16,13 @@
  * the boilerplate header.
  */
 import { getMetadata } from '../../scripts/aem.js';
-import { loadFragment } from '../fragment/fragment.js';
+import { loadFragment, loadBundledFragment } from '../fragment/fragment.js';
+
+/*
+ * Chrome that ships with the code, used when no /nav document exists.
+ * See the fallback note in decorate().
+ */
+const BUNDLED_NAV = '/blocks/header/nav.html';
 
 /* the nav collapses to a hamburger below the project's 900px breakpoint */
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -154,8 +160,24 @@ function onKeydown(e) {
     }
     return;
   }
-  if (e.key !== 'Tab' || !current) return;
-  const ring = [current.toggle, ...focusablesIn(current.panel)];
+  if (e.key !== 'Tab') return;
+  /*
+   * Three cases. A modal drawer (search/login) is aria-modal, so its toggle is
+   * outside the dialog and must stay out of the ring. A mega-menu drawer is
+   * non-modal and reads as toggle-then-panel. With no drawer open but the
+   * mobile panel covering the page, the whole header is the ring — without
+   * this the user tabs onto content hidden behind the panel.
+   */
+  let ring;
+  if (current) {
+    ring = current.modal
+      ? focusablesIn(current.panel)
+      : [current.toggle, ...focusablesIn(current.panel)];
+  } else if (!isDesktop.matches && isMenuOpen()) {
+    ring = focusablesIn(header);
+  } else {
+    return;
+  }
   if (ring.length < 2) return;
   const first = ring[0];
   const last = ring[ring.length - 1];
@@ -635,7 +657,12 @@ export default async function decorate(block) {
 
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
-  const fragment = await loadFragment(navPath);
+
+  // Authored content wins. The bundled default is the fallback so the header
+  // still renders on an environment where /nav has not been authored yet —
+  // which is every environment until the migration lands the nav document.
+  const fragment = await loadFragment(navPath)
+    || await loadBundledFragment(BUNDLED_NAV);
   block.textContent = '';
   if (!fragment) return;
 
@@ -658,7 +685,7 @@ export default async function decorate(block) {
   /* hamburger */
   const hamburger = document.createElement('div');
   hamburger.className = 'nav-hamburger';
-  hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-expanded="false"
+  hamburger.innerHTML = `<button type="button" aria-controls="nav-sections" aria-expanded="false"
       aria-label="Open navigation"><span class="nav-hamburger-icon"></span></button>`;
   hamburger.querySelector('button').addEventListener('click', () => toggleMenu(!isMenuOpen()));
   nav.append(hamburger);
@@ -686,6 +713,8 @@ export default async function decorate(block) {
   if (navList) {
     const sections = document.createElement('div');
     sections.className = 'nav-sections';
+    /* the hamburger's aria-controls target: this is what actually toggles */
+    sections.id = 'nav-sections';
     navList.className = 'nav-list';
     [...navList.children].forEach((li) => {
       const link = li.querySelector(':scope > a[href], :scope > p > a[href]');
@@ -757,11 +786,13 @@ export default async function decorate(block) {
 
   document.addEventListener('keydown', onKeydown);
   document.addEventListener('click', (e) => {
-    if (current && !header.contains(e.target)) closeDrawer();
+    if (!current || header.contains(e.target)) return;
+    /* hiding the panel while it holds focus would drop focus to <body> */
+    closeDrawer(current.panel.contains(document.activeElement));
   });
 
   isDesktop.addEventListener('change', () => {
-    closeDrawer();
+    closeDrawer(current ? current.panel.contains(document.activeElement) : false);
     toggleMenu(false);
     header.querySelectorAll('.nav-category[aria-expanded="true"]').forEach((button) => {
       button.setAttribute('aria-expanded', 'false');

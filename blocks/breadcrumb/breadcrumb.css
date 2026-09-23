@@ -1,0 +1,82 @@
+/*
+ * Breadcrumb: a single thin row of links above the page title.
+ *
+ * The source renders it at 20px tall directly under the 119px sticky header,
+ * left-aligned to the text column.
+ */
+
+.breadcrumb .breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.breadcrumb .breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+/*
+ * The separator is generated rather than authored so it can never end up in
+ * the accessible name of a crumb, and so a wrapped trail keeps its chevrons
+ * attached to the crumb that follows.
+ */
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-top: 1px solid currentcolor;
+  border-right: 1px solid currentcolor;
+  rotate: 45deg;
+  opacity: 0.5;
+}
+
+.breadcrumb .breadcrumb-item a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb .breadcrumb-item a:hover,
+.breadcrumb .breadcrumb-item a:focus-visible {
+  text-decoration: underline;
+}
+
+/* the current page: present but de-emphasised */
+.breadcrumb .breadcrumb-item [aria-current="page"] {
+  opacity: 0.7;
+}
+
+/*
+ * On narrow screens a deep trail costs more than it gives, so everything
+ * except the parent and the current page is dropped. Done in CSS rather than
+ * JS so it survives a resize with no listener.
+ */
+.breadcrumb .breadcrumb-item:not(:nth-last-child(-n + 2)) {
+  display: none;
+}
+
+.breadcrumb .breadcrumb-item:nth-last-child(2)::before {
+  display: none;
+}
+
+@media (width >= 600px) {
+  .breadcrumb .breadcrumb-item:not(:nth-last-child(-n + 2)) {
+    display: flex;
+  }
+
+  .breadcrumb .breadcrumb-item:nth-last-child(2)::before {
+    display: block;
+  }
+
+  .breadcrumb .breadcrumb-item:first-child::before {
+    display: none;
+  }
+}

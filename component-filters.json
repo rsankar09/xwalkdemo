@@ -24,7 +24,22 @@
       "announcement-banner",
       "feature-highlight-band",
       "cta-banner",
-      "email-subscribe"
+      "email-subscribe",
+      "teaser",
+      "callout",
+      "pull-quote",
+      "accordion",
+      "table",
+      "video",
+      "breadcrumb",
+      "social-share",
+      "form"
+    ]
+  },
+  {
+    "id": "accordion",
+    "components": [
+      "accordion-item"
     ]
   },
   {

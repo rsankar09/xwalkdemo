@@ -1,0 +1,79 @@
+/*
+ * Callout (cmp-a04): one tinted box, bold heading, bulleted list. No icon,
+ * no link, no border, no grid.
+ *
+ * Variants (block options): tinted (default) | plain. Tinted is the default
+ * in CSS as well as in the model, so a callout that arrives without header
+ * options — an import, a hand-written document — still reads as a box.
+ */
+
+.callout {
+  /*
+   * The source box spans 8 of 12 grid columns, which lands at ~870px: wide
+   * enough for a three-line bullet, narrow enough to stay a reading measure.
+   */
+  --callout-measure: 880px;
+}
+
+.callout .callout-box {
+  box-sizing: border-box;
+  max-width: var(--callout-measure);
+  padding: 24px;
+  background-color: var(--light-color);
+}
+
+.callout .callout-copy {
+  margin: 0;
+}
+
+.callout .callout-title {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.callout .callout-list {
+  margin: 12px 0 0;
+  padding-left: 22px;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.55;
+}
+
+.callout .callout-list li + li {
+  margin-top: 10px;
+}
+
+.callout .callout-copy p {
+  margin: 12px 0 0;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.55;
+}
+
+/* footnote markers in the takeaways */
+.callout .callout-copy sup {
+  font-size: max(0.7em, 11px);
+  line-height: 0;
+  vertical-align: super;
+}
+
+/* variant: plain — same content, no box */
+.callout.plain .callout-box {
+  padding: 0;
+  background-color: transparent;
+}
+
+@media (width >= 900px) {
+  .callout .callout-box {
+    padding: 28px 32px 32px;
+  }
+
+  .callout .callout-list {
+    margin-top: 16px;
+  }
+
+  .callout.plain .callout-box {
+    padding: 0;
+  }
+}

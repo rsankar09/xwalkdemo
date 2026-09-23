@@ -1,0 +1,122 @@
+/*
+ * Video (cmp-p04): a poster facade that swaps itself for the player.
+ *
+ * The frame owns the aspect ratio so the box is reserved before the poster
+ * decodes and again before the iframe arrives — swapping the facade for the
+ * player must not shift layout.
+ */
+
+.video {
+  --video-aspect: 16 / 9;
+  --video-play-size: 56px;
+}
+
+.video .video-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--video-aspect);
+  background-color: var(--brand-navy);
+}
+
+.video .video-poster {
+  display: block;
+}
+
+.video .video-poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * The trigger covers the whole frame: the poster is the target, not just the
+ * glyph, which keeps the hit area well past the 44px minimum on touch.
+ */
+.video .video-trigger {
+  display: block;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  color: var(--background-color);
+}
+
+.video .video-trigger:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: -4px;
+}
+
+.video .video-play {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: var(--brand-blue);
+  width: var(--video-play-size);
+  height: var(--video-play-size);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.video .video-play svg {
+  width: 60%;
+  height: 60%;
+}
+
+.video .video-trigger:hover .video-play,
+.video .video-trigger:focus-visible .video-play {
+  transform: translate(-50%, -50%) scale(1.08);
+  background-color: var(--brand-blue-hover);
+}
+
+.video .video-player {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* variant: 1:1, for square social cuts */
+.video.square {
+  --video-aspect: 1 / 1;
+}
+
+/* variant: 9:16, for vertical cuts — capped so it cannot dominate the page */
+.video.vertical {
+  --video-aspect: 9 / 16;
+
+  margin-inline: auto;
+  max-width: 420px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video .video-play,
+  .video .video-trigger:hover .video-play,
+  .video .video-trigger:focus-visible .video-play {
+    transform: translate(-50%, -50%);
+    transition: none;
+  }
+}
+
+@media (width >= 600px) {
+  .video {
+    --video-play-size: 68px;
+  }
+}
+
+@media (width >= 900px) {
+  .video {
+    --video-play-size: 80px;
+  }
+}

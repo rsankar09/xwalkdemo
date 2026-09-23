@@ -53,9 +53,15 @@
   color: var(--dark-color);
   font-size: var(--body-font-size-xs);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   line-height: 1.4;
-  text-transform: uppercase;
+
+  /*
+   * No text-transform here. This eyebrow carries a full phrase ("Life
+   * insurance • Investments • Retirement • Advisory"), not the 1-2 word
+   * kicker the other uppercase rules target; 50 characters of all-caps
+   * measurably slows reading.
+   */
 }
 
 .hero-billboard .hero-billboard-title {
@@ -105,21 +111,58 @@
     object-fit: cover;
   }
 
+  /*
+   * The source clips this card with an SVG clipPath using
+   * clipPathUnits="objectBoundingBox", so the bevels are proportional to the
+   * card's rendered box rather than a fixed angle. Transcribed vertex-for-
+   * vertex into percentages, which reproduces it exactly and keeps it
+   * proportional the same way.
+   *
+   * There are TWO bevels, not one: a long top-right diagonal running down 70%
+   * of the card, and a bottom-left diagonal cutting across the left 60% of the
+   * bottom edge. The `border-radius` below only survives at the two square
+   * corners — the clip overrides it elsewhere, exactly as it does in source.
+   */
   .hero-billboard .hero-billboard-content {
-    /* angled top-right corner, matching the diagonal used by the bands */
+    display: flex;
     clip-path: polygon(
-      0 0,
-      calc(100% - var(--band-angle)) 0,
-      100% var(--band-angle),
-      100% 100%,
-      0 100%
+      0.62% 0,
+      85.68% 0,
+      99.96% 70.46%,
+      100% 99.13%,
+      60.62% 100%,
+      0.44% 73.82%,
+      0 72.99%,
+      0 0.87%
     );
     position: relative;
     z-index: 1;
+    flex-direction: column;
     margin: 0;
-    padding: 48px calc(var(--band-angle) + 32px) 48px 48px;
-    width: 620px;
+    border-radius: 5px;
+    padding: 40px 43px 40px 38px;
+    width: 640px;
     max-width: 100%;
+  }
+
+  /*
+   * The source gives the heading and copy an extra 19px right margin but not
+   * the CTA, so the button overhangs the text column by that much. Holding the
+   * asymmetry rather than averaging it keeps the CTA clear of the top-right
+   * bevel at the width the text wraps to.
+   */
+  .hero-billboard .hero-billboard-title,
+  .hero-billboard .hero-billboard-description {
+    margin-right: 19px;
+  }
+
+  /*
+   * Right-aligned via flex, not text-align: the source uses
+   * `align-self: flex-end` on the CTA wrapper. text-align on the card would
+   * also right-align the heading and copy, which the source does not do.
+   */
+  .hero-billboard .hero-billboard-cta {
+    align-self: flex-end;
   }
 
   .hero-billboard .hero-billboard-title {

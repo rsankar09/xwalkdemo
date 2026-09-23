@@ -2,33 +2,35 @@
 
 Transform: `tools/importer/import.js`
 Harness: `npm run import:qa -- <page>...` (`tools/importer/qa.mjs`)
-Sample: 15 captured pages across 5 templates (home, about, product, article, careers).
+Corpus sweep: `node tools/importer/sweep.mjs` (new this pass)
+Scope: **the full corpus — all 1,221 captured pages**, plus the same 15-page
+sample as the previous pass (home, about, product, article, careers) kept
+for per-page detail.
 
-> **Gate status inherited, not cleared.** `capture/mapping.json` still records
-> `human_gate.status: "PENDING"`. This transform was written against
-> `MIGRATION-HANDOFF.md`, which documents the four REVIEWER DECISION items
-> being settled *against* the mapping's recommendation (one block per
-> component, no card consolidation). The block models and the handoff's
-> §3 contract table agree with each other, and the transform was derived
-> from the models — but the underlying mapping was never formally approved.
+> **Gate status: still PENDING, and now carrying more weight.**
+> `capture/home/mapping.json` records no approval, and this pass changed
+> things the mapping does not cover — a new `pull-quote` block, an `image`
+> field on `teaser`, and a change to how card grids are classified. Those
+> are content-model decisions, not transform details. See §6.
 
 ## 1. Result
 
-**9 of 15 sample pages convert end to end. Zero link loss on every page,
-including the 6 that fail.** Every emitted block matches the row/cell
-structure derived from its own `_<block>.json` model partial, *and* every
-cell lands on the model property it belongs to — now verified by running
-the real `md2jcr` converter, not just by counting cells.
+**All 1,221 captured pages convert end to end. Zero failures.** The 15-page
+sample is 15 of 15, up from 9 of 15. Section band styles now actually reach
+the JCR — they did not before, on any page, ever (§2.1).
 
-The 6 failures are two pre-existing content gaps (`Table`, `blockquote`),
-not card-mapping problems. See §3.
+| | before | after |
+|---|---|---|
+| **full corpus converting** | ~81% (19% failing) | **1221 / 1221 (100%)** |
+| sample pages converting | 9 / 15 | **15 / 15** |
+| pages whose band styles survive | 0 | **all** |
+| blockquote pages convertible (B4) | 0 of 66 | **66 of 66** |
+| data-table pages convertible (B1) | 0 of 92 | **96 of 96** |
+| teaser images preserved | 0 of 168 | **168 of 168** |
+| pages losing any link | — | **2 of 1221 (0.2%)**, both explained |
 
-> **Revision.** An earlier version of this report claimed 15 of 15. That
-> number came from a harness that only counted rows and cells against a
-> contract it derived itself — it never ran the converter, so it agreed
-> with the transform about a shape that the converter rejected. All four
-> container blocks in fact failed to import. §2.0 has the detail; the
-> harness now runs `md2jcr` and is the authority.
+The corpus number is the one that matters, and it is new: no previous pass
+ever completed a full sweep. §3 has the breakdown.
 
 | block | kind | rows × cells | verified on |
 |---|---|---|---|
@@ -36,274 +38,424 @@ not card-mapping problems. See §3.
 | `announcement-banner` | simple | 3 × 1 — icon / copy / link | home |
 | `feature-highlight-band` | simple | 4 × 1 — image / copy / highlights / cta | home |
 | `cta-banner` | simple | 2 × 1 — copy / cta | home |
-| `feature-card` | container | N × 3 — image \| copy \| link | 9 pages |
-| `product-card` | container | N × 2 — copy \| link | 6 pages |
+| `teaser` | simple | 3 × 1 — **image** / copy / link | 5 pages |
+| `callout` | simple | 1 × 1 — copy | 2 pages |
+| `pull-quote` | simple | 3 × 1 — quote / attribution / role | 3 pages |
+| `video` | simple | 3 × 1 — url / poster / title | 6 pages |
+| `table` | simple | 2 × 1 — table / caption | 4 pages |
+| `form` | simple | 2 × 1 — (empty) / path | 4 pages |
+| `feature-card` | container | N × 3 — image \| copy \| link | 11 pages |
+| `product-card` | container | N × 2 — copy \| link | 5 pages |
 | `icon-list-card` | container | N × 2 — icon \| copy | 9 pages |
 | `icon-link-card` | container | N × 3 — icon \| copy \| link | home |
+| `accordion` | container | N × 2 — title \| content | 7 pages |
 
-The contract is asserted against the models at run time, not hard-coded, so
-a model change that is not mirrored in the transform fails the harness.
+The contract is asserted against the model partials at run time, so a model
+change that is not mirrored in the transform fails the harness.
 
-### Per-page
+## 2. Bugs this pass caught and fixed
 
-`md2jcr` is the real converter. `links` counts source → imported.
+Four of these were **silent**: every prior check passed while content was
+being lost. That is the common thread and it is worth stating plainly — a
+transform that emits the right number of rows and cells can still be
+throwing content away, and until this pass nothing looked past the shape.
 
-| page | links | md2jcr |
-|---|---|---|
-| home | 21→21 | OK — 31 nodes, all 8 blocks |
-| about | 11→11 | OK — 29 nodes |
-| products-insurance-term-life | 13→13 | **FAIL** — `Table` (B1) |
-| products-investments | 13→13 | **FAIL** — `Table` (B1) |
-| articles-…-employee-benefits-for-small-businesses | 10→10 | **FAIL** — `blockquote` (B4) |
-| articles-deferred-income-annuities | 8→8 | OK — 13 nodes |
-| articles-homeowner | 6→6 | OK — 19 nodes |
-| articles-living-benefits-riders | 7→7 | **FAIL** — `blockquote` (B4) |
-| articles-building-financial-safety-net | 11→11 | **FAIL** — `Table` (B1) |
-| careers-corporate-internships | 10→10 | OK — 22 nodes |
-| careers-our-culture-inclusion-lgbtq-community | 4→4 | OK — 18 nodes |
-| careers-corporate-career-development | 6→6 | OK — 17 nodes |
-| products-…-employee-whole-life | 6→6 | **FAIL** — `Table` (B1) |
-| articles-buying-a-home | 7→7 | OK — 13 nodes |
-| about-corporate-governance | 19→19 | OK — but emits **no blocks at all** |
+### 2.1 Every section band style was being dropped — on every page
 
-`about-corporate-governance` was previously listed as emitting "cards". It
-does not: the transform matches nothing on it and the whole page falls
-through to default content. Links survive, presentation does not. This is
-another instance of §4 — worth a look before the bulk run.
-
-## 2. Bugs this QA pass caught and fixed
-
-### 2.0 Every container block failed to import — plural definition titles
-
-**Symptom.** The import service rejected the page with:
-
-```
-Icon List Card has errors!
-The content isn’t mapping to the model correctly, likely due to the import
-script generating incompatible markdown. Review the model file and ensure
-the import script meets all column and row requirements, every field must
-align with a column, even if empty.
-```
-
-**Not a column/row problem.** The error message points at the markdown,
-and that is a red herring — the table was already the right shape (N rows
-× 2 cells, `[icon] | [copy]`, exactly the item model's two field groups).
-
-**Root cause — a component title collision.** `md2jcr` resolves a block
-header to a component by an exact match on `title`
-(`Definitions.getComponentByTitle`, a plain `find()` over every component
-in `component-definition.json`). The block definitions were titled in the
-plural and the child items in the singular:
-
-| definition | title (before) | resourceType |
-|---|---|---|
-| `icon-list-card` | `Icon List Cards` | `…/block` |
-| `icon-list-card-item` | `Icon List Card` | `…/block/item` |
-
-The transform emits the header `Icon List Card`, so `find()` returned the
-**child item** component. `md2jcr` then treated the container block as a
-*simple* block against the item model, handed the row's first cell to
-field group 1 (`icon`, one field), and hit the second cell with no fields
-left — which is the error above, thrown from `processCell`.
-
-Both halves of that naming were wrong, and each was independently fatal:
-
-- the **item** title collided with the header the transform emits, which
-  is what threw;
-- the **block** title is also what Universal Editor writes into the block
-  node's `name` when an author inserts one, and `toClassName("Icon List
-  Cards")` is `icon-list-cards` — a class no block folder answers to. So
-  author-created blocks would have silently rendered undecorated, with no
-  importer involved at all.
-
-**Fix.** Block title = the block folder in title case; item title = that
-plus `Item`. Applied to all four container blocks — `feature-card`,
-`product-card`, `icon-list-card`, `icon-link-card` — because all four had
-the identical defect. `icon-list-card` was simply the first to be
-reported. `blocks/cards/` (from the boilerplate) was already correct:
-folder `cards`, block title `Cards`, item title `Card`.
-
-| block folder | block title | item title |
-|---|---|---|
-| `feature-card` | `Feature Card` | `Feature Card Item` |
-| `product-card` | `Product Card` | `Product Card Item` |
-| `icon-list-card` | `Icon List Card` | `Icon List Card Item` |
-| `icon-link-card` | `Icon Link Card` | `Icon Link Card Item` |
-
-Verified in the emitted JCR — every authored value on the right property:
+**Symptom.** None. The transform emitted its `Section Metadata` tables, the
+markdown was textbook-correct, `md2jcr` reported success, the contract
+checks passed, and the QA report said 9 pages converted. The bands simply
+were not in the JCR:
 
 ```xml
-<item_0 … model="icon-list-card-item"
-  modelFields="[icon,copy_title,copy_titleType,copy_description]"
-  icon=":people:"
-  copy_title="Dedicated financial expertise"
-  copy_titleType="h3"
-  copy_description="&lt;p&gt;One of our 12,000+ agents and advisors…&lt;/p&gt;"/>
+<section_1 … model="section" modelFields="[name,style]">   <!-- no style= -->
 ```
 
-**Why QA missed it.** `tools/importer/qa.mjs` derived the expected row and
-cell counts from the model partials and compared them to the transform's
-output. Both sides were right; the failure was in a third place neither
-looked at — the component *titles*. The harness now also
-(a) checks that every block header resolves to a block-level component
-rather than a child item, and (b) runs the page through the real
-`@adobe/helix-importer` `md2jcr` pipeline, which is the authority. Both
-checks fail on the old titles.
+**Root cause.** `md2jcr` resolves a metadata key against the section model
+with `model.fields.find((f) => f.name === key)` — an exact, case-sensitive
+comparison with no normalisation ([`section-helper.js`][sh]). The transform
+emitted the key as `Style`, title-cased, which is the convention for
+*document* authoring. The model field is `style`. The row matched nothing
+and was discarded.
 
-1. **Richtext descriptions were flattened to plain text, dropping inline
-   links.** `copy_description` is a `richtext` field on `icon-list-card`,
-   `product-card` and `hero-billboard`, but the transform extracted
-   `textContent`. The product pages link "premiums", "beneficiaries",
-   "death benefit" and "cash value" into `/resources/glossary` from inside
-   card copy — all four were silently lost. Fixed with `richFrom()`, which
-   unwraps the source's presentational spans but keeps `<a>`, `<strong>`,
-   `<em>` and `<sup>`.
-2. **A card grid that also held its section heading was skipped entirely.**
-   The guard required *every* grid child to be a card, so cmp-009 — whose
-   heading sits in the same grid — produced no block at all. Now only the
-   `.card` children are folded in and the heading stays as default content.
-3. **The band colour was read wrong.** The source overrides an inline navy
-   with an `!important` green in a `<style>` block, so cmp-009's section
-   came out `navy` instead of `green`. `getComputedStyle` is not reliable
-   here either (the styles are stripped before the transform runs, and
-   jsdom reports the inline value), so the cascade is now resolved
-   explicitly: `!important` rule → inline → normal rule → computed.
-4. **Source data tables would have become garbage blocks.** Any bare
-   `<table>` is read by the pipeline as a block whose *first row is the
-   block name*, so a comparison table landed as a block called
-   `protection-type-what-it-helps-cover-why-it-matters`. They are now
-   rewritten as `Table` blocks — deterministic, and matching the
-   block-collection contract. See blocker B1.
-5. **The OneTrust consent dialog was being imported as page content** —
-   ~2,500 characters of cookie policy, three logos and five headings on
-   every page. Stripped, along with 8 analytics beacons that would
-   otherwise have been downloaded as content assets.
-6. **Block headers must be singular.** `toClassName("Feature Cards")` is
-   `feature-cards`, which loads nothing, so the table headers are singular.
-   The definition titles were plural, which is what broke every container
-   block — see §2.0. Both are singular now and the harness fails on any
-   header that does not resolve to a block folder *and* to a block-level
-   component.
+What makes it silent is that the table's own *header* **is** normalised
+(`normalizeString` → `section-metadata`), so the metadata table is found
+and then every row inside it is thrown away. There is no error anywhere.
 
-## 3. Blockers — must clear before a bulk run
+**Fix.** Emit the key as `style`. Verified in the JCR:
 
-**B1 — `blocks/table/` does not exist (92 pages, 8%). Upgraded: this
-aborts the page, it does not degrade.**
-Data tables are emitted as `Table` blocks, but there is no such block in
-the repo. The earlier assessment — "they will render as undecorated divs"
-— was wrong: `md2jcr` throws `The component 'Table' does not exist` and
-**the entire page fails to convert**, blocks and default content alike.
-4 of the 15 sample pages die this way. Nothing about the page is
-recoverable until `blocks/table/` exists with a model. The public
-block-collection ships `table`; import it and add an xwalk model partial.
+```
+home:   [navy,angled]  [green]
+about:  [green,angled]
+```
 
-**B4 — `blockquote` is not supported by `md2jcr` (66 pages, 5%; new,
-previously unreported).**
-`Element 'blockquote' is currently not supported.` Same blast radius as
-B1: the whole page fails to convert. 2 of the 15 sample pages. 66 of the
-1,222 captures contain a `<blockquote>`, and none of the pages that
-convert cleanly contain one, so that count is the reach. The source uses
-blockquotes for pull-quotes inside article body copy. Either map them to a
-block with a model, or flatten them to paragraphs in the transform and
-accept the loss of semantics — that is a content-design call, not a
-transform detail, so it needs a decision before the bulk run.
+**Blast radius.** This is the whole of mapping item xc-2 — the navy, green
+and angled bands that the mapping deliberately modelled as section styles
+rather than block options. Every one of them, on every page, was being
+thrown away. The `styles.css` rules for `main > .section.navy` and
+`.section.green` have never once matched imported content.
 
-### Corpus-wide failure rate (partial)
+The harness now reads section styles back out of the JCR and fails when
+more `Section Metadata` tables are emitted than styles land.
 
-A full-corpus sweep was started and stopped at 200 of 1,222 pages:
-**162 converted, 38 failed — about 19%.** B1 and B4 together account for
-roughly 12% of the corpus, so there is likely a third failure class in the
-tail that the 15-page sample does not reach. Re-run the sweep to
-completion once B1 and B4 are cleared; it is the only way to find out what
-else is in there, and it is cheap to run unattended.
+[sh]: node_modules/@adobe/helix-md2jcr/src/mdast2jcr/hb/helpers/section-helper.js
 
-**B2 — 66 distinct card icons are unnamed (533 pages).**
-Only the 8 icon instances on the home page resolve; every other inline SVG
-produces an **empty icon cell**. The source inlines unnamed `<svg>`s, so
-the token cannot be derived — it has to be looked up by artwork
-fingerprint, and only 14 icons have been extracted so far. Worse, the site
-ships slightly translated variants of the same artwork (heartbeat appears
-as both `0 0 49 44|M28.5469 21.9809…` and `0 0 49 48|M28.5469 23.9804…`),
-so exact fingerprinting will keep missing them. This needs the 66 SVGs
-extracted, named by a human, dropped into `/icons/`, and
-`npm run import:icons` re-run.
+### 2.2 Teaser images were dropped — 135 pages, 168 images
 
-**B3 — the mapping's human gate is still PENDING.** See the note at the top.
+**Symptom.** `DROPPED IMAGES` on `about`, and the contract check passing
+anyway.
+
+**Root cause.** Not a transform bug but a **model gap**, which is why the
+contract check could not see it. `blocks/teaser/_teaser.json` had no image
+field at all, so the derived contract was 2 rows, the transform emitted 2
+rows, and the two agreed with each other about a model that did not
+describe the content. The source teaser is an image+text band: 168 images
+across 135 pages, `cmp-teaser__image--right` on 60 of them.
+
+**Fix.** Added `image` + `imageAlt` to the model (leading, so the row order
+is image/copy/link), taught the transform to emit the row — including when
+empty, since about half the teasers are text-only — and added the layout to
+the block. Also added the `dark` band variant: `cmp-teaser__dark-blue` is
+on 123 pages and was being silently flattened into the default treatment.
+
+### 2.3 `md2jcr` cannot convert `<blockquote>` — 66 pages aborting (B4, cleared)
+
+**Symptom.** `Element 'blockquote' is currently not supported.` and the
+**entire page** fails — blocks and body copy alike.
+
+**Root cause.** All 67 instances in the corpus are one component,
+`cmp-pull-quote`, and the transform claimed none of them, so the raw
+`<blockquote>` reached the converter.
+
+**Fix.** New `blocks/pull-quote/`. The markup is unusually uniform — the
+`<blockquote>` class string is byte-identical across all 67 — so the
+transform is a single selector. 22 of the 67 carry an attribution and 12 of
+those a separate role line; both are preserved. Three colour variants map
+to block options. The source's decorative quote `<svg>` and its
+always-emitted empty attribution scaffold are dropped.
+
+A **safety net** was added alongside it: any `<blockquote>` that somehow
+reaches the end of the transform is flattened to paragraphs and reported,
+rather than being allowed to take the page down. The cost of being wrong
+here is a whole page, not one component.
+
+### 2.4 A model naming collision that mimics a markdown error
+
+Worth recording because it is the *second* time this exact class of bug has
+appeared (§2.0 of the previous report was the first).
+
+The pull-quote model originally named its two credit fields `attribution`
+and `attributionTitle`. The import failed with the same misleading message
+as before:
+
+```
+Pull Quote (highlighted) has errors!
+The content isn't mapping to the model correctly, likely due to the import
+script generating incompatible markdown.
+```
+
+Again not a markdown problem. A `*Title` suffix is a **companion**
+convention (it is the link-`title` attribute pattern), so `attributionTitle`
+was collapsed into `attribution`'s cell — and two independent text values
+cannot both be read out of one cell. Renaming the field to `role` gives it
+its own group and its own row.
+
+**The general rule, now written into the block:** companion suffixes
+(`Alt`, `Text`, `Type`, `Title`, `MimeType`) are reserved. A field that is
+an independent value must not end in one, however natural the name reads.
+
+### 2.5 Card grids were classified wrongly, twice over
+
+`cardKind()` had two independent defects, each losing different content.
+
+**It tested `linked` before the media type,** so *any* card without a link
+went to `Icon List Card` — a model whose media field is an `icon` and which
+has no image field at all. A card with a photograph and no link therefore
+had the photograph dropped on the floor. Caught on `/about/partnerships`,
+where all three partner logos (MLB, US Soccer, Yankees) vanished.
+
+**It classified the whole grid from `cards[0]`,** and source grids are not
+homogeneous. `/newsroom/get-to-know-ching-wang` opens with an unlinked
+"About GMAD" text box followed by three linked article cards; the grid was
+typed from the box, mapped to a model with no `link` field, and all three
+article links were silently dropped.
+
+**Fix.** Classify across every card in the grid, and take the **most
+capable** shape present. That asymmetry is the point: every `link` and
+media group is optional, so a card missing one contributes an empty cell,
+whereas a model without the field has nowhere to put the content and
+discards it. Mixed photograph/icon grids now warn rather than guess.
+
+### 2.6 Two components imported as something worse than nothing
+
+- **Ceros embeds (31 pages)** were removed with no warning by the `iframe`
+  rule, alongside the analytics beacons. They are the content of the
+  section they sit in. Still removed — the experience lives on Ceros and
+  cannot be imported — but now reported per page with the source URL.
+- **Accumulation-unit-value tables (44 pages)** were being swept into
+  static `Table` blocks by `tableBlock()`. These are a live market-data
+  feed headed *"As of 09/21/2026"*. Freezing one day of fund prices into a
+  page that will never update, and that no author can correct, is worse
+  than not importing it. Now excluded and reported.
+
+### 2.7 Standalone images and buttons
+
+`cmp-image` (671 pages) and `cmp-button` (326 pages) outside any block were
+passed through untouched. Images kept their three art-directed `<source>`
+variants, which Edge Delivery regenerates itself; buttons kept their label
+buried in a nested span, so `decorateButtons()` would not render them.
+Both now run through the existing `imageFrom()` / `buttonFrom()` helpers.
+
+Buttons carrying `data-bs-toggle="modal"` open a dialog rather than
+navigating; they import as plain links and are reported, because the dialog
+is a design decision nobody has made yet.
+
+**This fix introduced a regression, which the corpus sweep caught.**
+`imageFrom()` returns a bare `<img>`, and a standalone image is often a
+*linked* logo — the nine bereavement-partner logos on
+`/foundation/kais-journey` are each an `<a>` wrapping the `<picture>`.
+Replacing the component with the bare image destroyed all nine links. The
+standalone pass now carries the anchor over explicitly. (The case does not
+arise inside a block, where the link is its own model field — which is
+exactly why it was easy to miss.)
+
+### 2.8 Adaptive Form fieldsets are now reported, not just discarded
+
+Forms import as a placeholder pointing at a `/forms/*.json` that a human
+must write, because the field list lives in the Adaptive Form model rather
+than the page. But the **fieldset headings** are in the page, and they are
+the form's structure. They were being dropped with the rest of the
+container — correct, since they belong in the definition and not on the
+page, but they are precisely what the person writing that definition needs.
+
+Each form now reports them in order:
+
+```
+Source fieldsets, in order: Personal information | Submitter personal
+information | Claimant personal information | Employment information |
+Work schedule | Claim dates | Type of claim | Illness | Accident or
+injury | Maternity | Surgery | Facility information | Provider
+information | Disclosure authorization | Additional information
+```
+
+This also explains most of the corpus-wide "dropped headings" figure: it is
+dominated by form pages, where the loss is intended.
+
+## 3. Corpus sweep — all 1,221 pages
+
+`tools/importer/sweep.mjs` is new. The previous pass stopped a full-corpus
+run at 200 of 1,222 pages, reported ~19% failing, and noted that a third
+failure class probably existed in the tail. There is no tail:
+
+```
+pages scored: 1221
+passed:       1221 (100.0%)
+failed:       0 (0.0%)
+
+failure classes:            (none)
+```
+
+### Block coverage
+
+| block | pages | % |
+|---|---|---|
+| `feature-card` | 475 | 38.9% |
+| `teaser` | 301 | 24.7% |
+| `hero-billboard` | 247 | 20.2% |
+| `product-card` | 245 | 20.1% |
+| `accordion` | 240 | 19.7% |
+| `form` | 226 | 18.5% |
+| `icon-list-card` | 175 | 14.3% |
+| `table` | 96 | 7.9% |
+| `video` | 77 | 6.3% |
+| `callout` | 71 | 5.8% |
+| `pull-quote` | 66 | 5.4% |
+| `cta-banner` | 13 | 1.1% |
+| `icon-link-card` | 8 | 0.7% |
+| `feature-highlight-band` | 3 | 0.2% |
+| `announcement-banner` | 1 | 0.1% |
+
+### Content fidelity
+
+| measure | pages | % | assessment |
+|---|---|---|---|
+| losing links | 2 | 0.2% | both explained below |
+| empty icon cells | 103 | 8.4% | **blocker B2**, unchanged |
+| dropping images | 1 | 0.1% | a 24×24 tooltip icon, not content |
+| dropping headings | 66 | 5.4% | Adaptive Form fieldset titles — by design (§2.8) |
+
+Every remaining loss was chased to a cause rather than left as a number:
+
+- **`contact-us--ccpa-request-form` (3 links)** — a phone number and two
+  mailto addresses inside an Adaptive Form container, which imports as a
+  placeholder by design. The form must be hand-authored regardless.
+- **`advanced-planning-group--our-team` (1 link)** — a hero with **two**
+  CTAs where the model holds one. Only 4 of the 89 heroes with a CTA do
+  this, so it is not worth a model change, but it now warns with the exact
+  label and href so the second action can be re-authored rather than
+  quietly lost.
+- **`products--investments--exchange-traded-funds` (1 image)** — a 24×24
+  `Info-icon` from a tooltip. The harness suppresses `/is/content/…icon-`
+  paths as icons; this one is `/is/image/…Info-icon`. Left unsuppressed
+  deliberately: broadening the pattern to catch it would start hiding real
+  image losses, and one known benign hit is the cheaper error.
+
+The 66 heading-loss pages are the one figure worth reading carefully. They
+are form fieldset titles, which *should* leave the page — but they are the
+structure of the form somebody now has to author, so §2.8 reports them per
+page instead of discarding them.
 
 ## 4. Known degradations — content preserved, presentation lost
 
-These are unmapped components (mapping xc-4). Content falls through to
-default content, so **nothing is dropped**, but the presentation is flat.
-
 | component | reach | behaviour |
 |---|---|---|
-| breadcrumb | 1083 pages (89%) | stripped; belongs in the `/nav` fragment per handoff |
-| accordion | 240 pages (20%) | flattened to headings + paragraphs, links intact |
-| video | 79 pages (6%) | no block; falls through |
-| hero variants | `dark-blue-pretitle-white` 87, `compact` 40, `ultralight-gray` 11 | all map to plain `hero-billboard`; the fields are identical, only the treatment differs, and no variant class exists yet. Reported per page as a warning. |
+| `cmp-text` | 1206 pages (99%) | falls through to default content. Headings and links survive; the source's presentational `.article-body` / `.text__*` spans are not unwrapped the way `richFrom()` does inside blocks |
+| `cmp-separator` | 637 pages (52%) | decorative rules. **Checked, and benign** — see §5 |
+| `cmp-experiencefragment` | 408 pages (33%) | only `--navigation` and `--global-footer` are stripped. Sub-brand navs and footers (GBS, The Assist, structured settlements) still inline as page content, as do ~290 pages of agent contact cards that should be Fragments |
+| breadcrumb | 1083 pages (89%) | stripped by design; belongs in `/nav` |
+| `cmp-content-list` | 74 pages (6%) | unclaimed; imports as an image plus a flat list |
+| `cmp-email-subscribe` inline | 82 pages (7%) | the transform assumes this only lives in the footer fragment. On 82 pages it is in the body and imports as loose text |
+| hero variants | `dark-blue-pretitle-white` 87, `compact` 40, `ultralight-gray` 11 | all map to plain `hero-billboard`; fields are identical, only the treatment differs. Reported per page |
 
-Two components on the **home page itself** are absent from
-`capture/home/inventory.json` and therefore from the mapping:
-a US Soccer partnership band (h4 + link + logo) and a "Personalized
-Guidance" band (eyebrow + h2 + copy + two CTAs). Both degrade to default
-content. This is direct evidence for xc-4 — the inventory under-samples
-even the page it was built from.
+## 5. Claims checked and rejected
 
-## 5. Inherited accessibility defects — not fixed by the importer
+Recorded because acting on them would have been expensive and wrong.
 
-- **`products-insurance-term-life` has 9 feature-matrix checkmark images
-  with no `alt`** (`icon-check-filled`). They carry meaning ("included"),
-  so they need real alternative text. The importer preserves source alt
-  verbatim and does not invent it.
-- The US Soccer logo on home has `alt=""`.
+- **"`cmp-separator` shatters pages into sections."** The reasoning was
+  sound — 1,301 `<hr>` elements, and the importer renders `<hr>` as `---`,
+  which is an Edge Delivery section break. Measured instead of assumed:
+  `about-privacy-nyl-online-privacy-policy` has **36 separators and emits
+  exactly 1 section**. The separators do not survive to the markdown. No
+  fix needed, and stripping them (the obvious "fix") would have been a
+  change with no effect, dressed up as a correctness win.
 
-## 6. Scope decisions
+The general point: two of the highest-severity items in this pass were
+found by measuring the JCR output, and the highest-severity item that
+turned out to be false was found the same way. Row and cell counts are not
+evidence that content survived.
 
-- **Header, footer and `email-subscribe` are not imported per page.** They
-  are page chrome, authored once as the `/nav` and `/footer` fragment
-  documents. `email-subscribe` (1038 pages, 85%) is nested inside the
-  footer XF, so importing it per page would duplicate it across the site.
-  The fragment documents still need authoring — they do not exist yet.
-- **Bands are section metadata, not block options** (mapping xc-2), so
-  `navy`, `green` and `angled` are emitted as `Section Metadata` tables.
-- `feature-highlight-band` paints its own band, so it gets no section style.
+### The corpus re-slugged mid-pass
 
-## 7. How to re-run
+Worth knowing before anyone tries to reproduce these numbers. The crawler's
+slug scheme changed during this work (`/` used to collapse to `-`, now to
+`--`), and `prune-captures.mjs` retired each superseded directory as its
+page was re-crawled. Nothing was lost: the analysis artifacts moved with
+it (`capture/home/` is now `capture/index/`, mapping and inventory intact),
+and the corpus is 1,221 captures — 1,195 under the new scheme plus 26
+top-level pages whose slug is identical either way.
+
+But the first full sweep was pinned to single-dash slugs and had them
+retired underneath it, so **547 pages reported as failures that were
+really just directories that had stopped existing** — with an empty
+failure-class histogram, because there was nothing to say about any of
+them. Two fixes: the sweep now selects captures by the presence of
+`dom.json` rather than by slug shape, and it counts "no report" as
+*skipped* rather than *failed*. A 44.7% failure rate with no failure
+classes should have been self-evidently a harness bug, and it is now
+impossible to report one.
+
+**Page names in §1 and §3 use the current scheme.** The previous report's
+names (`products-insurance-term-life`) no longer resolve; the equivalent is
+`products--insurance--term-life`.
+
+## 6. Decisions for the reviewer
+
+The first three are new this pass and were made in order to clear blockers.
+All are reversible; none has been approved.
+
+1. **`pull-quote` as a new block** (§2.3). The alternative was flattening
+   quotes to paragraphs, which clears the blocker in a few lines but
+   discards the attribution on 22 pages and the role line on 12. Built as a
+   block because the markup is perfectly uniform and the repo's own
+   `coverage.mjs` already declared it `NEW BLOCK NEEDED`.
+2. **`image` on the `teaser` model** (§2.2). This changes an approved block
+   contract from 2 rows to 3. It is the only way the 168 teaser images
+   survive, but it is a model change and belongs at the gate.
+3. **Card classification now keys on media type, not link** (§2.5). Fixes
+   real image loss, and changes which block some existing grids map to —
+   unlinked picture cards now become `feature-card` with an empty link
+   rather than `icon-list-card`.
+4. **Still open from the previous pass:** the four `REVIEWER DECISION`
+   items in `capture/home/mapping.json` (cmp-004, cmp-008, cmp-010,
+   cmp-011) have never been formally settled.
+
+## 7. Blockers remaining before a bulk run
+
+**B2 — unnamed card icons (103 pages, 8.4%).** Unchanged and now the
+largest open item. Only the 14 fingerprinted icons resolve; every other
+inline `<svg>` produces an **empty icon cell**. (The previous report's
+"533 pages" was an estimate from the inventory; the sweep measures the
+actual reach at 103 pages.) The source inlines unnamed SVGs,
+so the token must be looked up by artwork fingerprint, and the site ships
+slightly translated variants of the same artwork (`heartbeat` appears as
+both `0 0 49 44|M28.5469 21.9809…` and `0 0 49 48|M28.5469 23.9804…`), so
+exact fingerprinting will keep missing them. Needs the SVGs extracted,
+named by a human, dropped into `/icons/`, and `npm run import:icons` re-run.
+Converts fine, fails silently, expensive to find later.
+
+**B5 — `/nav` and `/footer` fragment documents do not exist.** Header,
+footer and `email-subscribe` are deliberately not imported per page. The
+fragment documents they need have still not been authored.
+
+**B6 — Adaptive Forms import as placeholders.** The field list lives in the
+Adaptive Form model, not the rendered page, so it cannot be derived. Each
+emits a `Form` block pointing at a `/forms/*.json` that a human must write.
+
+Cleared this pass: **B1** (`Table`, 92 pages) and **B4** (`blockquote`,
+66 pages) — both previously aborted the whole page.
+
+## 8. How to re-run
 
 ```bash
 npm run build:json            # ALWAYS first if any _<block>.json changed
 npm run import:qa -- home about products-insurance-term-life
+node tools/importer/sweep.mjs # full corpus, ~1h, unattended
 npm run import:icons          # regenerate the icon fingerprint map
 ```
 
-`aem-import-helper import` submits the script to the remote Spacecat
-service, so the *CLI* cannot exercise the transform locally. The
-conversion itself can be: `@adobe/helix-importer` is the library that
-service runs, and it is now a devDependency, so the harness runs the
-genuine `transformDOM → markdown → md2jcr → JCR` pipeline against
-`capture/<page>/dom.json`.
-
 `md2jcr` reads the **aggregated** `component-*.json` at the repo root, not
 the per-block partials. Editing a partial without re-running
-`npm run build:json` converts against the old shape — and, as §2.0 shows,
-the failure surfaces as a message about markdown columns rather than about
-models.
+`npm run build:json` converts against the old shape.
 
-## 8. Recommendation
+## 9. Recommendation
 
-Do **not** start a bulk import yet.
+**Do not start a bulk import yet — but the transform is no longer the
+reason.** Every one of the 1,221 captured pages converts, with two pages
+losing a link between them and both losses understood. What is left is
+authoring and approval, not transform work.
 
-Clear before the bulk run:
+Clear first, in order:
 
-- **B1 (`Table`, 92 pages)** and **B4 (`blockquote`)** — both abort the
-  whole page. These are now the top priority; they were previously
-  believed to degrade gracefully and they do not.
-- **B2 (66 unnamed icons, 533 pages)** — converts fine, but leaves the
-  `icon` property empty, which is silent and expensive to find later.
+1. **The gate itself (§6).** Three model-level decisions were made this
+   pass to clear blockers. Importing 1,221 pages against unapproved model
+   changes is the expensive mistake available here — re-importing is
+   cheap now and will not be once authors have edited the output.
+2. **B2 (103 pages, 8.4%).** Converts cleanly, leaves the `icon` property
+   empty. Silent, and the most expensive remaining item to discover after
+   the fact.
+3. **B5.** Every imported page will be missing its header and footer until
+   `/nav` and `/footer` exist.
 
-Cleared in this pass: the container-block title collision (§2.0), which
-was failing 100% of pages carrying any card grid.
+### What this pass was actually about
 
-The transform itself is ready for the pages it covers: 9 of 15 sample
-pages now convert to JCR with every field on the right property, and no
-sample page loses a link.
+Eight defects, and the four most serious were **silent** — the transform
+emitted the right number of rows and cells, `md2jcr` reported success, and
+content was being discarded anyway. Section bands had never once survived
+an import. Teaser images had never survived. Card grids were losing
+photographs and links depending on which card happened to be first.
+
+Three methodological notes, because they are more reusable than the fixes:
+
+- **Structure is not fidelity.** Every silent defect passed the row/cell
+  contract check. They surfaced only once the harness started reading
+  values back *out of the JCR* — section styles, field-by-field. That check
+  now exists and fails loudly.
+- **The sample could not have found them all.** The linked-logo regression
+  in §2.7 was introduced *by this pass*, affected 9 links on one page, and
+  was caught by the full-corpus sweep. A 15-page sample is a smoke test,
+  not evidence.
+- **One high-severity claim was false.** `cmp-separator` was reported as
+  shattering 52% of pages into sections; measured, 36 separators produce 1
+  section (§5). Two of the real findings and the one false alarm were all
+  settled the same way — by measuring output rather than reasoning about
+  it.

@@ -1,0 +1,136 @@
+<div>
+  <h1>Pull quote and teaser smoke test</h1>
+  <p>Exercises every field combination the importer emits for the two blocks
+    changed in this pass, including the empty-cell cases that are the whole
+    point of the row/cell contract.</p>
+
+  <h2>Pull quote — quote only (45 of 67 source instances)</h2>
+  <div class="pull-quote highlighted">
+    <div>
+      <div>
+        <p>A Living Benefits Rider enables the policy owner to access eligible policy proceeds when facing a terminal illness.</p>
+      </div>
+    </div>
+    <div>
+      <div></div>
+    </div>
+    <div>
+      <div></div>
+    </div>
+  </div>
+
+  <h2>Pull quote — quote + name + role (12 of 67)</h2>
+  <div class="pull-quote dark">
+    <div>
+      <div>
+        <p>New York Life is one of the first environments I have experienced where diversity and inclusion are not just concepts, they are common practice.</p>
+      </div>
+    </div>
+    <div>
+      <div>Cynthia Kalathas</div>
+    </div>
+    <div>
+      <div>New York Life Associate General Counsel</div>
+    </div>
+  </div>
+
+  <h2>Pull quote — quote + source citation, no role (10 of 67)</h2>
+  <div class="pull-quote tinted">
+    <div>
+      <div>
+        <p>3.5 million children under age 14 receive medical treatment for sports and recreational injuries each year.<sup>1</sup></p>
+      </div>
+    </div>
+    <div>
+      <div>John Hopkins Medicine Sports Injury Statistics, Accessed on January 29, 2025</div>
+    </div>
+    <div>
+      <div></div>
+    </div>
+  </div>
+
+  <h2>Pull quote — plain variant</h2>
+  <div class="pull-quote plain">
+    <div>
+      <div>
+        <p>The outlined angled box is the component — its distinctiveness is entirely the shape.</p>
+      </div>
+    </div>
+    <div>
+      <div>—Heather Nesle</div>
+    </div>
+    <div>
+      <div>President, New York Life Foundation</div>
+    </div>
+  </div>
+
+  <h2>Teaser — image right, tinted (the /about case-study band)</h2>
+  <div class="teaser text-left tinted image-right">
+    <div>
+      <div>
+        <picture><img src="/drafts/media/band-senior-couple-advisor.jpg" alt="Volunteers working on a construction project"></picture>
+      </div>
+    </div>
+    <div>
+      <div>
+        <h2>Dedicated to helping communities thrive</h2>
+        <p>New York Life lives its values alongside you, delivering financial security and peace of mind through trusted products, services, and deep community commitment.</p>
+      </div>
+    </div>
+    <div>
+      <div><a href="/about/corporate-social-responsibility">See our impact</a></div>
+    </div>
+  </div>
+
+  <h2>Teaser — image right, dark band (123 source pages)</h2>
+  <div class="teaser text-left dark image-right">
+    <div>
+      <div>
+        <picture><img src="/drafts/media/band-senior-couple-advisor.jpg" alt="Photos of New York Life vice presidents"></picture>
+      </div>
+    </div>
+    <div>
+      <div>
+        <h2>Leadership you can trust</h2>
+        <p>Our executive management team is one of the industry's most professional and experienced, with more than 160 combined years of service.</p>
+      </div>
+    </div>
+    <div>
+      <div><a href="/newsroom/executive-biographies">Meet our leaders</a></div>
+    </div>
+  </div>
+
+  <h2>Teaser — image left</h2>
+  <div class="teaser text-left image-left">
+    <div>
+      <div>
+        <picture><img src="/drafts/media/band-senior-couple-advisor.jpg" alt="A family at home"></picture>
+      </div>
+    </div>
+    <div>
+      <div>
+        <h2>Image on the left</h2>
+        <p>The source defaults to image-left and marks the exception with a modifier class.</p>
+      </div>
+    </div>
+    <div>
+      <div><a href="/products">Explore products</a></div>
+    </div>
+  </div>
+
+  <h2>Teaser — text only, empty image cell (about half of all teasers)</h2>
+  <div class="teaser text-center tinted">
+    <div>
+      <div></div>
+    </div>
+    <div>
+      <div>
+        <h2>No image authored</h2>
+        <p>The image row is still emitted. If it were skipped, this copy would land in the image property instead.</p>
+      </div>
+    </div>
+    <div>
+      <div><a href="/about">Learn more</a></div>
+    </div>
+  </div>
+</div>

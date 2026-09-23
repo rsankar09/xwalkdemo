@@ -17,10 +17,15 @@
  *   announcement-banner     3 rows x 1  [icon]  [copy] [link]
  *   feature-highlight-band  4 rows x 1  [image] [copy] [highlights] [cta]
  *   cta-banner              2 rows x 1  [copy]  [cta]
+ *   teaser                  3 rows x 1  [image] [copy] [link]
+ *   callout                 1 row  x 1  [copy]
+ *   pull-quote              3 rows x 1  [quote] [attribution] [role]
+ *   video                   3 rows x 1  [url]   [poster] [title]
  *   feature-card            N rows x 3  [image] | [copy]        | [link]
  *   product-card            N rows x 2  [copy]  | [link]
  *   icon-list-card          N rows x 2  [icon]  | [copy]
  *   icon-link-card          N rows x 3  [icon]  | [copy]        | [link]
+ *   accordion               N rows x 2  [title] | [content]
  *
  * Block-name headers are SINGULAR, and must match the BLOCK definition's
  * `title` in component-definition.json exactly. Two separate things depend
@@ -297,7 +302,16 @@ function heroBillboard(el, document) {
     title = text(clone);
   }
   const description = el.querySelector('.cmp-hero__description');
-  const cta = el.querySelector('.cmp-hero__cta a[href]');
+  const ctas = [...el.querySelectorAll('.cmp-hero__cta a[href]')];
+  const cta = ctas[0];
+  // The model carries one `cta`, and 4 of the 89 heroes with a CTA have two
+  // (a primary action plus a PDF). Only the first survives; the rest would
+  // otherwise vanish without trace.
+  ctas.slice(1).forEach((extra) => {
+    warn(`hero has a second CTA "${anchorLabel(extra)}" -> ${extra.getAttribute('href')} `
+      + '— the model holds one, so this one is dropped and needs re-authoring '
+      + 'as default content below the hero');
+  });
 
   return WebImporter.DOMUtils.createTable([
     ['Hero Billboard'],
@@ -321,16 +335,39 @@ function heroBillboard(el, document) {
  * @param {Element} card A .cmp-card element
  * @returns {string} The target block name
  */
-function cardKind(card) {
-  const linked = !!card.querySelector('a.cmp-card__content-wrapper[href]');
-  const wrapper = card.querySelector('.cmp-card__image-wrapper');
-  const hasPicture = !!wrapper?.querySelector('picture, img');
-  const hasSvg = !!wrapper?.querySelector('svg');
+function cardKind(cards) {
+  const has = (fn) => cards.some(fn);
+  const linked = has((c) => c.querySelector('a.cmp-card__content-wrapper[href]'));
+  const wrapper = (c) => c.querySelector('.cmp-card__image-wrapper');
+  const hasPicture = has((c) => wrapper(c)?.querySelector('picture, img'));
+  const hasSvg = has((c) => wrapper(c)?.querySelector('svg'));
 
-  if (!linked) return 'Icon List Card';
-  if (hasPicture) return 'Feature Card';
-  if (hasSvg) return 'Icon Link Card';
-  return 'Product Card';
+  /*
+   * Classified across the WHOLE grid, and by the most capable shape in it.
+   *
+   * Two things were wrong before. It read only cards[0], and source grids
+   * are not homogeneous — /newsroom/get-to-know-ching-wang opens with an
+   * unlinked "About GMAD" text box followed by three linked article cards,
+   * so the grid was typed from the box and all three links were dropped.
+   * And it tested `linked` before the media type, which sent every unlinked
+   * card to Icon List Card — a model carrying an `icon` and no image — so a
+   * card with a photograph and no link lost the photograph (the three
+   * partner logos on /about/partnerships).
+   *
+   * Taking the most capable shape is safe in a way that the narrowest is
+   * not: every `link` and media group is optional, so a card that lacks one
+   * simply contributes an empty cell, whereas a model without the field has
+   * nowhere to put the content and silently discards it.
+   */
+  if (hasPicture) {
+    if (hasSvg) {
+      warn('card grid mixes photographs and icons — mapped to Feature Card, '
+        + 'so the icon cards will have an empty image cell');
+    }
+    return 'Feature Card';
+  }
+  if (hasSvg) return linked ? 'Icon Link Card' : 'Icon List Card';
+  return linked ? 'Product Card' : 'Icon List Card';
 }
 
 /**
@@ -359,7 +396,7 @@ function cardParts(card) {
  * @returns {Element} The block table
  */
 function cardGrid(cards, document) {
-  const name = cardKind(cards[0]);
+  const name = cardKind(cards);
   const rows = cards.map((card) => {
     const p = cardParts(card);
     const icon = p.svg ? iconToken(p.svg) : null;
@@ -497,6 +534,267 @@ function ctaBanner(grid, document) {
 }
 
 /* ------------------------------------------------------------------ *
+ * cmp-a09 — teaser (simple, 2 rows x 1 cell)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Transforms a teaser band.
+ *
+ * The quieter sibling of cta-banner: same shape, but the action is a text
+ * link with an arrow rather than a filled button, so the link goes through
+ * linkFrom() and not buttonFrom().
+ *
+ * Half the teasers in the corpus (135 pages, 168 images) are image+text
+ * bands rather than plain tinted ones, so `image` leads the model and the
+ * row is emitted even when the teaser is text-only — dropping it would
+ * shift the copy into the image property on every text-only teaser.
+ * @param {Element} el The .cmp-teaser root
+ * @param {Document} document The document
+ * @returns {Element} The block table
+ */
+function teaser(el, document) {
+  const image = imageFrom(el.querySelector('.cmp-teaser__image'), document);
+  const title = el.querySelector('.cmp-teaser__title');
+  const description = el.querySelector('.cmp-teaser__description');
+  const link = el.querySelector('.cmp-teaser__action-link[href], .cmp-teaser__action-container a[href]');
+
+  // Block options ride in the header, not in a cell: md2jcr filters the
+  // `classes` field out of the row-by-row field groups and reads the
+  // parenthesised tokens instead.
+  const root = el.closest('.teaser') || el;
+  const options = [];
+  options.push(root.classList.contains('cmp-teaser__text-center') ? 'text-center' : 'text-left');
+
+  // The two band treatments are mutually exclusive in the source and the
+  // dark one is the more common (123 pages vs 181), so it cannot be folded
+  // into `tinted` — the copy has to invert against it.
+  if (root.className.includes('dark-blue')) options.push('dark');
+  else if (root.className.includes('ultralight-gray')) options.push('tinted');
+
+  // Image side only means anything when there is an image. The source
+  // defaults to image-left and marks the exception with `image--right`.
+  if (image) {
+    options.push(root.className.includes('image--right') ? 'image-right' : 'image-left');
+  }
+
+  return WebImporter.DOMUtils.createTable([
+    [`Teaser (${options.join(', ')})`],
+    [cell([image])],
+    [cell([
+      heading('h2', text(title), document),
+      ...richFrom(description, document),
+    ])],
+    [cell([linkFrom(link, document)])],
+  ], document);
+}
+
+/* ------------------------------------------------------------------ *
+ * cmp-pull-quote — pull-quote (simple, 2 rows x 1 cell)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Transforms a pull quote.
+ *
+ * Claimed explicitly because md2jcr cannot convert a bare <blockquote> at
+ * all — it throws "Element 'blockquote' is currently not supported" and the
+ * WHOLE page fails, blocks and body copy alike. So this is not a fidelity
+ * improvement, it is what keeps 66 pages convertible.
+ *
+ * The source's decorative quote <svg> and its always-emitted empty
+ * `.card-body` attribution scaffold are both dropped: the glyph is drawn in
+ * CSS, and the scaffold is present even on the 45 quotes that have no
+ * attribution at all.
+ * @param {Element} el The .cmp-pull-quote root
+ * @param {Document} document The document
+ * @returns {Element|null} The block table, or null when there is no quote
+ */
+function pullQuote(el, document) {
+  const quoteEl = el.querySelector('.cmp-pull-quote__quote');
+  // keep <sup> footnote markers — several quotes cite a statistic
+  const quote = quoteEl ? richFrom(quoteEl, document) : [];
+  if (!quote.length) {
+    warn('pull quote with no quote text — skipped');
+    return null;
+  }
+
+  // Authoring hygiene is uneven: names arrive with hand-typed em dashes and
+  // sometimes with the role crammed into the same line. The dash is stripped
+  // here; splitting a conflated name/role is a judgement call and is left to
+  // the author rather than guessed at.
+  const name = text(el.querySelector('.cmp-pull-quote__attribution'))
+    .replace(/^[—–-]\s*/, '');
+  const role = text(el.querySelector('.cmp-pull-quote__title'));
+
+  const root = el.closest('.pull-quote') || el;
+  let style = 'plain';
+  if (root.className.includes('dark-blue')) style = 'dark';
+  else if (root.className.includes('ultralight-gray')) style = 'tinted';
+  else if (root.className.includes('--highlighted')) style = 'highlighted';
+
+  return WebImporter.DOMUtils.createTable([
+    [`Pull Quote (${style})`],
+    [cell(quote)],
+    [cell([para(name, document)])],
+    [cell([para(role, document)])],
+  ], document);
+}
+
+/* ------------------------------------------------------------------ *
+ * cmp-a04 — callout (simple, 1 row x 1 cell)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Transforms a standalone `cmp-card--list` box into a Callout.
+ *
+ * Distinguished from icon-list-card by context, not by class: both are
+ * `cmp-card--list`, but a callout is the ONLY card in its container, carries
+ * no icon and is not a link. See the reasoning recorded on cmp-a04 in
+ * capture/articles--what-is-an-ira/inventory.json.
+ * @param {Element} card The .cmp-card element
+ * @param {Document} document The document
+ * @returns {Element} The block table
+ */
+function callout(card, column, document) {
+  const p = cardParts(card);
+  const tinted = column.className.includes('card-color__');
+
+  return WebImporter.DOMUtils.createTable([
+    [`Callout (${tinted ? 'tinted' : 'plain'})`],
+    [cell([
+      heading('h2', p.title, document),
+      ...richFrom(p.description, document),
+    ])],
+  ], document);
+}
+
+/* ------------------------------------------------------------------ *
+ * cmp-p04 — video (simple, 3 rows x 1 cell)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Transforms a Brightcove player into a Video block.
+ *
+ * Only the ids and the poster are authored content; the ~30KB of injected
+ * video.js runtime in the source is vendor noise and is dropped. The block
+ * rebuilds a player lazily from the ids.
+ * @param {Element} el The .cmp-video root
+ * @param {Document} document The document
+ * @returns {Element|null} The block table, or null when no ids were found
+ */
+function video(el, document) {
+  const player = el.querySelector('[data-video-id]');
+  const account = player?.getAttribute('data-account');
+  const videoId = player?.getAttribute('data-video-id');
+  const playerId = player?.getAttribute('data-player') || 'default';
+  if (!account || !videoId) {
+    warn('video with no Brightcove ids — skipped, needs manual authoring');
+    return null;
+  }
+
+  const url = `https://players.brightcove.net/${account}/${playerId}_default/index.html?videoId=${videoId}`;
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.textContent = url;
+
+  // the poster is the only real asset; it is what the block shows until play
+  const posterEl = el.querySelector('.vjs-poster img, picture img, img');
+  const poster = posterEl ? imageFrom(posterEl.closest('picture') || el, document) : null;
+
+  const title = text(player.getAttribute('aria-label') || '')
+    .replace(/^Video Player$/i, '');
+
+  return WebImporter.DOMUtils.createTable([
+    ['Video'],
+    [cell([link])],
+    [cell([poster])],
+    [cell([para(title, document)])],
+  ], document);
+}
+
+/* ------------------------------------------------------------------ *
+ * cmp-a07 / cmp-p08 — accordion (container, N rows x 2 cells)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Transforms an accordion.
+ *
+ * The source marks single-expansion with `data-cmp-single-expansion`; the
+ * block expresses that as a `single` variant, so the block name carries it.
+ * @param {Element} el The .cmp-accordion root
+ * @param {Document} document The document
+ * @returns {Element|null} The block table, or null when there are no items
+ */
+function accordion(el, document) {
+  const items = [...el.querySelectorAll('.cmp-accordion__item')];
+  if (!items.length) return null;
+
+  const rows = items.map((item) => {
+    const label = text(item.querySelector('.cmp-accordion__title, .cmp-accordion__header'));
+    const panel = item.querySelector('.cmp-accordion__panel');
+    return [
+      cell([para(label, document)]),
+      cell(richFrom(panel, document)),
+    ];
+  });
+
+  const single = el.hasAttribute('data-cmp-single-expansion');
+  return WebImporter.DOMUtils.createTable(
+    [[single ? 'Accordion (single)' : 'Accordion'], ...rows],
+    document,
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * cmp-p10 — form (simple, 2 rows x 1 cell)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Transforms an AEM Adaptive Form into a Form block reference.
+ *
+ * The source ships ~62KB of form runtime; none of it is content. What the
+ * block needs is a path to a field definition, and that cannot be derived
+ * from the rendered markup — the field list lives in the Adaptive Form
+ * model, not in the page. So this emits a reference to a definition that a
+ * human still has to write, and warns loudly rather than pretending the
+ * form came across.
+ * @param {Element} el The .aem-form-container root
+ * @param {Document} document The document
+ * @returns {Element} The block table
+ */
+function formBlock(el, document) {
+  const config = el.querySelector('[data-thankyou]');
+  const thankYou = config?.getAttribute('data-thankyou') || '';
+  const isLead = config?.getAttribute('data-isleadform') === 'true';
+
+  /*
+   * The fieldset headings ARE derivable, even though the field list is not,
+   * and they are the form's structure: "Personal information", "Claim
+   * dates", "Disclosure authorization". They get dropped with the rest of
+   * the form container, which is correct — they belong in the form
+   * definition, not in the page — but they are exactly what whoever writes
+   * that definition needs. Reported rather than discarded.
+   */
+  const sections = [...el.querySelectorAll(HEADINGS)]
+    .map((h) => text(h))
+    .filter((t) => t);
+
+  warn('AEM Adaptive Form found — emitted as a `Form` block pointing at a '
+    + 'PLACEHOLDER definition. The field list is not in the page markup, so '
+    + `it must be authored by hand in /forms/${isLead ? 'lead-form' : 'form'}.json`
+    + `${thankYou ? ` (source thank-you page: ${thankYou})` : ''}`
+    + `${sections.length ? `. Source fieldsets, in order: ${sections.join(' | ')}` : ''}`);
+
+  const path = document.createElement('p');
+  path.textContent = `/forms/${isLead ? 'lead-form' : 'form'}.json`;
+
+  return WebImporter.DOMUtils.createTable([
+    ['Form'],
+    [cell([])],
+    [cell([path])],
+  ], document);
+}
+
+/* ------------------------------------------------------------------ *
  * Source data tables
  * ------------------------------------------------------------------ */
 
@@ -508,20 +806,46 @@ function ctaBanner(grid, document) {
  * so an untouched data table lands as a block called
  * "protection-type-what-it-helps-cover-why-it-matters" and loses its
  * tabular semantics. Naming it `Table` is deterministic and matches the
- * block-collection `table` block's contract, so the markup is recoverable
- * once blocks/table/ exists.
- *
- * NOTE: blocks/table/ is NOT in this repo yet (mapping xc-4). Until it is
- * imported from the block collection, these render unstyled.
+ * `blocks/table/` contract, so the tabular markup survives the round trip.
  * @param {Element} source The source table
  * @param {Document} document The document
  * @returns {Element} The block table
  */
 function tableBlock(source, document) {
-  const rows = [...source.querySelectorAll('tr')].map((tr) => (
-    [...tr.children].map((td) => [...td.childNodes])
-  ));
-  return WebImporter.DOMUtils.createTable([['Table'], ...rows], document);
+  // The block's model is [table, caption] — two FIELD groups, not N data
+  // rows. Emitting the data as block rows makes md2jcr reject the block
+  // ("the content isn't mapping to the model correctly"), because a simple
+  // block's rows are properties. So the whole table goes into ONE richtext
+  // cell as a real <table>, which is both what the model wants and the
+  // shape blocks/table/table.js already detects.
+  const clean = document.createElement('table');
+  [...source.querySelectorAll('tr')].forEach((tr) => {
+    const row = document.createElement('tr');
+    [...tr.children].forEach((sourceCell) => {
+      const out = document.createElement(sourceCell.tagName.toLowerCase() === 'th' ? 'th' : 'td');
+      if (out.tagName === 'TH') out.setAttribute('scope', 'col');
+      // keep the authored inline markup, drop the AEM wrapper divs
+      const inner = sourceCell.querySelector('.cmp-text') || sourceCell;
+      out.append(...[...inner.childNodes].map((n) => n.cloneNode(true)));
+      row.append(out);
+    });
+    clean.append(row);
+  });
+
+  // The source design rules both axes, which is the block's `bordered`
+  // variant; plain `Table` would drop the column rules. The
+  // `table__ultralight-gray` tint has no exact counterpart, and `striped`
+  // is the nearest thing the block offers.
+  const options = ['bordered'];
+  if (source.closest('[class*="table__"]')?.className.includes('ultralight-gray')) {
+    options.push('striped');
+  }
+
+  return WebImporter.DOMUtils.createTable([
+    [`Table (${options.join(', ')})`],
+    [cell([clean])],
+    [cell([])],
+  ], document);
 }
 
 /* ------------------------------------------------------------------ *
@@ -611,9 +935,16 @@ function bandStyles(container, win, bandCss) {
  */
 function wrapSection(node, styles, document) {
   if (!styles.length) return;
+  // The key must be the section model's FIELD NAME exactly. md2jcr resolves
+  // it with `model.fields.find((f) => f.name === key)` — a case-sensitive
+  // comparison with no normalisation — so a title-cased "Style" silently
+  // matches nothing and the whole band is dropped. Only the table's own
+  // header is normalised (`section-metadata`), which is what makes the
+  // failure look like it worked: the metadata table is found, and then
+  // every row in it is discarded.
   const meta = WebImporter.DOMUtils.createTable([
     ['Section Metadata'],
-    ['Style', styles.join(', ')],
+    ['style', styles.join(', ')],
   ], document);
   node.before(document.createElement('hr'));
   node.after(meta);
@@ -656,6 +987,29 @@ function transformContainer(container, document, win, bandCss) {
   const cards = cardKids
     .map((k) => k.querySelector('.cmp-card'))
     .filter((c) => c);
+
+  // --- callout --------------------------------------------------------
+  // A lone cmp-card--list with no icon and no link is not a one-item grid,
+  // it is a standalone callout box (the "Key takeaways" pattern). Checked
+  // before the grid branch, which would otherwise emit a 1-row Icon List
+  // Card. Context, not class, is what separates the two.
+  if (cards.length === 1 && cardKids[0].classList.contains('cmp-card--list')) {
+    const only = cards[0];
+    const isCallout = !only.querySelector('a.cmp-card__content-wrapper[href]')
+      && !only.querySelector('.cmp-card__image-wrapper svg, .cmp-card__image-wrapper picture');
+    if (isCallout) {
+      const table = callout(only, cardKids[0], document);
+      if (cardKids.length === kids.length) {
+        container.replaceWith(table);
+        wrapSection(table, styles, document);
+      } else {
+        cardKids[0].before(table);
+        cardKids[0].remove();
+      }
+      return true;
+    }
+  }
+
   if (cards.length && cards.length === cardKids.length) {
     const table = cardGrid(cards, document);
     if (cardKids.length === kids.length) {
@@ -721,6 +1075,17 @@ export default {
     // must run before the <style> elements are stripped below
     const bandCss = collectBandCss(document);
 
+    // Ceros embeds are <iframe>s, and the remove list below strips every
+    // iframe. That is right for analytics frames and wrong for these: the
+    // embed IS the content of the page section it sits in. Nothing can be
+    // imported — the experience lives on Ceros — so the only honest move is
+    // to name each one loudly enough that it gets re-authored by hand.
+    main.querySelectorAll('.cmp-embed').forEach((embed) => {
+      const src = embed.querySelector('iframe')?.getAttribute('src') || 'unknown source';
+      warn(`third-party embed dropped (${src}) — it cannot be imported and `
+        + 'must be re-authored, probably as a Fragment or a new block');
+    });
+
     // Page chrome is authored once as the /nav and /footer fragment
     // documents, not per page. Dropping the footer XF also drops the
     // nested email-subscribe block (cmp-011), which lives inside it —
@@ -733,7 +1098,13 @@ export default {
       'style',
       'script',
       'noscript',
+      // Breadcrumb and share rail are page-template furniture, not authored
+      // content: the source generates the trail from the page hierarchy and
+      // the share links from the current URL. blocks/breadcrumb/ and
+      // blocks/social-share/ rebuild both at runtime, so importing 307
+      // hand-made trails would only create 307 things to keep in sync.
       '.cmp-breadcrumb',
+      '.cmp-social-share',
       // OneTrust injects its banner and full cookie-policy dialog into the
       // page body. It is CMP chrome, loaded at runtime by delayed.js, and
       // importing it would push ~2.5k characters of cookie policy into
@@ -758,14 +1129,24 @@ export default {
       'iframe',
     ]);
 
-    // Source data tables first, before any block table exists, so the two
-    // can never be confused.
+    // Snapshot the SOURCE data tables now, before any block table exists, so
+    // the two can never be confused. They are converted last (see below):
+    // a table nested inside an accordion panel or a teaser has to be claimed
+    // by that component's richtext first, and only the tables still standing
+    // in the page afterwards are real standalone data tables.
+    // Accumulation-unit-value tables are a live market-data feed rendered
+    // server-side, headed "As of <yesterday>". Importing one freezes a
+    // single day's prices into the page as static content that will never
+    // update and that no author can correct — worse than not importing it,
+    // because it looks authoritative. Excluded here and reported.
+    main.querySelectorAll('.cmp-auv').forEach((auv) => {
+      warn('accumulation-unit-value table dropped — it is a live market-data '
+        + 'feed, and importing it would freeze one day of prices into the '
+        + 'page. Needs a data-backed block, not an import.');
+      auv.remove();
+    });
+
     const dataTables = [...main.querySelectorAll('table')];
-    if (dataTables.length) {
-      warn(`${dataTables.length} source data table(s) rewritten as \`Table\` `
-        + 'blocks — blocks/table/ is not in this repo yet (mapping xc-4)');
-      dataTables.forEach((t) => t.replaceWith(tableBlock(t, document)));
-    }
 
     // Heroes first: the hero sits outside the .cmp-container tree.
     // Every hero variant carries the same fields (image, pretitle, title,
@@ -784,6 +1165,39 @@ export default {
       root.replaceWith(heroBillboard(hero, document));
     });
 
+    // Standalone components, each rooted on its own cmp-* class rather than
+    // on a container, so they are claimed before the container walk below.
+    main.querySelectorAll('.cmp-teaser').forEach((el) => {
+      (el.closest('.teaser') || el).replaceWith(teaser(el, document));
+    });
+
+    // Before the container walk: a pull quote is a grid column in its own
+    // right, and any <blockquote> left standing aborts the whole page.
+    main.querySelectorAll('.cmp-pull-quote').forEach((el) => {
+      const table = pullQuote(el, document);
+      const root = el.closest('.pull-quote') || el;
+      if (table) root.replaceWith(table);
+      else root.remove();
+    });
+
+    main.querySelectorAll('.cmp-video').forEach((el) => {
+      const table = video(el, document);
+      const root = el.closest('.video') || el;
+      if (table) root.replaceWith(table);
+      else root.remove();
+    });
+
+    main.querySelectorAll('.aem-form-container').forEach((el) => {
+      el.replaceWith(formBlock(el, document));
+    });
+
+    main.querySelectorAll('.cmp-accordion').forEach((el) => {
+      const table = accordion(el, document);
+      const root = el.closest('.accordion') || el;
+      if (table) root.replaceWith(table);
+      else root.remove();
+    });
+
     // Containers, innermost last: transformContainer() reads nested
     // containers (the highlight band), so walking outermost-first lets the
     // band claim its children before they are visited on their own.
@@ -793,7 +1207,86 @@ export default {
       transformContainer(container, document, win, bandCss);
     });
 
-    WebImporter.DOMUtils.createMetadata(main, document);
+    /*
+     * Default content, claimed last on purpose.
+     *
+     * Anything still standing here was not part of a block: every component
+     * above replaces its own subtree, so a `.cmp-image` or `.cmp-button` that
+     * survived the walk is a standalone one sitting in the page body. Both
+     * are real authored content and both were previously passed through
+     * untouched, which lost them in different ways.
+     */
+
+    // Standalone images arrive as an art-directed <picture> with three
+    // <source> variants. Left alone the importer may download the wrong
+    // rendition, and on some pages dropped the image entirely (the three
+    // partner logos on /about/partnerships). imageFrom() reduces each to the
+    // single <img> Edge Delivery wants — it regenerates its own responsive
+    // variants — while keeping the alt text.
+    main.querySelectorAll('.cmp-image').forEach((el) => {
+      const img = imageFrom(el, document);
+      const root = el.closest('.image') || el;
+      if (!img) {
+        root.remove();
+        return;
+      }
+      // A standalone image is often a LINKED logo — the nine bereavement
+      // partner logos on /foundation/kais-journey are each an <a> wrapping
+      // the <picture>. imageFrom() returns the bare <img>, so the anchor has
+      // to be carried over explicitly or the link is destroyed. (Inside a
+      // block this does not arise: the link is its own model field.)
+      const anchor = el.querySelector('a[href]');
+      if (anchor) {
+        const link = document.createElement('a');
+        link.setAttribute('href', anchor.getAttribute('href'));
+        const title = anchor.getAttribute('title');
+        if (title) link.setAttribute('title', title);
+        link.append(img);
+        root.replaceWith(link);
+        return;
+      }
+      root.replaceWith(img);
+    });
+
+    // Standalone CTAs bury their label in a nested span, so passing them
+    // through yields an anchor whose text is empty or duplicated. buttonFrom()
+    // recovers the label and emits <p><strong><a>, which decorateButtons()
+    // renders as a primary button — matching how the source presents them.
+    main.querySelectorAll('.cmp-button').forEach((el) => {
+      const anchor = el.querySelector('a[href]');
+      const root = el.closest('.button') || el;
+      if (el.hasAttribute('data-bs-toggle')) {
+        // opens a modal rather than navigating; there is no target document
+        warn(`button "${anchorLabel(anchor || el)}" opens a modal dialog in the `
+          + 'source — imported as a plain link, and the dialog needs designing');
+      }
+      const button = buttonFrom(anchor, document);
+      if (button) root.replaceWith(button);
+      else root.remove();
+    });
+
+    // Safety net. md2jcr cannot convert a <blockquote> — it throws and the
+    // ENTIRE page is lost, body copy included. Every one in the corpus is a
+    // cmp-pull-quote and was claimed above, but the cost of being wrong is
+    // a whole page rather than one component, so any that reached this point
+    // is unwrapped to its paragraphs and reported.
+    main.querySelectorAll('blockquote').forEach((bq) => {
+      warn('blockquote outside a cmp-pull-quote — flattened to paragraphs to '
+        + 'keep the page convertible; check whether it should be a Pull Quote');
+      const paragraphs = [...bq.children].filter((c) => text(c));
+      bq.replaceWith(...(paragraphs.length ? paragraphs : [para(text(bq), document)]
+        .filter((p) => p)));
+    });
+
+    // Whatever source tables are still in the page are genuine standalone
+    // data tables: the ones nested in an accordion panel or a teaser were
+    // detached when those components cloned their richtext, so `isConnected`
+    // is what separates the two.
+    dataTables
+      .filter((t) => t.isConnected)
+      .forEach((t) => t.replaceWith(tableBlock(t, document)));
+
+    WebImporter.rules.createMetadata(main, document);
     return main;
   },
 

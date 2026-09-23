@@ -1,0 +1,52 @@
+{
+  "definitions": [
+    {
+      "title": "Social Share",
+      "id": "social-share",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Social Share",
+              "model": "social-share"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "social-share",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Label",
+          "description": "Optional visible label, such as \"Share\". Leave empty to show icons only."
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "layout",
+          "label": "Layout",
+          "value": "rail",
+          "description": "The rail is vertical and sticky from 900px up and a row below it. Inline stays a row at every width.",
+          "options": [
+            {
+              "name": "Vertical rail",
+              "value": "rail"
+            },
+            {
+              "name": "Inline row",
+              "value": "inline"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

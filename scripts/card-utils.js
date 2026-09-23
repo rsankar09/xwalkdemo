@@ -83,7 +83,14 @@ export function decorateCopy(cell, blockName) {
 export function applyStretchedLink(li, link, blockName) {
   const anchor = document.createElement('a');
   anchor.href = link.href;
-  if (link.title) anchor.title = link.title;
+  /*
+   * Only carry a title the author actually typed. This anchor takes the card
+   * title as its text, so a title echoing the original link text would become
+   * a description that disagrees with the accessible name.
+   */
+  if (link.title && link.title.trim() !== link.textContent.trim()) {
+    anchor.title = link.title;
+  }
   anchor.className = `${blockName}-link`;
 
   const title = li.querySelector(`.${blockName}-title`);

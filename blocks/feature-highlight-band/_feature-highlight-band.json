@@ -67,7 +67,7 @@
           "valueType": "string",
           "name": "highlights",
           "label": "Highlights",
-          "description": "Each heading starts a new highlight; the text under it is its body. Two highlights per row on desktop."
+          "description": "Each heading starts a new highlight; the text under it is its body. Two highlights per row on desktop. Use Heading 3 — the band's own heading is a Heading 2, so Heading 4 here skips a level. Styling comes from the block, not the heading level."
         },
         {
           "component": "aem-content",

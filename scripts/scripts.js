@@ -76,7 +76,12 @@ function buildAutoBlocks() {
  */
 export function decorateButtons(main) {
   main.querySelectorAll('p a[href]').forEach((a) => {
-    a.title = a.title || a.textContent;
+    /*
+     * No blanket a.title here. A title that merely repeats the link text is a
+     * redundant accessible description, and card blocks re-home the anchor
+     * onto the card heading — leaving a description that contradicts the
+     * accessible name.
+     */
     const p = a.closest('p');
     const text = a.textContent.trim();
 
@@ -110,6 +115,29 @@ export function decorateButtons(main) {
 }
 
 /**
+ * Adds a skip-to-main-content link as the first focusable element on the page.
+ *
+ * Lives here rather than in the header block: the header is loaded lazily, so a
+ * link injected there would not exist on the user's first Tab press. WCAG 2.4.1.
+ * @param {Element} main The main element
+ */
+function decorateSkipLink(main) {
+  if (document.querySelector('.skip-to-main')) return;
+  if (!main.id) main.id = 'main';
+  const skip = document.createElement('a');
+  skip.className = 'skip-to-main';
+  skip.href = `#${main.id}`;
+  skip.textContent = 'Skip to main content';
+  // move focus to main, which is not focusable by default
+  skip.addEventListener('click', () => {
+    main.setAttribute('tabindex', '-1');
+    main.focus({ preventScroll: true });
+    main.addEventListener('blur', () => main.removeAttribute('tabindex'), { once: true });
+  });
+  document.body.prepend(skip);
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -132,6 +160,7 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
+    decorateSkipLink(main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
@@ -164,6 +193,14 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  // Universal Editor support. editor-support.js self-initializes on import: it
+  // attaches the aue:content-* listeners to <main> and decorates richtext, so it
+  // must load after decorateMain() and loadSections() have run.
+  if (document.querySelector('[data-aue-resource]') || window.location.hostname.includes('adobeaemcloud')) {
+    // eslint-disable-next-line import/no-cycle
+    await import('./editor-support.js');
+  }
 }
 
 /**

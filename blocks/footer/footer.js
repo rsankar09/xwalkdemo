@@ -1,5 +1,11 @@
 import { getMetadata } from '../../scripts/aem.js';
-import { loadFragment } from '../fragment/fragment.js';
+import { loadFragment, loadBundledFragment } from '../fragment/fragment.js';
+
+/*
+ * Chrome that ships with the code, used when no /footer document exists.
+ * See the fallback note in decorate().
+ */
+const BUNDLED_FOOTER = '/blocks/footer/footer.html';
 
 /*
  * Footer block.
@@ -155,7 +161,11 @@ export default async function decorate(block) {
   // load footer as fragment
   const footerMeta = getMetadata('footer');
   const footerPath = footerMeta ? new URL(footerMeta, window.location).pathname : '/footer';
-  const fragment = await loadFragment(footerPath);
+
+  // Authored content wins; the bundled default keeps the footer rendering on
+  // an environment where /footer has not been authored yet.
+  const fragment = await loadFragment(footerPath)
+    || await loadBundledFragment(BUNDLED_FOOTER);
 
   block.textContent = '';
   if (!fragment) return;

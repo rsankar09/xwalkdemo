@@ -1,0 +1,73 @@
+{
+  "definitions": [
+    {
+      "title": "Pull Quote",
+      "id": "pull-quote",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Pull Quote",
+              "model": "pull-quote"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "pull-quote",
+      "fields": [
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "quote",
+          "label": "Quote",
+          "description": "The quoted sentence itself, without surrounding quotation marks — the block draws those."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "attribution",
+          "label": "Attribution",
+          "description": "Who or what is being quoted. A person's name, or a source for a statistic. Leave empty for an unattributed pull quote."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "role",
+          "label": "Role or organisation",
+          "description": "Optional second line, e.g. \"Head of Benefits, New York Life\". Deliberately NOT named attributionTitle: a *Title suffix is read as a companion of `attribution` (the link-title convention), which would put two independent text values in one cell and fail the import."
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "classes",
+          "label": "Style",
+          "value": "highlighted",
+          "options": [
+            {
+              "name": "Highlighted",
+              "value": "highlighted"
+            },
+            {
+              "name": "Dark band",
+              "value": "dark"
+            },
+            {
+              "name": "Tinted",
+              "value": "tinted"
+            },
+            {
+              "name": "Plain",
+              "value": "plain"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

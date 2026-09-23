@@ -124,12 +124,14 @@
     "fields": [
       {
         "component": "text",
+        "valueType": "string",
         "name": "name",
         "label": "Section Name",
         "description": "The label shown for this section in the Content Tree"
       },
       {
         "component": "multiselect",
+        "valueType": "string",
         "name": "style",
         "label": "Style",
         "description": "Band treatments that sit behind a whole section. Blocks that carry their own band (Announcement Banner, Feature Highlight Band, Hero Billboard) need none of these.",
@@ -155,6 +157,28 @@
             "value": "footnotes"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "accordion",
+    "fields": []
+  },
+  {
+    "id": "accordion-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "description": "The label on the disclosure control. Rendered as a heading."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "content",
+        "label": "Content"
       }
     ]
   },
@@ -186,6 +210,75 @@
         "valueType": "string",
         "name": "linkText",
         "label": "Link text"
+      }
+    ]
+  },
+  {
+    "id": "breadcrumb",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "rootLabel",
+        "label": "Root label",
+        "value": "Home",
+        "description": "Label for the first crumb. The rest of the trail is derived from the page path, so there is nothing else to author."
+      }
+    ]
+  },
+  {
+    "id": "callout",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Heading type",
+        "value": "h2",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          },
+          {
+            "name": "Heading 4",
+            "value": "h4"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Body",
+        "description": "Usually a bulleted list of takeaways."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style",
+        "value": "tinted",
+        "options": [
+          {
+            "name": "Tinted box",
+            "value": "tinted"
+          },
+          {
+            "name": "Plain",
+            "value": "plain"
+          }
+        ]
       }
     ]
   },
@@ -241,7 +334,7 @@
         "valueType": "string",
         "name": "copy_titleType",
         "label": "Heading type",
-        "value": "h3",
+        "value": "h2",
         "options": [
           {
             "name": "Heading 2",
@@ -439,7 +532,7 @@
         "valueType": "string",
         "name": "highlights",
         "label": "Highlights",
-        "description": "Each heading starts a new highlight; the text under it is its body. Two highlights per row on desktop."
+        "description": "Each heading starts a new highlight; the text under it is its body. Two highlights per row on desktop. Use Heading 3 — the band's own heading is a Heading 2, so Heading 4 here skips a level. Styling comes from the block, not the heading level."
       },
       {
         "component": "aem-content",
@@ -452,6 +545,48 @@
         "valueType": "string",
         "name": "ctaText",
         "label": "Button text"
+      }
+    ]
+  },
+  {
+    "id": "form",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Heading type",
+        "value": "h3",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Intro copy"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "definition",
+        "label": "Form definition",
+        "value": "/forms/group-term-life.json",
+        "description": "Path to the form definition JSON, e.g. /forms/group-term-life.json. Same-origin paths starting with / only. The fields, validation messages and submit endpoint all come from that file — see /forms/README.md."
       }
     ]
   },
@@ -706,6 +841,236 @@
         "name": "linkText",
         "label": "Link text",
         "description": "Screen-reader label for the card link. Defaults to the title."
+      }
+    ]
+  },
+  {
+    "id": "pull-quote",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "quote",
+        "label": "Quote",
+        "description": "The quoted sentence itself, without surrounding quotation marks — the block draws those."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "attribution",
+        "label": "Attribution",
+        "description": "Who or what is being quoted. A person's name, or a source for a statistic. Leave empty for an unattributed pull quote."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "role",
+        "label": "Role or organisation",
+        "description": "Optional second line, e.g. \"Head of Benefits, New York Life\". Deliberately NOT named attributionTitle: a *Title suffix is read as a companion of `attribution` (the link-title convention), which would put two independent text values in one cell and fail the import."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style",
+        "value": "highlighted",
+        "options": [
+          {
+            "name": "Highlighted",
+            "value": "highlighted"
+          },
+          {
+            "name": "Dark band",
+            "value": "dark"
+          },
+          {
+            "name": "Tinted",
+            "value": "tinted"
+          },
+          {
+            "name": "Plain",
+            "value": "plain"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "social-share",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Label",
+        "description": "Optional visible label, such as \"Share\". Leave empty to show icons only."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "layout",
+        "label": "Layout",
+        "value": "rail",
+        "description": "The rail is vertical and sticky from 900px up and a row below it. Inline stays a row at every width.",
+        "options": [
+          {
+            "name": "Vertical rail",
+            "value": "rail"
+          },
+          {
+            "name": "Inline row",
+            "value": "inline"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "table",
+        "label": "Table",
+        "description": "The table itself. The first row becomes the header row unless the no-header variant is used."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "caption",
+        "label": "Caption",
+        "description": "Optional. Describes the table and names its scrollable region for screen readers."
+      }
+    ]
+  },
+  {
+    "id": "teaser",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "description": "Optional. Leave empty for a text-only band.",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Alt text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "copy_title",
+        "label": "Headline"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "copy_titleType",
+        "label": "Headline type",
+        "value": "h2",
+        "options": [
+          {
+            "name": "Heading 2",
+            "value": "h2"
+          },
+          {
+            "name": "Heading 3",
+            "value": "h3"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "copy_description",
+        "label": "Description",
+        "description": "One short supporting sentence."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "label": "Link text",
+        "description": "Reads on its own in a list of links, so prefer \"Connect with a professional\" over \"Learn more\"."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style",
+        "value": [
+          "text-left"
+        ],
+        "options": [
+          {
+            "name": "Text left",
+            "value": "text-left"
+          },
+          {
+            "name": "Text centred",
+            "value": "text-center"
+          },
+          {
+            "name": "Tinted band",
+            "value": "tinted"
+          },
+          {
+            "name": "Dark band",
+            "value": "dark"
+          },
+          {
+            "name": "Image right",
+            "value": "image-right"
+          },
+          {
+            "name": "Image left",
+            "value": "image-left"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "video",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "url",
+        "label": "Video link",
+        "description": "Brightcove, YouTube or Vimeo link, a direct .mp4 URL, or a Brightcove account/player/videoId triple such as 75123740001/U7xpFq697r/6249762114001."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "poster",
+        "label": "Poster image",
+        "description": "Shown until the visitor presses play. Without it the frame is a plain dark box.",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "posterAlt",
+        "label": "Poster alt text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Video title",
+        "description": "Names the player for screen readers and labels the play button. Required for accessibility."
       }
     ]
   }
