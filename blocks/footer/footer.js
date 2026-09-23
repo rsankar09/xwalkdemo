@@ -1,24 +1,18 @@
-```javascript
-/*
- * Footer block.
- *
- * Footer content is hardcoded below. This can later be replaced with
- * loadFragment() when the footer document is available.
- */
-
-const ONETRUST_HREF = '#ot-sdk-show-settings';
-const ONETRUST_ID = 'onetrust-privacy-choices';
-
-const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
+import { getMetadata } from '../../scripts/aem.js';
+import { loadFragment, loadBundledFragment } from '../fragment/fragment.js';
 
 /*
- * Hardcoded footer content.
- *
- * Each top-level <div class="section"> represents one footer section.
- * The last section is the legal section.
+ * Bundled footer used when no /footer document exists.
  */
-const FOOTER_HTML = `
- <div class="section">
+const BUNDLED_FOOTER = '/blocks/footer/footer.html';
+
+/*
+ * Fallback footer content.
+ *
+ * This is plain HTML. It is converted to a DOM fragment before decoration.
+ */
+const BUNDLED_FOOTER_HTML = `
+<div>
   <h2>GET IN TOUCH</h2>
   <ul>
     <li><a href="/contact-us" title="Contact New York Life">Contact us</a></li>
@@ -44,7 +38,7 @@ const FOOTER_HTML = `
   </ul>
 </div>
 
-<div class="section">
+<div>
   <h2>ACCOUNT</h2>
   <ul>
     <li><a href="https://www.mynyl.newyorklife.com/VSCRegWebApp/login" title="Log in to your New York Life account">Log in</a></li>
@@ -71,7 +65,7 @@ const FOOTER_HTML = `
   </ul>
 </div>
 
-<div class="section">
+<div>
   <h2>INSTITUTIONAL &amp; EMPLOYER SOLUTIONS</h2>
   <ul>
     <li><a href="/guaranteed-products/medium-term-notes" title="Go to Global Medium Term Notes">Medium term notes</a></li>
@@ -95,7 +89,7 @@ const FOOTER_HTML = `
   </ul>
 </div>
 
-<div class="section">
+<div>
   <div class="email-subscribe">
     <div>
       <div>
@@ -103,7 +97,7 @@ const FOOTER_HTML = `
         <p>Receive resources &amp; tools that can help you prepare for the future. You can cancel anytime.</p>
       </div>
       <div>
-        <p><a href="">Subscribe</a></p>
+        <p><a href="/subscribe">Subscribe</a></p>
         <p>Email address</p>
       </div>
     </div>
@@ -139,7 +133,7 @@ const FOOTER_HTML = `
   </ul>
 </div>
 
-<div class="section footer-legal">
+<div class="footer-legal">
   <p>
     <a href="tel:+18002255695">1 (800) CALL-NYL</a>
   </p>
@@ -175,23 +169,27 @@ const FOOTER_HTML = `
 </div>
 `;
 
-const fragment = document.createElement('div');
-fragment.innerHTML = FOOTER_HTML;
+const ONETRUST_HREF = '#ot-sdk-show-settings';
+const ONETRUST_ID = 'onetrust-privacy-choices';
 
-/*
- * A list is the social row when every one of its items is an icon-only link.
+const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
+
+/**
+ * Returns true when the UL represents a social-media list.
  */
 function isSocialList(el) {
   if (el.tagName !== 'UL') return false;
 
   const links = [...el.querySelectorAll(':scope > li > a')];
 
-  return links.length > 0
-    && links.every((a) => a.querySelector('span.icon'));
+  return (
+    links.length > 0
+    && links.every((a) => a.querySelector('span.icon'))
+  );
 }
 
-/*
- * Decorate social media links.
+/**
+ * Decorates a social link.
  */
 function decorateSocialLink(a) {
   const icon = a.querySelector('span.icon');
@@ -205,9 +203,10 @@ function decorateSocialLink(a) {
     ? iconClass.slice(5).replace(/-/g, ' ')
     : '';
 
-  const label = a.getAttribute('aria-label')
+  const label =
+    a.getAttribute('aria-label')
     || a.textContent.trim()
-    || a.title
+    || a.getAttribute('title')
     || iconName;
 
   a.setAttribute('aria-label', label);
@@ -216,8 +215,8 @@ function decorateSocialLink(a) {
   a.replaceChildren(icon);
 }
 
-/*
- * Turns heading + list into a navigation landmark.
+/**
+ * Builds a navigation group from heading + list.
  */
 function buildLinkGroup(group) {
   const list = group.find((el) => el.tagName === 'UL');
@@ -270,8 +269,8 @@ function buildLinkGroup(group) {
   return nav;
 }
 
-/*
- * Splits column content into heading/list groups.
+/**
+ * Converts authored column content into navigation groups.
  */
 function decorateColumnContent(wrapper) {
   const groups = [];
@@ -289,7 +288,7 @@ function decorateColumnContent(wrapper) {
   );
 }
 
-/*
+/**
  * Decorates the legal section.
  */
 function decorateLegal(section) {
@@ -297,8 +296,7 @@ function decorateLegal(section) {
 
   const wrapper =
     section.querySelector(':scope > .default-content-wrapper')
-    || section.firstElementChild
-    || section;
+    || section.firstElementChild;
 
   if (!wrapper) return;
 
@@ -322,6 +320,7 @@ function decorateLegal(section) {
     });
 
     paragraphs[0].replaceWith(meta);
+
     meta.append(...paragraphs);
   }
 
@@ -340,16 +339,12 @@ function decorateLegal(section) {
     nav.append(list);
   }
 
-  /*
-   * OneTrust hook.
-   */
   const privacyChoices = wrapper.querySelector(
-    `a[href$="${ONETRUST_HREF}"]`,
+    `a[href="${ONETRUST_HREF}"]`,
   );
 
   if (privacyChoices) {
     privacyChoices.id = ONETRUST_ID;
-
     privacyChoices.classList.add(
       'ot-sdk-show-settings',
       'footer-privacy-choices',
@@ -357,36 +352,77 @@ function decorateLegal(section) {
   }
 }
 
-/*
+/**
+ * Converts the bundled HTML string into a DOM element.
+ */
+function getBundledFooterFragment() {
+  const template = document.createElement('template');
+
+  template.innerHTML = BUNDLED_FOOTER_HTML.trim();
+
+  const fragment = document.createDocumentFragment();
+
+  fragment.append(...template.content.children);
+
+  return fragment;
+}
+
+/**
  * Loads and decorates the footer.
+ *
+ * @param {Element} block Footer block element
  */
 export default async function decorate(block) {
+  const footerMeta = getMetadata('footer');
+
+  const footerPath = footerMeta
+    ? new URL(footerMeta, window.location).pathname
+    : '/footer';
+
   block.textContent = '';
 
   /*
-   * Use the hardcoded fragment.
+   * First try the authored /footer fragment.
    *
-   * No loadFragment()
-   * No loadBundledFragment()
-   * No /footer document required.
+   * If it doesn't exist, fall back to the bundled HTML.
    */
-  const footerFragment = fragment;
+  let fragment = await loadFragment(footerPath);
 
-  if (!footerFragment) return;
-
-  const sections = [
-    ...footerFragment.children,
-  ].filter((el) =>
-    el.classList.contains('section'),
-  );
+  if (!fragment) {
+    fragment = await loadBundledFragment(BUNDLED_FOOTER);
+  }
 
   /*
-   * The last section is legal.
+   * If the external bundled fragment also doesn't exist,
+   * use the inline fallback.
+   */
+  if (!fragment) {
+    fragment = getBundledFooterFragment();
+  }
+
+  if (!fragment) return;
+
+  /*
+   * Make sure we are working with an Element/DocumentFragment.
+   */
+  if (typeof fragment === 'string') {
+    const template = document.createElement('template');
+
+    template.innerHTML = fragment.trim();
+
+    fragment = template.content;
+  }
+
+  const sections = [
+    ...fragment.children,
+  ].filter((el) => el.classList.contains('section'));
+
+  /*
+   * Last section is considered legal unless explicitly marked
+   * footer-legal.
    */
   const legal =
-    footerFragment.querySelector(
-      ':scope > .section.footer-legal',
-    )
+    fragment.querySelector(':scope > .section.footer-legal')
     || (
       sections.length > 1
         ? sections[sections.length - 1]
@@ -408,32 +444,23 @@ export default async function decorate(block) {
     columns.forEach((column) => {
       column.classList.add('footer-column');
 
-      /*
-       * Hardcoded HTML doesn't have the EDS
-       * .default-content-wrapper, so decorate the
-       * section itself when necessary.
-       */
-      const wrappers = column.querySelectorAll(
-        ':scope > .default-content-wrapper',
-      );
-
-      if (wrappers.length) {
-        wrappers.forEach(decorateColumnContent);
-      } else {
-        decorateColumnContent(column);
-      }
+      column
+        .querySelectorAll(
+          ':scope > .default-content-wrapper',
+        )
+        .forEach(decorateColumnContent);
 
       /*
-       * Subscribe/social column becomes aside.
+       * The column containing either:
+       * - a block
+       * - social navigation
+       * becomes the aside column.
        */
       if (
-        column.querySelector(
-          '.block, .email-subscribe, .footer-social',
-        )
+        column.querySelector('.block')
+        || column.querySelector('.footer-social')
       ) {
-        column.classList.add(
-          'footer-column-aside',
-        );
+        column.classList.add('footer-column-aside');
       }
 
       grid.append(column);
@@ -443,10 +470,18 @@ export default async function decorate(block) {
   }
 
   /*
-   * Legal footer.
+   * Legal section.
    */
   if (legal) {
     decorateLegal(legal);
     block.append(legal);
   }
+
+  /*
+   * Anything outside .section is preserved.
+   */
+  while (fragment.firstElementChild) {
+    block.append(fragment.firstElementChild);
+  }
 }
+```
